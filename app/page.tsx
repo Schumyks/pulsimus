@@ -44,7 +44,7 @@ export default function Home() {
           </a>
           <a
             href="#contacto"
-            className="rounded-full bg-ambar px-5 py-2 text-sm font-medium text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar"
+            className="rounded-full bg-ambar px-4 py-1.5 text-xs font-medium whitespace-nowrap text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar sm:px-5 sm:py-2 sm:text-sm"
           >
             Agendá tu diagnóstico
           </a>

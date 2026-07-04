@@ -59,6 +59,6 @@ El cierre congelado va textual: "Esto que acabás de tocar es lo que hacemos: lo
 - Sonido de campanita opcional al caer el pedido (idea del brief §Post-v1).
 - Preámbulo "vidriera → mostrador" (dirección en f4-image-prompts §B).
 
-## Pendiente detectado para P3 (pre-existente de F2, NO de esta fase)
+## Pulido P3 aplicado en esta rama
 
-- Header mobile: el CTA "Agendá tu diagnóstico" parte en 2 líneas y aprieta el wordmark a 375px (se ve en `mobile-mostrador.png` arriba). Va en el pulido P3 de esta corrida si la cuota alcanza; si no, queda anotado acá.
+- Header mobile (pre-existente de F2): el CTA "Agendá tu diagnóstico" partía en 2 líneas y apretaba el wordmark a 375px (visible en `mobile-mostrador.png`, tomado antes del fix). Arreglado con tamaños responsivos + `whitespace-nowrap` (solo estilos, copy intacto) — ver `mobile-header-fixed.png`.
