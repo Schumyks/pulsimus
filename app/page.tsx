@@ -1,5 +1,6 @@
 import Hero from "./components/Hero";
 import Dolores from "./components/Dolores";
+import Mostrador from "./components/Mostrador";
 import Proceso from "./components/Proceso";
 import CtaFooter from "./components/CtaFooter";
 import Intro from "./components/Intro";
@@ -53,7 +54,7 @@ export default function Home() {
       <main>
         <Hero />
         <Dolores />
-        {/* F4 · El mostrador (pieza firma) — hueco reservado, se integra después */}
+        <Mostrador />
         <Proceso />
         {/* F5 · Ejemplos (slot vivo, nace oculto) — hueco reservado */}
         <CtaFooter />
