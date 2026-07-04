@@ -39,6 +39,9 @@ yarn-error.log*
 # local tooling artifacts
 .playwright-cli/
 
+# design reference (Fable v1 export, extracted to docs/f3-intro-donante.md)
+Pulsimus Landing.html
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
