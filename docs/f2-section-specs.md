@@ -1,5 +1,9 @@
 # F2 · Specs de secciones (fan-out de 4 subagentes)
 
+> ⚠️ **SUPERSEDED (2026-07-04).** El copy de este documento es el ORIGINAL de F2 y ya NO es la fuente.
+> La revisión de voz implementada en los componentes vive en [`f2-voz-revision.md`](f2-voz-revision.md).
+> Este archivo queda como registro histórico del fan-out F2 (contrato, arquitectura y proceso siguen siendo referencia válida; el copy NO).
+
 > Escritas por el director. Cada subagente construye **una** sección y toca **un solo archivo**.
 > El copy es **final**: se pega tal cual, palabra por palabra. No lo reescribas, no lo "mejores", no lo traduzcas.
 > Fuente del QUÉ: [`agency/landing-brief.md`](../../agency/landing-brief.md). Glosario y prohibiciones: [`CONTEXT.md`](../../CONTEXT.md).

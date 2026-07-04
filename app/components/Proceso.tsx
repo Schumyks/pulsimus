@@ -10,20 +10,20 @@ const pasos: Paso[] = [
     rotulo: "01",
     titulo: "Diagnóstico gratis",
     descripcion:
-      "Nos sentamos 20 minutos por videollamada —desde el navegador, sin instalar nada— y te muestro dónde se te está escapando la plata. Sin compromiso.",
+      "Nos juntamos 20 minutos por videollamada. Desde el navegador, sin instalar nada. Ya sabés por dónde se te escapa la plata; yo te muestro cómo cerrar la canilla. Sin compromiso.",
     href: "#contacto",
   },
   {
     rotulo: "02",
     titulo: "Propuesta",
     descripcion:
-      "Te llevo un plan concreto: qué se hace, qué gana tu negocio y cuánto sale. En idioma de mostrador, no técnico.",
+      "Te armamos un plan concreto: qué se hace, qué ganás y cuánto sale. Fácil, bien estructurado y bajado a tierra.",
   },
   {
     rotulo: "03",
     titulo: "Construcción",
     descripcion:
-      "Diseñamos y construimos tu web de cero, cuidando cada detalle. Vos ves los avances; sale cuando está para salir.",
+      "Te construimos la web desde cero, cuidando cada detalle. Vos ves los avances. Sale cuando tenga que salir.",
   },
 ];
 
@@ -39,7 +39,7 @@ export default function Proceso() {
             Cómo trabajamos
           </h2>
           <p className="mt-4 font-normal text-bruma">
-            Sin vueltas y en tu idioma. Del primer café a tu web andando.
+            Sin vueltas y en tu idioma.
           </p>
         </div>
 
@@ -92,6 +92,23 @@ export default function Proceso() {
             );
           })}
         </ol>
+
+        <p className="mt-14 max-w-2xl text-lg text-noche/80">
+          <span className="font-semibold text-noche">
+            ¿Pensás que una web es cara?
+          </span>{" "}
+          El diagnóstico es gratis y te digo exactamente cuánto sale. Sin
+          sorpresas.
+        </p>
+
+        <p className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-noche md:text-3xl">
+          Un corazón sano{" "}
+          <span className="underline decoration-ambar decoration-[3px] underline-offset-[6px]">
+            late fuerte
+          </span>
+          . Que el de tu negocio no pierda ni un latido: ni un pedido, ni un
+          turno, ni un cliente.
+        </p>
       </div>
     </section>
   );

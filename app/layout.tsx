@@ -9,7 +9,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Pulsimus — El pulso de tu negocio",
+  title: "Pulsimus · El corazón digital de tu negocio",
   description:
     "Agencia web para negocios de barrio. Webs donde tus clientes piden fácil y vos ves todo ordenado.",
 };

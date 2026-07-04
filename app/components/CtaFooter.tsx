@@ -1,5 +1,11 @@
 const contactMethods = ["WhatsApp", "Mail", "Llamada"] as const;
 
+const needs = [
+  { id: "web", label: "Una web" },
+  { id: "gestion", label: "Un sistema de gestión" },
+  { id: "no-se", label: "No sé, ayudame a decidir" },
+] as const;
+
 const fieldClass =
   "w-full rounded-lg border border-hueso/25 bg-hueso/5 px-4 py-3 text-hueso placeholder:text-hueso/40 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar";
 
@@ -20,7 +26,7 @@ export default function CtaFooter() {
               ¿Arrancamos?
             </h2>
             <p className="mt-4 text-lg text-hueso/80">
-              Contame qué te está costando y lo ordenamos juntos.
+              Contame qué se te complica y lo ordenamos.
             </p>
             <p className="mt-6 inline-flex items-center gap-2 text-sm text-hueso/70">
               <span
@@ -32,10 +38,17 @@ export default function CtaFooter() {
           </div>
 
           <div className="mt-14 grid gap-8 md:grid-cols-2 md:gap-16 lg:gap-20">
-            <div className="flex items-center justify-center rounded-2xl border border-hueso/15 bg-hueso/5 p-10 md:p-12">
+            <div className="flex flex-col justify-center gap-4 rounded-2xl border border-hueso/15 bg-hueso/5 p-10 md:p-12">
+              <h3 className="text-2xl font-semibold text-hueso">
+                Diagnóstico gratis, 20 minutos
+              </h3>
+              <p className="text-hueso/80">
+                Por videollamada, desde el navegador. Te vas con ideas
+                concretas para tu negocio, me contrates o no.
+              </p>
               <a
                 href="#contacto"
-                className="inline-flex items-center justify-center rounded-full bg-ambar px-8 py-4 text-center font-medium text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar"
+                className="mt-2 inline-flex items-center justify-center self-start rounded-full bg-ambar px-8 py-4 text-center font-medium text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar"
               >
                 Agendá tu diagnóstico gratis
               </a>
@@ -72,6 +85,34 @@ export default function CtaFooter() {
                     className={fieldClass}
                   />
                 </div>
+
+                <fieldset className="flex flex-col gap-3">
+                  <legend className="text-sm text-hueso/70">
+                    ¿Qué necesitás?
+                  </legend>
+                  <div className="flex flex-wrap gap-3">
+                    {needs.map((need) => {
+                      const inputId = `cta-necesidad-${need.id}`;
+                      return (
+                        <div key={need.id}>
+                          <input
+                            type="checkbox"
+                            name="necesidad"
+                            id={inputId}
+                            value={need.id}
+                            className="peer sr-only"
+                          />
+                          <label
+                            htmlFor={inputId}
+                            className="inline-flex cursor-pointer items-center rounded-full border border-hueso/25 px-4 py-2 text-sm text-hueso/80 transition-colors peer-checked:border-ambar peer-checked:bg-ambar peer-checked:text-noche peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ambar"
+                          >
+                            {need.label}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </fieldset>
 
                 <div className="flex flex-col gap-2">
                   <label htmlFor="cta-dolor" className="text-sm text-hueso/70">
@@ -121,7 +162,9 @@ export default function CtaFooter() {
                   Enviar
                 </button>
 
-                <p className="text-sm text-hueso/50">Sin spam. Te leo yo.</p>
+                <p className="text-sm text-hueso/50">
+                  Sin spam. Te leo y escucho yo, Alan.
+                </p>
               </form>
             </div>
           </div>
