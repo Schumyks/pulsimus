@@ -18,7 +18,7 @@ export default function CtaFooter() {
         className="bg-noche text-hueso"
       >
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl" data-rv="">
             <h2
               id="cta-title"
               className="text-3xl font-semibold text-hueso sm:text-4xl md:text-5xl"
@@ -38,7 +38,11 @@ export default function CtaFooter() {
           </div>
 
           <div className="mt-14 grid gap-8 md:grid-cols-2 md:gap-16 lg:gap-20">
-            <div className="flex flex-col justify-center gap-4 rounded-2xl border border-hueso/15 bg-hueso/5 p-10 md:p-12">
+            <div
+              className="flex flex-col justify-center gap-4 rounded-2xl border border-hueso/15 bg-hueso/5 p-10 md:p-12"
+              data-rv=""
+              data-rv-d="120"
+            >
               <h3 className="text-2xl font-semibold text-hueso">
                 Diagnóstico gratis, 20 minutos
               </h3>
@@ -54,7 +58,11 @@ export default function CtaFooter() {
               </a>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div
+              className="flex flex-col gap-6"
+              data-rv=""
+              data-rv-d="240"
+            >
               <p className="text-sm text-hueso/60">
                 o contame tu caso y te escribo
               </p>

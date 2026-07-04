@@ -31,7 +31,7 @@ export default function Proceso() {
   return (
     <section id="proceso" aria-labelledby="proceso-title">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl" data-rv="">
           <h2
             id="proceso-title"
             className="text-3xl font-semibold text-noche md:text-4xl"
@@ -48,7 +48,12 @@ export default function Proceso() {
             const esUltimo = index === pasos.length - 1;
 
             return (
-              <li key={paso.rotulo} className="relative">
+              <li
+                key={paso.rotulo}
+                className="relative"
+                data-rv=""
+                data-rv-d={index * 120}
+              >
                 {paso.href ? (
                   <a
                     href={paso.href}
@@ -93,7 +98,11 @@ export default function Proceso() {
           })}
         </ol>
 
-        <p className="mt-14 max-w-2xl text-lg text-noche/80">
+        <p
+          className="mt-14 max-w-2xl text-lg text-noche/80"
+          data-rv=""
+          data-rv-d="100"
+        >
           <span className="font-semibold text-noche">
             ¿Pensás que una web es cara?
           </span>{" "}
@@ -101,7 +110,11 @@ export default function Proceso() {
           sorpresas.
         </p>
 
-        <p className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-noche md:text-3xl">
+        <p
+          className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-noche md:text-3xl"
+          data-rv=""
+          data-rv-d="150"
+        >
           Un corazón sano{" "}
           <span className="underline decoration-ambar decoration-[3px] underline-offset-[6px]">
             late fuerte

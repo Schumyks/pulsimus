@@ -14,6 +14,12 @@ export const metadata: Metadata = {
     "Agencia web para negocios de barrio. Webs donde tus clientes piden fácil y vos ves todo ordenado.",
 };
 
+// Runs synchronously before first paint: hides the page while the brand intro
+// is about to mount, so there is no flash of content. The Intro component
+// removes the class on mount; the timeout is a failsafe if hydration stalls.
+const introGuard =
+  "try{if(!sessionStorage.getItem('px-intro-seen')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('px-intro-pending');setTimeout(function(){document.documentElement.classList.remove('px-intro-pending')},4000)}}catch(e){}";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${outfit.variable} font-sans bg-hueso text-noche`}>
+        <script dangerouslySetInnerHTML={{ __html: introGuard }} />
         {children}
       </body>
     </html>

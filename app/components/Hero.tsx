@@ -8,7 +8,10 @@ export default function Hero() {
       aria-labelledby="hero-title"
       className="scroll-mt-[72px] bg-hueso"
     >
-      <div className="mx-auto max-w-6xl px-6 py-24 md:py-32 lg:py-40">
+      <div
+        className="mx-auto max-w-6xl px-6 py-24 md:py-32 lg:py-40"
+        data-rv="hero"
+      >
         <p className="text-xs font-medium tracking-[0.2em] text-bruma uppercase sm:text-sm">
           Agencia web para negocios de barrio
         </p>

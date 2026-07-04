@@ -25,7 +25,7 @@ const dolores: Dolor[] = [
   },
 ];
 
-// Static in F2; the heartbeat animates along this line in F3.
+// Left half (HOY) beats slow and dim; right half (CON PULSIMUS) beats strong.
 function PulseDivider() {
   return (
     <div className="my-8 flex items-center" aria-hidden="true">
@@ -35,14 +35,23 @@ function PulseDivider() {
         height="24"
         viewBox="0 0 40 24"
         fill="none"
-        className="shrink-0 text-ambar"
+        className="shrink-0"
       >
         <path
-          d="M0 12h8l6-8 6 16 6-12 4 4h10"
+          d="M0 12 H8 L14 4 L20 20"
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="px-beat-soft text-bruma"
+        />
+        <path
+          d="M20 20 L26 8 L30 12 H40"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="px-beat-strong text-ambar"
         />
       </svg>
       <span className="h-px flex-1 bg-noche/15" />
@@ -56,12 +65,13 @@ export default function Dolores() {
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <h2
           id="dolores-title"
+          data-rv=""
           className="max-w-3xl text-3xl font-semibold text-noche md:text-4xl"
         >
           Instagram es tu vidriera, no tu mostrador.
         </h2>
 
-        <div className="mt-14 max-w-4xl">
+        <div className="mt-14 max-w-4xl" data-rv="" data-rv-d="100">
           <p className="text-2xl leading-snug font-medium text-noche/85 md:text-3xl">
             “Sin las redes hoy no existo. Todo pasa por ahí. Y gestionarlo
             entero es difícil y lleva mucho tiempo.”
@@ -76,9 +86,11 @@ export default function Dolores() {
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
-          {dolores.map((item) => (
+          {dolores.map((item, index) => (
             <article
               key={item.sello}
+              data-rv=""
+              data-rv-d={index * 120}
               className="flex flex-col rounded-2xl bg-noche/[0.03] p-8 md:p-10"
             >
               <div className="flex-1">
