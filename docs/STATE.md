@@ -3,7 +3,7 @@
 > Estado vivo de **la landing de la agencia** (repo `pulsimus/`, deploy `pulsimus.vercel.app`).
 > Fuente única de la verdad **volátil de la landing**. Actualizar al cierre de cada sesión que toque la landing.
 > **Reglas de negocio / pipeline / metodología de la AGENCIA** viven un nivel arriba → [../../docs/STATE.md](../../docs/STATE.md).
-> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-08 21:xx** (latido narrativo tuneado a mano y consolidado en `f3-motion`).
+> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-08 23:31** (latido narrativo tuneado a mano y consolidado en `f3-motion`).
 
 ## Qué es
 
