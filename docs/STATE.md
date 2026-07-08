@@ -3,7 +3,7 @@
 > Estado vivo de **la landing de la agencia** (repo `pulsimus/`, deploy `pulsimus.vercel.app`).
 > Fuente única de la verdad **volátil de la landing**. Actualizar al cierre de cada sesión que toque la landing.
 > **Reglas de negocio / pipeline / metodología de la AGENCIA** viven un nivel arriba → [../../docs/STATE.md](../../docs/STATE.md).
-> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-08 23:31** (latido narrativo tuneado a mano y consolidado en `f3-motion`).
+> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-08 23:45** (F3 + latido narrativo tuneado → **mergeado a `main` y LIVE en producción**; `f4-mostrador` rebasada).
 
 ## Qué es
 
@@ -13,22 +13,23 @@ Riel **GitHub → Vercel**: cada push a `main` auto-deploya a `pulsimus.vercel.a
 
 ## Estado de ramas / gates
 
-- **`main` (738457f)** — LIVE: F1 + F2 + revisión de voz.
-- **`f3-motion` (4a2c7e1 · HEAD)** — F3 completa + **latido narrativo consolidado**, pusheada, **SIN mergear**. Intro 1×/sesión con FLIP al header (2050ms), skip click/teclado, reveals `[data-rv]` con IntersectionObserver, PulseDivider, `useReducedMotion` end-to-end. Latido: Dolores = corazón **ENFERMO** — retroiluminación por-card *lub-dub* espaciado a **30bpm** (2s, doble-golpe parejo en 14.5%/29% + pausa larga), ámbar pálido **`#ffbf66`**, contenido quieto + estrella recorriendo el electro (`offset-path`). Valores **tuneados a mano por Alan** (panel dev `?tune`, ya borrado); provenance JSON en el comentario de `globals.css`. El ritmo **SANO se reserva para El mostrador**. Gate en [`gate-f3/report.md`](gate-f3/report.md) (9 decisiones + GIF/video/screenshots).
-- **`f4-mostrador` (c262f1e)** — F4 pieza firma **El mostrador** completa, verificada con Playwright (gesto chip-FLIP + ticket que se imprime, seeds SSR, cap 4, lockout, reduced, mobile). Incluye **copy nuevo de sección (h2 + sub) a veredicto de Alan**. Gate en `gate-f4/report.md`; spec en `f4-build-spec.md`. Pulido P3: fix header mobile (CTA nowrap responsivo). ⚠️ **Apilada sobre el `f3-motion` VIEJO (2c00cf7)** — al mover `f3-motion` quedó desactualizada; **rebasar sobre `f3-motion` (o main) antes del gate F4**.
-- **`f3-pulse-proto` (9f6b5e6)** — rama proto descartable, **ya CONSOLIDADA en `f3-motion`** (squash). Redundante; **segura de borrar** (local + remoto/preview) cuando quieras.
+- **`main` (45f7834 · HEAD)** — **LIVE en producción**: F1 + F2 + voz + **F3 (intro + motion kit + latido narrativo)**. Verificado: `pulsimus.vercel.app` sirve el latido (`#ffbf66`). Latido: Dolores = corazón **ENFERMO** — retroiluminación por-card *lub-dub* espaciado a **30bpm** (2s, doble-golpe parejo en 14.5%/29% + pausa larga), ámbar pálido `#ffbf66`, contenido quieto + estrella recorriendo el electro (`offset-path`). Valores **tuneados a mano por Alan** (panel dev `?tune`, ya borrado); provenance JSON en el comentario de `globals.css`. El ritmo **SANO se reserva para El mostrador**. Gate en [`gate-f3/report.md`](gate-f3/report.md).
+- **`f3-motion` (45f7834)** — ya mergeada a `main` (idéntica). Redundante; **segura de borrar** junto con la proto.
+- **`f4-mostrador` (d3c5939)** — F4 pieza firma **El mostrador** completa, verificada con Playwright (gesto chip-FLIP + ticket que se imprime, seeds SSR, cap 4, lockout, reduced, mobile). Incluye **copy nuevo de sección (h2 + sub) a veredicto de Alan**. Gate en `gate-f4/report.md`; spec en `f4-build-spec.md`. Pulido P3: fix header mobile (CTA nowrap responsivo). ✅ **Rebasada sobre `main` (45f7834)** — ahora incluye el latido + El mostrador, typecheck limpio. Lista para el gate F4.
+- **`f3-pulse-proto` (9f6b5e6)** — rama proto descartable, ya consolidada en `main`. Redundante; **segura de borrar** (local + remoto/preview) cuando quieras.
 
 ## Gate en curso
 
-**GATE F3.** Alan rechazó el latido del PulseDivider por escala → se prototipó el latido narrativo, y tras rechazar la primera aprobación lo **tuneó a mano** (panel dev `?tune` construido ad-hoc, ya borrado) hasta un feel **APROBADO** (30bpm, ámbar pálido `#ffbf66`, doble-golpe espaciado). **Consolidado en `f3-motion` (squash, commit a717f28).** Falta solo la decisión de **mergear a `main`** (paso a producción → requiere OK explícito). Preview `pulsimus-git-f3-motion-…` **protegido** (Vercel Deployment Protection → solo Alan logueado lo ve; el agente valida en LOCAL).
-**Orden de revisión:** gate F3 → merge → gate F4 → merge. Previews de Vercel por rama.
+**GATE F3 · ✅ CERRADO Y EN PRODUCCIÓN.** El latido se tuneó a mano hasta aprobación, se consolidó en `f3-motion` (squash) y se mergeó a `main` (fast-forward) → LIVE en `pulsimus.vercel.app` (verificado). `f4-mostrador` ya rebasada sobre `main`.
+**GATE F4 · próximo.** El mostrador vive en `f4-mostrador` (rebasada, incluye el latido). Falta: revisar el preview logueado y **mergear `f4-mostrador` → `main`**. Nota: los previews por rama están **protegidos** (Deployment Protection → solo Alan logueado); producción NO.
+**Orden de revisión:** ~~gate F3 → merge~~ ✅ → **gate F4 → merge**. Previews de Vercel por rama.
 
 ## Próximos pasos (landing)
 
-1. ~~Consolidar el motion aprobado en `f3-motion`~~ ✅ **hecho** (squash a717f28 + `next.config` 4a2c7e1, pusheado).
-2. **Mergear `f3-motion` → `main`** (decisión de Alan: pasa a producción). Después, borrar `f3-pulse-proto` y **rebasar `f4-mostrador`** sobre el nuevo `f3-motion`/main.
-3. **Aplicar el ritmo SANO en El mostrador** (la prueba de que la infra funciona).
-4. **Gate F4** → merge.
+1. ~~Consolidar el latido en `f3-motion`~~ ✅ · ~~mergear a `main`~~ ✅ (F3 LIVE) · ~~rebasar `f4-mostrador`~~ ✅.
+2. **Limpieza (opcional, pendiente de OK):** borrar `f3-pulse-proto` y `f3-motion` (remotas + previews) — ya redundantes.
+3. **Gate F4:** revisar preview de `f4-mostrador` logueado → **mergear a `main`**.
+4. **Aplicar el ritmo SANO en El mostrador** (la prueba de que la infra funciona).
 5. **Módulo EN** de la landing antes del pitch a Prudence (vuelve el 13/07).
 
 ## Pendientes F5 (prerequisitos de Alan)
