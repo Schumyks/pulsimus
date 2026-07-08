@@ -25,36 +25,34 @@ const dolores: Dolor[] = [
   },
 ];
 
-// Left half (HOY) beats slow and dim; right half (CON PULSIMUS) beats strong.
+// The ECG line stays as a dim rail; a brand star (pulse→star) travels it once
+// per beat, synced to the section's sick heartbeat (~45 bpm). The line's two
+// peaks read as the lub-dub. No scaling — content never moves.
 function PulseDivider() {
   return (
     <div className="my-8 flex items-center" aria-hidden="true">
-      <span className="h-px flex-1 bg-noche/15" />
+      <span className="h-px flex-1 bg-noche/10" />
       <svg
         width="40"
         height="24"
         viewBox="0 0 40 24"
         fill="none"
-        className="shrink-0"
+        className="shrink-0 overflow-visible text-bruma/45"
       >
         <path
-          d="M0 12 H8 L14 4 L20 20"
+          d="M0 12 H8 L14 4 L20 20 L26 8 L30 12 H40"
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="px-beat-soft text-bruma"
         />
         <path
-          d="M20 20 L26 8 L30 12 H40"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="px-beat-strong text-ambar"
+          className="px-pulse-star"
+          d="M0 -3.4 C0.65 -1 1.04 -0.65 3.4 0 C1.04 0.65 0.65 1 0 3.4 C-0.65 1 -1.04 0.65 -3.4 0 C-1.04 -0.65 -0.65 -1 0 -3.4 Z"
+          fill="#F2A63E"
         />
       </svg>
-      <span className="h-px flex-1 bg-noche/15" />
+      <span className="h-px flex-1 bg-noche/10" />
     </div>
   );
 }
@@ -91,7 +89,7 @@ export default function Dolores() {
               key={item.sello}
               data-rv=""
               data-rv-d={index * 120}
-              className="flex flex-col rounded-2xl bg-noche/[0.03] p-8 md:p-10"
+              className="px-card-lit flex flex-col rounded-2xl bg-noche/[0.03] p-8 md:p-10"
             >
               <div className="flex-1">
                 <p className="text-xs font-medium tracking-[0.2em] text-bruma">
