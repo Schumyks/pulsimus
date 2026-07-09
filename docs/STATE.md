@@ -3,7 +3,7 @@
 > Estado vivo de **la landing de la agencia** (repo `pulsimus/`, deploy `pulsimus.vercel.app`).
 > Fuente única de la verdad **volátil de la landing**. Actualizar al cierre de cada sesión que toque la landing.
 > **Reglas de negocio / pipeline / metodología de la AGENCIA** viven un nivel arriba → [../../docs/STATE.md](../../docs/STATE.md).
-> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-09 09:20** (diseño F4R+F4T cerrado: spec + plan de ejecución listos para sesión nueva).
+> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-09 09:55** (diseño F4R+F4T sellado: spec + plan con modelo de delegación — subagentes Sonnet con bloque ejecutor, director modo-fable, escalada quirúrgica. Working tree LIMPIO, todo en `main`).
 
 ## Qué es
 
