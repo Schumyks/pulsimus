@@ -12,7 +12,7 @@
  * si el diseño del tablero lo pide — ver reporte de R1.
  */
 
-import type { DemoState, Order, Product } from './store';
+import type { DemoState, Order, OrderItem, OrderStatus, Product } from './store';
 import type { DailyAggregate, Weekday } from './seeds';
 import { calcMoms, calcProfit, calcAverageTicket, round2 } from './economics';
 
@@ -43,6 +43,21 @@ export type StockInfo = {
   sold: number;
   remaining: number;
 };
+
+export type UnitsSold = { productId: string; name: string; units: number };
+
+/** Facturado del período actual vs. el período anterior equivalente. */
+export type PeriodDelta = { current: number; previous: number; pct: number | null };
+
+export type PendingReservation = {
+  number: number;
+  customer: string;
+  items: OrderItem[];
+  total: number;
+  pickupAt: string;
+};
+
+export type Pickup = { pickupAt: string; customer: string; items: OrderItem[]; status: OrderStatus };
 
 const WEEK_DAYS_AGO = 6;
 const MONTH_DAYS_AGO = 27; // 4 semanas de 7 días (hoy + 27 anteriores)
@@ -138,6 +153,19 @@ function maxDaysAgoFor(period: Period): number {
   return period === 'month' ? MONTH_DAYS_AGO : WEEK_DAYS_AGO;
 }
 
+/**
+ * Unidades vendidas por producto en el período, hoy + historia fusionadas.
+ * Única fuente para `selectTotals` (costo de mercadería → ganancia) y
+ * `selectUnitsSold` (panel "qué se vende") — así ambos paneles cierran
+ * entre sí por construcción, nunca driftean.
+ */
+function aggregateUnits(state: DemoState, period: Period): Record<string, number> {
+  const today = todayAggregate(state.orders);
+  if (period === 'today') return today.unidadesPorProducto;
+  const past = sumHistoryRange(state.history, 1, maxDaysAgoFor(period));
+  return mergeUnidades(today.unidadesPorProducto, past.unidadesPorProducto);
+}
+
 // ---------------------------------------------------------------------------
 // Selectores públicos
 // ---------------------------------------------------------------------------
@@ -161,7 +189,6 @@ export function selectTotals(state: DemoState, period: Period): PeriodTotals {
 
   let facturado = today.facturado;
   let pedidos = today.pedidos;
-  let unidadesPorProducto = today.unidadesPorProducto;
   let cobrado = today.cobrado;
   let aCobrar = today.aCobrar;
 
@@ -169,7 +196,6 @@ export function selectTotals(state: DemoState, period: Period): PeriodTotals {
     const past = sumHistoryRange(state.history, 1, maxDaysAgoFor(period));
     facturado = round2(facturado + past.facturado);
     pedidos += past.pedidos;
-    unidadesPorProducto = mergeUnidades(unidadesPorProducto, past.unidadesPorProducto);
     // Sin cap "cobrado/a cobrar" real más allá de hoy (el registro operativo
     // vive en el día); se aproxima con el split de método, que sí es
     // historizable y por construcción suma exactamente `facturado`.
@@ -178,6 +204,7 @@ export function selectTotals(state: DemoState, period: Period): PeriodTotals {
     aCobrar = split.onPickup;
   }
 
+  const unidadesPorProducto = aggregateUnits(state, period);
   const moms = calcMoms(facturado);
   const cost = costFromUnits(unidadesPorProducto, state.products);
   const ganancia = calcProfit(facturado, moms, cost);
@@ -226,8 +253,7 @@ export function selectWeekBuckets(state: DemoState): WeekBucket[] {
 /**
  * Stock restante de la tanda del día, por producto. Es propiedad del DÍA
  * (spec §4.2: "sin stock: es propiedad del día") — no varía con el período;
- * Semana/Mes muestran unidades vendidas (`selectTotals().unidadesPorProducto`
- * vía el consumidor), no stock.
+ * Semana/Mes muestran unidades vendidas (`selectUnitsSold`), no stock.
  */
 export function selectStock(state: DemoState): StockInfo[] {
   const today = todayAggregate(state.orders);
@@ -241,4 +267,78 @@ export function selectStock(state: DemoState): StockInfo[] {
       remaining: product.batchSize - sold,
     };
   });
+}
+
+/**
+ * Unidades vendidas por producto en el período (panel "Qué se vende").
+ * Comparte `aggregateUnits` con `selectTotals`: las mismas unidades que
+ * entran al costo de mercadería de la ganancia, por construcción.
+ */
+export function selectUnitsSold(state: DemoState, period: Period): UnitsSold[] {
+  const unidades = aggregateUnits(state, period);
+  return state.products.map((product) => ({
+    productId: product.id,
+    name: product.name,
+    units: unidades[product.id] ?? 0,
+  }));
+}
+
+/**
+ * Facturado del período actual vs. el período anterior equivalente
+ * (panel "El día de un vistazo" → delta). Ventanas rodantes, ver header:
+ * - today: hoy vs. `HISTORY_DAYS` en `daysAgo=7` (mismo día de semana,
+ *   semana pasada — "hoy" es jueves, así que `daysAgo=7` es jueves pasado).
+ * - week: semana rodante actual vs. la semana rodante inmediatamente
+ *   anterior (`daysAgo` 7-13).
+ * - month: mes rodante actual (hoy + 27 días) vs. los 28 días previos a esa
+ *   ventana (`daysAgo` 28-55) — 28 días parejos, dentro del histórico de 60.
+ */
+export function selectFacturadoDelta(state: DemoState, period: Period): PeriodDelta {
+  const current = selectTotals(state, period).facturado;
+
+  let previous: number;
+  if (period === 'today') {
+    const sameWeekdayLastWeek = state.history.find((day) => day.daysAgo === 7);
+    previous = sameWeekdayLastWeek?.facturado ?? 0;
+  } else if (period === 'week') {
+    previous = sumHistoryRange(state.history, 7, 13).facturado;
+  } else {
+    previous = sumHistoryRange(state.history, 28, 55).facturado;
+  }
+
+  const pct = previous === 0 ? null : round2(((current - previous) / previous) * 100);
+  return { current, previous, pct };
+}
+
+/**
+ * Reservas `reservation_pending` ordenadas por hora de retiro (panel
+ * "⚡ Reservas por confirmar"). Cola VIVA operativa: no depende del período
+ * (spec §4.2 — las colas viven en presente).
+ */
+export function selectPendingReservations(state: DemoState): PendingReservation[] {
+  return state.orders
+    .filter((order): order is Order & { status: 'reservation_pending' } => order.status === 'reservation_pending')
+    .map(({ number, customer, items, total, pickupAt }) => ({ number, customer, items, total, pickupAt }))
+    .sort((a, b) => a.pickupAt.localeCompare(b.pickupAt));
+}
+
+/**
+ * Agenda de retiros (panel "Retiros"). today = todas las órdenes de hoy,
+ * ordenadas por hora de retiro. week/month = solo reservas `on_pickup`
+ * (pending + confirmed) — los "próximos" (spec §4.2: "Retiros muta a
+ * 'próximos' en Semana/Mes"). En la práctica solo distingue today vs.
+ * no-today: la historia son agregados diarios, no órdenes individuales,
+ * así que no hay retiros futuros más allá de las órdenes de hoy.
+ */
+export function selectPickups(state: DemoState, period: Period): Pickup[] {
+  const source =
+    period === 'today'
+      ? state.orders
+      : state.orders.filter(
+          (order) => order.status === 'reservation_pending' || order.status === 'reservation_confirmed',
+        );
+
+  return [...source]
+    .sort((a, b) => a.pickupAt.localeCompare(b.pickupAt))
+    .map(({ pickupAt, customer, items, status }) => ({ pickupAt, customer, items, status }));
 }

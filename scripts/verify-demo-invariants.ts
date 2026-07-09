@@ -15,7 +15,16 @@ import {
   confirmReservation,
   __resetForTesting,
 } from '../app/lib/demo/store';
-import { selectTotals, selectStock, selectHourBuckets } from '../app/lib/demo/selectors';
+import {
+  selectTotals,
+  selectStock,
+  selectHourBuckets,
+  selectUnitsSold,
+  selectFacturadoDelta,
+  selectPendingReservations,
+  selectPickups,
+  selectPaymentSplit,
+} from '../app/lib/demo/selectors';
 import type { Period } from '../app/lib/demo/selectors';
 
 type Result = { name: string; pass: boolean; detail?: string };
@@ -208,6 +217,148 @@ function approxEqual(a: number, b: number, tolerance = 0.01): boolean {
   check('confirmReservation: idempotente (segunda vez devuelve false)', doubleConfirm === false);
 
   __resetForTesting();
+}
+
+// ---------------------------------------------------------------------------
+// 9 · T1 (F4T) — los 6 paneles del tablero cierran entre sí en los 3 períodos
+// ---------------------------------------------------------------------------
+
+function approxEqualRelative(a: number, b: number, relTolerance: number): boolean {
+  const denom = Math.max(Math.abs(a), Math.abs(b), 1);
+  return Math.abs(a - b) / denom <= relTolerance;
+}
+
+{
+  const state = getSnapshot();
+  const periods: Period[] = ['today', 'week', 'month'];
+
+  for (const period of periods) {
+    const totals = selectTotals(state, period);
+    const split = selectPaymentSplit(state, period);
+    const unitsSold = selectUnitsSold(state, period);
+
+    // facturado === mobilepay + onPickup (split de método)
+    check(
+      `[${period}] facturado === paymentSplit.mobilepay + paymentSplit.onPickup`,
+      approxEqual(totals.facturado, round2(split.mobilepay + split.onPickup)),
+      `facturado=${totals.facturado} mobilepay=${split.mobilepay} onPickup=${split.onPickup}`,
+    );
+
+    // facturado === cobrado + aCobrar
+    check(
+      `[${period}] facturado === cobrado + aCobrar`,
+      approxEqual(totals.facturado, round2(totals.cobrado + totals.aCobrar)),
+      `facturado=${totals.facturado} cobrado=${totals.cobrado} aCobrar=${totals.aCobrar}`,
+    );
+
+    // moms === facturado * 0.20
+    check(
+      `[${period}] moms === round2(facturado * 0.20)`,
+      approxEqual(totals.moms, round2(totals.facturado * 0.2)),
+      `moms=${totals.moms} facturado=${totals.facturado}`,
+    );
+
+    // ganancia === facturado - moms - Σ(unitsSold[p].units × unitCost) — MISMAS
+    // unidades que selectUnitsSold usa (comparten aggregateUnits), así que
+    // cierra EXACTO, no aproximado.
+    const costoMercaderia = round2(
+      unitsSold.reduce((sum, u) => {
+        const product = PRODUCTS.find((p) => p.id === u.productId);
+        return sum + (product?.unitCost ?? 0) * u.units;
+      }, 0),
+    );
+    const expectedGanancia = round2(totals.facturado - totals.moms - costoMercaderia);
+    check(
+      `[${period}] ganancia === facturado - moms - Σ(unitsSold × unitCost)`,
+      approxEqual(totals.ganancia, expectedGanancia),
+      `ganancia=${totals.ganancia} esperado=${expectedGanancia} costo=${costoMercaderia}`,
+    );
+
+    // Σ(unitsSold × unitPrice) cierra con facturado.
+    // - today: EXACTO (±0.01) — las órdenes reales determinan unitsSold y
+    //   facturado a partir de los mismos `order.total`.
+    // - week/month: aproximado. `HISTORY_DAYS.unidadesPorProducto` se genera
+    //   con `Math.round((facturado * mix) / unitPrice)` por día (seeds.ts);
+    //   cada redondeo diario introduce un desvío de hasta ~0.5 unidad por
+    //   producto, que se ACUMULA sobre 6-27 días. No es un bug: es el
+    //   generador histórico produciendo unidades enteras a partir de un
+    //   facturado objetivo, no al revés. Tolerancia relativa ≤ 3%.
+    const facturadoDesdeUnidades = round2(
+      unitsSold.reduce((sum, u) => {
+        const product = PRODUCTS.find((p) => p.id === u.productId);
+        return sum + (product?.unitPrice ?? 0) * u.units;
+      }, 0),
+    );
+    const tolerance = period === 'today' ? 0 : 0.03;
+    const pass =
+      period === 'today'
+        ? approxEqual(facturadoDesdeUnidades, totals.facturado)
+        : approxEqualRelative(facturadoDesdeUnidades, totals.facturado, tolerance);
+    check(
+      `[${period}] Σ(unitsSold × unitPrice) cierra con facturado (${period === 'today' ? 'exacto ±0.01' : 'relativo ≤3%'})`,
+      pass,
+      `desdeUnidades=${facturadoDesdeUnidades} facturado=${totals.facturado}`,
+    );
+
+    // selectFacturadoDelta: previous no negativo, pct finito o null
+    const delta = selectFacturadoDelta(state, period);
+    check(
+      `[${period}] selectFacturadoDelta.previous >= 0`,
+      delta.previous >= 0,
+      `previous=${delta.previous}`,
+    );
+    check(
+      `[${period}] selectFacturadoDelta.pct es número finito o null`,
+      delta.pct === null || Number.isFinite(delta.pct),
+      `pct=${delta.pct}`,
+    );
+  }
+
+  // selectPendingReservations: 2 en el seed, todas pending, ordenadas por pickupAt
+  const pending = selectPendingReservations(state);
+  check('selectPendingReservations: 2 reservas en el seed', pending.length === 2, `length=${pending.length}`);
+  check(
+    'selectPendingReservations: todas status reservation_pending',
+    state.orders
+      .filter((o) => pending.some((p) => p.number === o.number))
+      .every((o) => o.status === 'reservation_pending'),
+  );
+  const pendingSorted = [...pending].sort((a, b) => a.pickupAt.localeCompare(b.pickupAt));
+  check(
+    'selectPendingReservations: ordenadas por pickupAt ascendente',
+    JSON.stringify(pending) === JSON.stringify(pendingSorted),
+  );
+
+  // selectPickups: today no vacío; week/month solo on_pickup (pending+confirmed)
+  const pickupsToday = selectPickups(state, 'today');
+  check('selectPickups(today): no vacío', pickupsToday.length > 0, `length=${pickupsToday.length}`);
+
+  for (const period of ['week', 'month'] as const) {
+    const pickups = selectPickups(state, period);
+    const onlyOnPickup = pickups.every(
+      (p) => p.status === 'reservation_pending' || p.status === 'reservation_confirmed',
+    );
+    check(`selectPickups(${period}): solo reservas on_pickup (pending+confirmed)`, onlyOnPickup);
+  }
+
+  // Determinismo: 2 corridas de cada selector nuevo dan el mismo JSON.stringify
+  for (const period of periods) {
+    const a1 = JSON.stringify(selectUnitsSold(state, period));
+    const a2 = JSON.stringify(selectUnitsSold(state, period));
+    check(`[${period}] selectUnitsSold determinista (2 corridas)`, a1 === a2);
+
+    const b1 = JSON.stringify(selectFacturadoDelta(state, period));
+    const b2 = JSON.stringify(selectFacturadoDelta(state, period));
+    check(`[${period}] selectFacturadoDelta determinista (2 corridas)`, b1 === b2);
+
+    const c1 = JSON.stringify(selectPickups(state, period));
+    const c2 = JSON.stringify(selectPickups(state, period));
+    check(`[${period}] selectPickups determinista (2 corridas)`, c1 === c2);
+  }
+
+  const d1 = JSON.stringify(selectPendingReservations(state));
+  const d2 = JSON.stringify(selectPendingReservations(state));
+  check('selectPendingReservations determinista (2 corridas)', d1 === d2);
 }
 
 // ---------------------------------------------------------------------------
