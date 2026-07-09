@@ -47,6 +47,20 @@
   re-correr ESA tarea en Opus; no subir el plan entero de categoría.
   Cada brief incluye: qué LEER (spec §, archivos), qué TOCAR (paths exactos — sin
   colisiones entre subagentes paralelos), DoD, y el comando de verificación local.
+- **Bloque ejecutor** (disciplinas modo-fable destiladas para ejecutores — pegar
+  VERBATIM al final de cada brief de subagente; un subagente no hereda nada solo):
+  > - Ante ambigüedad o contradicción con la spec: devolvé la pregunta en tu reporte,
+  >   NO inventes una interpretación.
+  > - No toques archivos fuera de tu contrato. Si creés que hace falta, reportalo
+  >   en vez de hacerlo.
+  > - Verificá tu DoD ANTES de reportar y pegá el output del comando de verificación.
+  >   "Debería funcionar" no es un estado.
+  > - Anomalía (warning raro, output inesperado) → se reporta con causa probable,
+  >   no se tapa.
+  > - Reporte final: qué hiciste · qué verificaste (con evidencia) · qué quedó
+  >   afuera y por qué · nivel de certeza de cada afirmación.
+- El director aplica su lado del protocolo con `modo-fable` (§0); para la plantilla
+  completa de delegación y el QA del trabajo delegado: `~/.claude/skills/modo-fable/delegacion.md`.
 - Calibración conocida (log del 03-04/07): **~70–90k tokens por subagente** que lee
   spec + componentes de referencia. Presupuestar el overhead del director aparte.
 - Subagentes paralelos SOLO si no comparten archivos (está diseñado así abajo).
