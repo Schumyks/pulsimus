@@ -40,7 +40,7 @@ _Sin parqueos._
 
 ## F4 (versión chip-FLIP) · — ⚠️ SUPERSEDED por F4R (la rama `f4-mostrador` es su base)
 
-### BL-02 · Chips del mostrador = orden real con trazabilidad completa · ✅ RESUELTO POR DISEÑO (build pendiente en F4R) · prioridad **alta**
+### BL-02 · Chips del mostrador = orden real con trazabilidad completa · ✅ RESUELTO Y CONSTRUIDO en F4R (rama `f4-mostrador`, esperando gate) · prioridad **alta**
 - **Origen:** Alan (audio, 2026-07-04).
 - **Problema:** los chips están **sosos** — hoy son "datos nomás", no parecen una orden real.
 - **Deseo:** que el panel receptor (lado mostrador) muestre el **registro completo de la operación**. Si el cliente pide *6 medialunas*, el receptor ve: **quién** la pidió · **hora** del pedido · **cómo paga** · **para cuándo** la quiere · **canal** de entrada.

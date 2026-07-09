@@ -3,7 +3,7 @@
 > Estado vivo de **la landing de la agencia** (repo `pulsimus/`, deploy `pulsimus.vercel.app`).
 > Fuente única de la verdad **volátil de la landing**. Actualizar al cierre de cada sesión que toque la landing.
 > **Reglas de negocio / pipeline / metodología de la AGENCIA** viven un nivel arriba → [../../docs/STATE.md](../../docs/STATE.md).
-> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-09 09:55** (diseño F4R+F4T sellado: spec + plan con modelo de delegación — subagentes Sonnet con bloque ejecutor, director modo-fable, escalada quirúrgica. Working tree LIMPIO, todo en `main`).
+> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-09 ~14:45** (F4R CONSTRUIDO en `f4-mostrador`: mostrador ciclo-completo — store + los dos lados + cadena de motion + latido sano — verificado con Playwright, gate armado en `gate-f4r/`. Esperando revisión de Alan. Antes, 09:55: diseño F4R+F4T sellado).
 
 ## Qué es
 
@@ -13,21 +13,21 @@ Riel **GitHub → Vercel**: cada push a `main` auto-deploya a `pulsimus.vercel.a
 
 ## Estado de ramas / gates
 
-- **`main` (2c706c0)** — **LIVE en producción**: F1 + F2 + voz + **F3 (intro + motion kit + latido narrativo)** (+ docs de diseño F4R/F4T). Verificado: `pulsimus.vercel.app` sirve el latido (`#ffbf66`). Latido: Dolores = corazón **ENFERMO** — retroiluminación por-card *lub-dub* espaciado a **30bpm** (2s, doble-golpe parejo en 14.5%/29% + pausa larga), ámbar pálido `#ffbf66`, contenido quieto + estrella recorriendo el electro (`offset-path`). Valores **tuneados a mano por Alan** (panel dev `?tune`, ya borrado); provenance JSON en el comentario de `globals.css`. El ritmo **SANO se reserva para El mostrador**. Gate en [`gate-f3/report.md`](gate-f3/report.md).
+- **`main` (52780d0)** — **LIVE en producción**: F1 + F2 + voz + **F3 (intro + motion kit + latido narrativo)** (+ docs de diseño F4R/F4T). Sigue con el mostrador VIEJO (chip-FLIP) hasta que Alan mergee F4R. Verificado: `pulsimus.vercel.app` sirve el latido (`#ffbf66`). Latido: Dolores = corazón **ENFERMO** — retroiluminación por-card *lub-dub* espaciado a **30bpm** (2s, doble-golpe parejo en 14.5%/29% + pausa larga), ámbar pálido `#ffbf66`, contenido quieto + estrella recorriendo el electro (`offset-path`). Valores **tuneados a mano por Alan** (panel dev `?tune`, ya borrado); provenance JSON en el comentario de `globals.css`. El ritmo **SANO se reserva para El mostrador**. Gate en [`gate-f3/report.md`](gate-f3/report.md).
 - **`f3-motion` (45f7834)** — ya mergeada a `main` (idéntica). Redundante; **segura de borrar** junto con la proto.
-- **`f4-mostrador` (d3c5939)** — F4 pieza firma **El mostrador** completa, verificada con Playwright (gesto chip-FLIP + ticket que se imprime, seeds SSR, cap 4, lockout, reduced, mobile). Incluye **copy nuevo de sección (h2 + sub) a veredicto de Alan**. Gate en `gate-f4/report.md`; spec en `f4-build-spec.md`. Pulido P3: fix header mobile (CTA nowrap responsivo). ✅ **Rebasada sobre `main` (45f7834)** — incluye el latido + El mostrador. ⚠️ El gate F4 quedó **superseded**: esta rama es la BASE de F4R (el rework la evoluciona; ver plan).
+- **`f4-mostrador` (F4R construido, adelante de `main`)** — **El mostrador REFORMADO (ciclo completo)**, construido y verificado (Playwright, build de producción, cero errores runtime). Store determinista (`app/lib/demo/*`, 21/21 invariantes) + los dos lados (steppers→draft→pago→sobre FLIP→print-in; mini-dashboard con franja de negocio, lista acumulativa sin cap, modal de trazabilidad) + **latido SANO** + `?tune` + reduced-motion. Sincronizada con los docs de `main` (spec/plan/engram-config). **Gate armado**: [`gate-f4r/report.md`](gate-f4r/report.md) + capturas desktop/mobile + `paynow-flow.webm`. **Esperando revisión de Alan** (veredicto de copy + tune de timings + merge). El gate F4 viejo (chip-FLIP) quedó **superseded**; assets en `gate-f4/` como registro histórico.
 - **`f3-pulse-proto` (9f6b5e6)** — rama proto descartable, ya consolidada en `main`. Redundante; **segura de borrar** (local + remoto/preview) cuando quieras.
 
 ## Gate en curso
 
 **GATE F3 · ✅ CERRADO Y EN PRODUCCIÓN.** El latido se tuneó a mano hasta aprobación, se consolidó en `f3-motion` (squash) y se mergeó a `main` (fast-forward) → LIVE en `pulsimus.vercel.app` (verificado).
-**GATE F4 (chip-FLIP) · SUPERSEDED.** En el gate, Alan pidió rediseño a fondo: el mostrador pasa a ciclo completo (armar→pagar→sobre→ticket) + nace la sección **El tablero**. Diseño cerrado en brainstorming (09/07): spec en [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan de ejecución con subagentes y presupuesto en [`f4r-f4t-plan.md`](f4r-f4t-plan.md). Los assets `gate-f4/` quedan como registro histórico.
-**PRÓXIMO: ejecutar F4R** (sesión nueva, rama `f4-mostrador`) → gate F4R → **F4T** (rama `f4-tablero`) → gate F4T → merges (solo Alan). Cada bloque = una ventana de cuota mínimo (~820k–1.24M y ~740k–1.11M tokens respectivamente). Nota: previews por rama **protegidos**; producción NO.
+**GATE F4R · 🟢 ARMADO, ESPERANDO A ALAN.** F4R construido y verificado end-to-end (ver rama `f4-mostrador` arriba). Report + assets en [`gate-f4r/`](gate-f4r/report.md). Lo que le queda a Alan: (1) probar el flujo en el preview logueado; (2) tunear timings con `?tune` → me pasa el JSON a congelar en `flowParams.ts`; (3) veredicto del micro-copy nuevo (lista en el report); (4) decisión de **merge a `main`**. El gate F4 viejo (chip-FLIP) quedó superseded (assets en `gate-f4/`).
+**PRÓXIMO tras el gate F4R: F4T** (El tablero, rama `f4-tablero` desde `f4-mostrador`) según [`f4r-f4t-plan.md`](f4r-f4t-plan.md) §5 → gate F4T → merges (solo Alan). F4T ≈ ~740k–1.11M tokens (una ventana de cuota). Nota: previews por rama **protegidos**; producción NO.
 
 ## Próximos pasos (landing)
 
-1. **→ ARRANCÁ ACÁ: ejecutar F4R** según [`f4r-f4t-plan.md`](f4r-f4t-plan.md) (bootstrap §0; arranque barato: R1 store). Después F4T.
-2. En F4R entra también **aplicar el ritmo SANO** al mostrador (la contracara del latido enfermo de Dolores).
+1. **→ ARRANCÁ ACÁ: revisión del gate F4R por Alan** (preview logueado + `?tune` + veredicto de copy). Cuando Alan cierre el gate: congelar timings en `flowParams.ts` + borrar `TunePanel`/`?tune` + merge (decisión suya). **Después: ejecutar F4T** según [`f4r-f4t-plan.md`](f4r-f4t-plan.md) §5.
+2. **Latido SANO** — ✅ hecho en F4R (panel dueño, ~66bpm, intensifica al entrar orden).
 3. **Limpieza (opcional, pendiente de OK de Alan):** borrar `f3-pulse-proto` y `f3-motion` (remotas + previews) — ya redundantes.
 4. **Módulo EN** de la landing antes del pitch a Prudence (vuelve el 13/07) — OJO: F4R+F4T son ~2 días de ventanas de cuota; el pitch del 13 puede necesitar priorizarse.
 5. Pendientes F5 sin cambios (abajo).
