@@ -29,9 +29,18 @@ _Sin parqueos._
 - **Deseo:** que scrollear hacia abajo dé sensación de vida/pulso — que la página "esté viva" mientras el usuario baja, no solo en los elementos que aparecen.
 - **Dirección posible (sin comprometer):** scroll-driven animations, easing/inercia en reveals, latido sutil sincronizado con el desplazamiento, parallax discreto. Respetar `useReducedMotion` end-to-end.
 
-## F4 · El mostrador (pieza firma) — 🔵 completa en `f4-mostrador`, espera gate
+## F4R+F4T · Mostrador ciclo-completo + El tablero — 🟠 diseño cerrado, build pendiente (spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md))
 
-### BL-02 · Chips del mostrador = orden real con trazabilidad completa · prioridad **alta**
+### BL-07 · Iteraciones v2 del módulo tablero · prioridad baja (post-F4T)
+- **Origen:** brainstorming del 2026-07-09 (curación de widgets, spec §8).
+- **Clientes que repiten** ("3 de tus 12 pedidos son clientes que ya pidieron") — buenísimo pero pide historial multi-día real → v2.
+- **Merma/desperdicio** — el registro de la demo no lo captura; solo si el producto real lo captura.
+- **Canal de entrada** — en la demo todo entra por Web, no discrimina nada; cobra sentido multi-canal.
+- **Descartado con causa (no revivir):** predicciones ("mañana vas a vender X") — humo en una demo, mata credibilidad.
+
+## F4 (versión chip-FLIP) · — ⚠️ SUPERSEDED por F4R (la rama `f4-mostrador` es su base)
+
+### BL-02 · Chips del mostrador = orden real con trazabilidad completa · ✅ RESUELTO POR DISEÑO (build pendiente en F4R) · prioridad **alta**
 - **Origen:** Alan (audio, 2026-07-04).
 - **Problema:** los chips están **sosos** — hoy son "datos nomás", no parecen una orden real.
 - **Deseo:** que el panel receptor (lado mostrador) muestre el **registro completo de la operación**. Si el cliente pide *6 medialunas*, el receptor ve: **quién** la pidió · **hora** del pedido · **cómo paga** · **para cuándo** la quiere · **canal** de entrada.

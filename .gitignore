@@ -45,3 +45,6 @@ Pulsimus Landing.html
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# session handoffs (never committed)
+Handoffs/
