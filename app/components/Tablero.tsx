@@ -8,6 +8,18 @@ import {
   type ReactNode,
 } from "react";
 import PeriodToggle from "./tablero/PeriodToggle";
+import ReservationsQueue from "./tablero/ReservationsQueue";
+import SummaryPanel from "./tablero/SummaryPanel";
+import SalesPanel from "./tablero/SalesPanel";
+import HoursPanel from "./tablero/HoursPanel";
+import PaymentsPanel from "./tablero/PaymentsPanel";
+import PickupsPanel from "./tablero/PickupsPanel";
+import TableroTunePanel from "./tablero/TableroTunePanel";
+import { TableroChoreoContext } from "./tablero/primitives";
+import {
+  DEFAULT_TABLERO_PARAMS,
+  type TableroParams,
+} from "./tablero/tableroParams";
 import { useReducedMotion } from "./motion/useReducedMotion";
 import type { Period } from "../lib/demo/selectors";
 
@@ -30,10 +42,6 @@ import type { Period } from "../lib/demo/selectors";
  * primitives return their final values — the whole board appears full at once.
  */
 
-// Stagger between consecutive frames' reveal, in reading order (design-spec
-// §4.4 ~90ms). Default; Alan freezes the feel at the gate via ?tune (T4).
-const FRAME_STAGGER_MS = 90;
-
 /** The chart surface validated with the dataviz palette validator is exactly
  * `#1B2140` (noche); status/delta hues that aren't brand tokens live as CSS
  * vars here so panels reference them by role and they swap in one place. */
@@ -47,17 +55,18 @@ type FrameProps = {
   index: number;
   active: boolean;
   reduced: boolean;
+  staggerMs: number;
   className?: string;
   children: ReactNode;
 };
 
-function Frame({ index, active, reduced, className = "", children }: FrameProps) {
+function Frame({ index, active, reduced, staggerMs, className = "", children }: FrameProps) {
   const style: CSSProperties = reduced
     ? {}
     : {
         opacity: active ? 1 : 0,
         transform: active ? "none" : "translateY(26px)",
-        transition: `opacity 0.6s ease ${index * FRAME_STAGGER_MS}ms, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) ${index * FRAME_STAGGER_MS}ms`,
+        transition: `opacity 0.6s ease ${index * staggerMs}ms, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) ${index * staggerMs}ms`,
       };
   return (
     <div
@@ -69,21 +78,20 @@ function Frame({ index, active, reduced, className = "", children }: FrameProps)
   );
 }
 
-/** Placeholder panel body — replaced by the real T3 panels in T4. */
-function PanelStub({ title, note }: { title: string; note: string }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs font-medium tracking-[0.2em] text-ambar">{title}</p>
-      <p className="text-sm text-hueso/50">{note}</p>
-    </div>
-  );
-}
-
 export default function Tablero() {
   const reduced = useReducedMotion();
   const [period, setPeriod] = useState<Period>("today");
   const [active, setActive] = useState(false);
+  const [params, setParams] = useState<TableroParams>(DEFAULT_TABLERO_PARAMS);
+  const [tuneOpen, setTuneOpen] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // Client-only gate: the ?tune panel depends on window.location, absent
+    // during SSR. Reading it in an effect avoids a hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only URL gate, resolves after hydration
+    if (new URLSearchParams(window.location.search).has("tune")) setTuneOpen(true);
+  }, []);
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -103,6 +111,8 @@ export default function Tablero() {
     io.observe(node);
     return () => io.disconnect();
   }, []);
+
+  const stagger = params.frameStaggerMs;
 
   return (
     <section
@@ -129,51 +139,39 @@ export default function Tablero() {
           <PeriodToggle period={period} onChange={setPeriod} />
         </div>
 
-        <div className="mt-12 flex flex-col gap-6">
-          <Frame index={0} active={active} reduced={reduced}>
-            <PanelStub
-              title="⚡ RESERVAS POR CONFIRMAR"
-              note="Cola viva — se conecta en T3a/T4."
-            />
-          </Frame>
+        <TableroChoreoContext.Provider
+          value={{ countMs: params.countMs, barMs: params.barMs }}
+        >
+          <div className="mt-12 flex flex-col gap-6">
+            <Frame index={0} active={active} reduced={reduced} staggerMs={stagger}>
+              <ReservationsQueue period={period} active={active} />
+            </Frame>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <Frame index={1} active={active} reduced={reduced}>
-              <PanelStub
-                title="EL DÍA DE UN VISTAZO"
-                note="KPIs + ganancia — se conecta en T3c/T4."
-              />
-            </Frame>
-            <Frame index={2} active={active} reduced={reduced}>
-              <PanelStub
-                title="QUÉ SE VENDE"
-                note="Unidades + stock — se conecta en T3b/T4."
-              />
-            </Frame>
-            <Frame index={3} active={active} reduced={reduced}>
-              <PanelStub
-                title="CUÁNDO TE PIDEN"
-                note="Barras por hora/día/semana — se conecta en T3b/T4."
-              />
-            </Frame>
-          </div>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <Frame index={1} active={active} reduced={reduced} staggerMs={stagger}>
+                <SummaryPanel period={period} active={active} />
+              </Frame>
+              <Frame index={2} active={active} reduced={reduced} staggerMs={stagger}>
+                <SalesPanel period={period} active={active} />
+              </Frame>
+              <Frame index={3} active={active} reduced={reduced} staggerMs={stagger}>
+                <HoursPanel period={period} active={active} />
+              </Frame>
+            </div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <Frame index={4} active={active} reduced={reduced}>
-              <PanelStub
-                title="CÓMO TE PAGAN"
-                note="Cobrado / a cobrar + split — se conecta en T3b/T4."
-              />
-            </Frame>
-            <Frame index={5} active={active} reduced={reduced}>
-              <PanelStub
-                title="RETIROS"
-                note="Agenda por hora — se conecta en T3a/T4."
-              />
-            </Frame>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <Frame index={4} active={active} reduced={reduced} staggerMs={stagger}>
+                <PaymentsPanel period={period} active={active} />
+              </Frame>
+              <Frame index={5} active={active} reduced={reduced} staggerMs={stagger}>
+                <PickupsPanel period={period} active={active} />
+              </Frame>
+            </div>
           </div>
-        </div>
+        </TableroChoreoContext.Provider>
       </div>
+
+      {tuneOpen && <TableroTunePanel params={params} onChange={setParams} />}
     </section>
   );
 }

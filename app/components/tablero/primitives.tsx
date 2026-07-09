@@ -15,9 +15,25 @@
  * re-tweens on later value changes (a fresh order, or a period toggle).
  */
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
-const COUNT_MS = 900;
+/**
+ * Choreography durations, supplied by Tablero.tsx (and tuneable via `?tune`).
+ * Panels never pass these — they read the context through the primitives — so
+ * wiring the tune panel touched no panel contract. Defaults match
+ * DEFAULT_TABLERO_PARAMS so a primitive used outside a provider still behaves.
+ */
+export const TableroChoreoContext = createContext<{ countMs: number; barMs: number }>({
+  countMs: 900,
+  barMs: 700,
+});
 
 export function formatKr(value: number): string {
   return `${Math.round(value).toLocaleString("da-DK")} kr.`;
@@ -40,6 +56,7 @@ export function formatPct(value: number): string {
  * straight from render — no effect drives the display, mirroring BizStrip.
  */
 export function useCountUp(value: number, active: boolean, reduced: boolean): number {
+  const { countMs } = useContext(TableroChoreoContext);
   const [animated, setAnimated] = useState(value);
   const prevRef = useRef(value);
   const activatedRef = useRef(false);
@@ -61,7 +78,7 @@ export function useCountUp(value: number, active: boolean, reduced: boolean): nu
 
     const start = performance.now();
     function tick(now: number) {
-      const t = Math.min(1, (now - start) / COUNT_MS);
+      const t = Math.min(1, (now - start) / countMs);
       const eased = 1 - (1 - t) ** 3;
       setAnimated(from + (to - from) * eased);
       if (t < 1) rafRef.current = requestAnimationFrame(tick);
@@ -71,7 +88,7 @@ export function useCountUp(value: number, active: boolean, reduced: boolean): nu
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [value, active, reduced]);
+  }, [value, active, reduced, countMs]);
 
   return reduced ? value : animated;
 }
@@ -136,6 +153,7 @@ export function Bar({
   note,
   delayMs = 0,
 }: BarProps) {
+  const { barMs } = useContext(TableroChoreoContext);
   const filled = reduced || active;
   const width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
 
@@ -144,7 +162,7 @@ export function Bar({
     backgroundColor: color,
     transition: reduced
       ? undefined
-      : `width 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) ${delayMs}ms`,
+      : `width ${barMs}ms cubic-bezier(0.22, 0.61, 0.36, 1) ${delayMs}ms`,
   };
 
   return (
