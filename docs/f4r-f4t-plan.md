@@ -8,6 +8,7 @@
 
 1. `/apertura` (o mínimo: leer `docs/STATE.md`, la spec y este plan; `git status -sb`).
 2. Engram: `project=agencia` en toda llamada. Guardar decisiones/gotchas al vuelo.
+   Si la sesión no corre en Fable: invocar `modo-fable` antes de arrancar.
 3. Ramas: **F4R sobre `f4-mostrador`** (ya rebasada sobre main @ 45f7834+) ·
    **F4T sobre `f4-tablero`** (se crea desde `f4-mostrador` al cerrar F4R).
 4. Ejecutar **F4R y F4T en sesiones/ventanas de cuota SEPARADAS** (ver §Estimates:
@@ -33,9 +34,17 @@
 
 ## 2 · Modelo de delegación
 
-- **Director** (la sesión): mantiene el contrato del store, escribe los briefs, integra,
-  corre la verificación, captura gates, commitea. NO delega la verificación final.
-- **Subagentes** (Agent tool, general-purpose): 1 tarea = 1 subagente con brief cerrado.
+- **Director** (la sesión, en su modelo — Fable u Opus): mantiene el contrato del store,
+  escribe los briefs, integra, corre la verificación, captura gates, commitea, y ejecuta
+  él mismo las fases marcadas DIRECTOR (R4 motion es la única de confianza baja: no se
+  delega). NO delega la verificación final. Si la sesión NO corre en Fable, invocar la
+  skill `modo-fable` en el bootstrap antes de delegar.
+- **Subagentes** (Agent tool, general-purpose, **`model: sonnet`**): 1 tarea = 1 subagente
+  con brief cerrado. Sonnet es deliberado: los briefs vienen masticados (spec exacta,
+  paths fijos, DoD verificable) y TODA la calibración del §Estimates es data real de
+  subagentes Sonnet en este repo — correrlos en Opus rompe el presupuesto sin ganancia
+  proporcional. **Escalada**: si una tarea vuelve floja (candidata: T3b, la más fina),
+  re-correr ESA tarea en Opus; no subir el plan entero de categoría.
   Cada brief incluye: qué LEER (spec §, archivos), qué TOCAR (paths exactos — sin
   colisiones entre subagentes paralelos), DoD, y el comando de verificación local.
 - Calibración conocida (log del 03-04/07): **~70–90k tokens por subagente** que lee
