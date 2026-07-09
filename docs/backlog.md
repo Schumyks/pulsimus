@@ -29,7 +29,7 @@ _Sin parqueos._
 - **Deseo:** que scrollear hacia abajo dé sensación de vida/pulso — que la página "esté viva" mientras el usuario baja, no solo en los elementos que aparecen.
 - **Dirección posible (sin comprometer):** scroll-driven animations, easing/inercia en reveals, latido sutil sincronizado con el desplazamiento, parallax discreto. Respetar `useReducedMotion` end-to-end.
 
-## F4R+F4T · Mostrador ciclo-completo + El tablero — 🟠 diseño cerrado, build pendiente (spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md))
+## F4R+F4T · Mostrador ciclo-completo + El tablero — 🔵 AMBAS construidas, esperan gate (F4R en `f4-mostrador`, F4T en `f4-tablero`) · spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md)
 
 ### BL-07 · Iteraciones v2 del módulo tablero · prioridad baja (post-F4T)
 - **Origen:** brainstorming del 2026-07-09 (curación de widgets, spec §8).
@@ -37,6 +37,9 @@ _Sin parqueos._
 - **Merma/desperdicio** — el registro de la demo no lo captura; solo si el producto real lo captura.
 - **Canal de entrada** — en la demo todo entra por Web, no discrimina nada; cobra sentido multi-canal.
 - **Descartado con causa (no revivir):** predicciones ("mañana vas a vender X") — humo en una demo, mata credibilidad.
+
+### BL-08 · ¿Ventana de período del tablero al store? · prioridad baja (decisión de arquitectura, a veredicto de Alan)
+- **Origen:** build F4T (director, 2026-07-09). El plan sugería la ventana `today|week|month` en el store; quedó como React state en `Tablero.tsx` (selectores puros con `period` como arg) para **desacoplar** — un toggle del tablero no re-renderiza El mostrador. Reversible; si algún día otra sección necesita leer el período activo, mover al store es trivial.
 
 ## F4 (versión chip-FLIP) · — ⚠️ SUPERSEDED por F4R (la rama `f4-mostrador` es su base)
 
