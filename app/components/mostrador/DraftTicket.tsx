@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import type { Product } from "../../lib/demo/products";
 import { useReducedMotion } from "../motion/useReducedMotion";
 
@@ -13,6 +13,12 @@ type DraftTicketProps = {
   lines: DraftTicketLine[];
   total: number;
   onConfirm: () => void;
+  /**
+   * When provided, replaces the default "Confirmar pedido" button — the
+   * director swaps in the payment moment (R4) once the order is confirmed,
+   * keeping payment IN the ticket (spec §3.1 paso 2).
+   */
+  footer?: ReactNode;
 };
 
 const ENTER_TRANSITION =
@@ -23,7 +29,7 @@ const ENTER_TRANSITION =
  * visitante arma el pedido (§3.1 paso 1 de la spec) — no conoce el momento
  * de pago, eso lo envuelve el director en R4/R5 alrededor de `onConfirm`.
  */
-export default function DraftTicket({ lines, total, onConfirm }: DraftTicketProps) {
+export default function DraftTicket({ lines, total, onConfirm, footer }: DraftTicketProps) {
   const reduced = useReducedMotion();
   const visibleLines = lines.filter((line) => line.qty > 0);
   const hasItems = visibleLines.length > 0 && total > 0;
@@ -89,13 +95,15 @@ export default function DraftTicket({ lines, total, onConfirm }: DraftTicketProp
         </div>
         <div className="px-ticket-teeth" aria-hidden="true" />
       </div>
-      <button
-        type="button"
-        onClick={onConfirm}
-        className="rounded-full bg-ambar px-4 py-2.5 text-sm font-medium text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar"
-      >
-        Confirmar pedido
-      </button>
+      {footer ?? (
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="rounded-full bg-ambar px-4 py-2.5 text-sm font-medium text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar"
+        >
+          Confirmar pedido
+        </button>
+      )}
     </div>
   );
 }
