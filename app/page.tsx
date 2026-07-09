@@ -1,6 +1,7 @@
 import Hero from "./components/Hero";
 import Dolores from "./components/Dolores";
 import Mostrador from "./components/Mostrador";
+import Tablero from "./components/Tablero";
 import Proceso from "./components/Proceso";
 import CtaFooter from "./components/CtaFooter";
 import Intro from "./components/Intro";
@@ -55,6 +56,7 @@ export default function Home() {
         <Hero />
         <Dolores />
         <Mostrador />
+        <Tablero />
         <Proceso />
         {/* F5 · Ejemplos (slot vivo, nace oculto) — hueco reservado */}
         <CtaFooter />
