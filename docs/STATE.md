@@ -3,7 +3,7 @@
 > Estado vivo de **la landing de la agencia** (repo `pulsimus/`, deploy `pulsimus.vercel.app`).
 > Fuente única de la verdad **volátil de la landing**. Actualizar al cierre de cada sesión que toque la landing.
 > **Reglas de negocio / pipeline / metodología de la AGENCIA** viven un nivel arriba → [../../docs/STATE.md](../../docs/STATE.md).
-> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-08 23:45** (F3 + latido narrativo tuneado → **mergeado a `main` y LIVE en producción**; `f4-mostrador` rebasada).
+> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-09 09:20** (diseño F4R+F4T cerrado: spec + plan de ejecución listos para sesión nueva).
 
 ## Qué es
 
@@ -20,17 +20,17 @@ Riel **GitHub → Vercel**: cada push a `main` auto-deploya a `pulsimus.vercel.a
 
 ## Gate en curso
 
-**GATE F3 · ✅ CERRADO Y EN PRODUCCIÓN.** El latido se tuneó a mano hasta aprobación, se consolidó en `f3-motion` (squash) y se mergeó a `main` (fast-forward) → LIVE en `pulsimus.vercel.app` (verificado). `f4-mostrador` ya rebasada sobre `main`.
-**GATE F4 · próximo.** El mostrador vive en `f4-mostrador` (rebasada, incluye el latido). Falta: revisar el preview logueado y **mergear `f4-mostrador` → `main`**. Nota: los previews por rama están **protegidos** (Deployment Protection → solo Alan logueado); producción NO.
-**Orden de revisión:** ~~gate F3 → merge~~ ✅ → **gate F4 → merge**. Previews de Vercel por rama.
+**GATE F3 · ✅ CERRADO Y EN PRODUCCIÓN.** El latido se tuneó a mano hasta aprobación, se consolidó en `f3-motion` (squash) y se mergeó a `main` (fast-forward) → LIVE en `pulsimus.vercel.app` (verificado).
+**GATE F4 (chip-FLIP) · SUPERSEDED.** En el gate, Alan pidió rediseño a fondo: el mostrador pasa a ciclo completo (armar→pagar→sobre→ticket) + nace la sección **El tablero**. Diseño cerrado en brainstorming (09/07): spec en [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan de ejecución con subagentes y presupuesto en [`f4r-f4t-plan.md`](f4r-f4t-plan.md). Los assets `gate-f4/` quedan como registro histórico.
+**PRÓXIMO: ejecutar F4R** (sesión nueva, rama `f4-mostrador`) → gate F4R → **F4T** (rama `f4-tablero`) → gate F4T → merges (solo Alan). Cada bloque = una ventana de cuota mínimo (~820k–1.24M y ~740k–1.11M tokens respectivamente). Nota: previews por rama **protegidos**; producción NO.
 
 ## Próximos pasos (landing)
 
-1. ~~Consolidar el latido en `f3-motion`~~ ✅ · ~~mergear a `main`~~ ✅ (F3 LIVE) · ~~rebasar `f4-mostrador`~~ ✅.
-2. **Limpieza (opcional, pendiente de OK):** borrar `f3-pulse-proto` y `f3-motion` (remotas + previews) — ya redundantes.
-3. **Gate F4:** revisar preview de `f4-mostrador` logueado → **mergear a `main`**.
-4. **Aplicar el ritmo SANO en El mostrador** (la prueba de que la infra funciona).
-5. **Módulo EN** de la landing antes del pitch a Prudence (vuelve el 13/07).
+1. **→ ARRANCÁ ACÁ: ejecutar F4R** según [`f4r-f4t-plan.md`](f4r-f4t-plan.md) (bootstrap §0; arranque barato: R1 store). Después F4T.
+2. En F4R entra también **aplicar el ritmo SANO** al mostrador (la contracara del latido enfermo de Dolores).
+3. **Limpieza (opcional, pendiente de OK de Alan):** borrar `f3-pulse-proto` y `f3-motion` (remotas + previews) — ya redundantes.
+4. **Módulo EN** de la landing antes del pitch a Prudence (vuelve el 13/07) — OJO: F4R+F4T son ~2 días de ventanas de cuota; el pitch del 13 puede necesitar priorizarse.
+5. Pendientes F5 sin cambios (abajo).
 
 ## Pendientes F5 (prerequisitos de Alan)
 

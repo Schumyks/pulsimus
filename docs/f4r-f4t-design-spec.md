@@ -121,7 +121,15 @@ del mostrador actualiza su badge en vivo.
 - Seeds visibles antes de tocar nada: al menos una orden pagada y una reserva pendiente,
   para que ambos estados se lean de entrada.
 
-### 3.3 Mobile
+### 3.3 Latido sano (decisión heredada de F3)
+
+El latido narrativo: Dolores late ENFERMO (30bpm, lub-dub espaciado — ya LIVE). El
+mostrador es la prueba de que la infra funciona → late SANO: mismo lenguaje (halo
+por-card / por-panel discreto) a ritmo saludable (~60-70bpm, regular, más sutil que el
+enfermo — acá el contenido es el protagonista). Se intensifica sutilmente al recibir
+una orden. Valores con defaults + `?tune`; Alan congela en el gate.
+
+### 3.4 Mobile
 
 Paneles apilados (cliente arriba, dueño abajo); el sobre viaja HACIA ABAJO. El modal de
 detalle ocupa la pantalla con margen.
