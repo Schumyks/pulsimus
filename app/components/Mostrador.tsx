@@ -54,6 +54,10 @@ export default function Mostrador() {
   const [flight, setFlight] = useState<Flight | null>(null);
   const [params, setParams] = useState<FlowParams>(DEFAULT_FLOW_PARAMS);
   const [tuneOpen, setTuneOpen] = useState(false);
+  // Healthy heartbeat of the owner panel: it beats subtly (see globals.css) and
+  // intensifies once each time a fresh order lands — the business beats on a sale.
+  const [pulseKey, setPulseKey] = useState(0);
+  const [pulsing, setPulsing] = useState(false);
 
   const flightRef = useRef<HTMLDivElement | null>(null);
   const ownerColRef = useRef<HTMLDivElement | null>(null);
@@ -78,6 +82,18 @@ export default function Mostrador() {
   }, []);
 
   useEffect(() => clearTimers, [clearTimers]);
+
+  // One-shot "beat" of the owner panel when an order lands. setState runs in a
+  // callback (rAF / timeout), never synchronously in the effect body.
+  useEffect(() => {
+    if (pulseKey === 0) return;
+    const raf = requestAnimationFrame(() => setPulsing(true));
+    const id = window.setTimeout(() => setPulsing(false), 900);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(id);
+    };
+  }, [pulseKey]);
 
   const setQty = useCallback((id: string, qty: number) => {
     setDraft((prev) => ({ ...prev, [id]: qty }));
@@ -111,6 +127,7 @@ export default function Mostrador() {
         lines.map((line) => ({ productId: line.product.id, qty: line.qty })),
         method,
       );
+      setPulseKey((k) => k + 1);
       reset();
     },
     [lines, placeOrder, reset],
@@ -248,7 +265,9 @@ export default function Mostrador() {
             ref={ownerColRef}
             data-rv=""
             data-rv-d="240"
-            className="rounded-2xl bg-noche p-6 text-hueso md:p-8"
+            className={`rounded-2xl bg-noche p-6 text-hueso md:p-8 ${
+              pulsing ? "px-card-beat-pulse" : "px-card-lit-healthy"
+            }`}
           >
             <p className="text-xs font-medium tracking-[0.2em] text-hueso/60">
               LO QUE VES VOS

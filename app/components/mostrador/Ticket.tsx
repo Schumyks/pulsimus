@@ -50,7 +50,7 @@ const STATUS_META: Record<OrderStatus, { label: string; className: string }> =
   {
     paid: {
       label: "✓ Pagada (MobilePay)",
-      className: "text-bruma",
+      className: "text-noche/70",
     },
     reservation_pending: {
       label: "Reserva · pendiente",
