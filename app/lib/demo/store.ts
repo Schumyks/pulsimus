@@ -110,6 +110,40 @@ function roundUpToQuarter(hhmm: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Derivación de la próxima orden (compartida por placeOrder y peekNextOrder)
+// ---------------------------------------------------------------------------
+
+type NextOrderMeta = { number: number; customer: string; placedAt: string; pickupAt: string };
+
+/**
+ * Metadatos que tendría la PRÓXIMA orden del visitante, derivados del estado
+ * actual (determinista, sin azar): N° correlativo (máximo + 1), nombre que
+ * continúa el ciclo del pool donde lo dejaron los seeds, y horas de pedido/
+ * retiro. Una única fuente para que `placeOrder` (commit) y `peekNextOrder`
+ * (el form autorrellenado que se muestra ANTES del commit) nunca drifteen.
+ */
+function deriveNextMeta(current: DemoState): NextOrderMeta {
+  const liveOrdersSoFar = current.orders.filter((order) => order.isLive).length;
+  const number = Math.max(...current.orders.map((order) => order.number)) + 1;
+  const customer = nameForIndex(current.orders.length);
+  const placedAt = addMinutes(DEMO_NOW, liveOrdersSoFar);
+  const pickupAt = roundUpToQuarter(addMinutes(placedAt, 45));
+  return { number, customer, placedAt, pickupAt };
+}
+
+/**
+ * Solo lectura: el nombre/retiro que le tocarán a la próxima orden. Lo usa el
+ * form autorrellenado (R4) para tipear los datos del cliente antes de que el
+ * sobre viaje y `placeOrder` commitee. Como el flujo del mostrador está
+ * bloqueado (una orden a la vez), el estado no cambia entre el peek y el
+ * commit → los valores coinciden exactamente.
+ */
+export function peekNextOrder(): { customer: string; pickupAt: string } {
+  const { customer, pickupAt } = deriveNextMeta(state);
+  return { customer, pickupAt };
+}
+
+// ---------------------------------------------------------------------------
 // Acciones
 // ---------------------------------------------------------------------------
 
@@ -118,24 +152,17 @@ function roundUpToQuarter(hhmm: string): string {
  * - `mobilepay` → status `paid` (pagado ahora, en el momento del gesto).
  * - `on_pickup` → status `reservation_pending` (pago al retirar = reserva;
  *   el dueño la confirma después con `confirmReservation`).
- * Nombre y N° de orden salen del estado actual (determinista, sin azar):
- * el nombre continúa el ciclo del pool donde lo dejaron los seeds, y el
- * N° es el correlativo más alto + 1.
  */
 export function placeOrder(items: OrderItem[], paymentMethod: PaymentMethod): Order {
   if (items.length === 0) {
     throw new Error('store.placeOrder: el pedido necesita al menos un ítem');
   }
 
-  const liveOrdersSoFar = state.orders.filter((order) => order.isLive).length;
-  const nextNumber = Math.max(...state.orders.map((order) => order.number)) + 1;
-  const customer = nameForIndex(state.orders.length);
-  const placedAt = addMinutes(DEMO_NOW, liveOrdersSoFar);
-  const pickupAt = roundUpToQuarter(addMinutes(placedAt, 45));
+  const { number, customer, placedAt, pickupAt } = deriveNextMeta(state);
   const status: OrderStatus = paymentMethod === 'mobilepay' ? 'paid' : 'reservation_pending';
 
   const order: Order = {
-    number: nextNumber,
+    number,
     customer,
     items,
     total: calcOrderTotal(items, state.products),

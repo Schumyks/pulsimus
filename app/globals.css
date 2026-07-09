@@ -89,7 +89,8 @@ html.px-intro-pending body {
   .px-beat-soft,
   .px-beat-strong,
   .px-card-lit,
-  .px-pulse-star {
+  .px-pulse-star,
+  .px-pay-processing {
     animation: none;
   }
   .px-pulse-star { opacity: 0; }
@@ -101,4 +102,22 @@ html.px-intro-pending body {
   background:
     linear-gradient(45deg, #F6EFE1 4px, transparent 0) 0 0 / 8px 8px repeat-x,
     linear-gradient(-45deg, #F6EFE1 4px, transparent 0) 4px 0 / 8px 8px repeat-x;
+}
+
+/* --- F4R · payment moment + envelope journey ---------------------------- */
+
+/* Amber pulse around the ticket while a "pay now" is processing (the theater
+   before the envelope forms). Looping glow; duration is overridden inline from
+   the ?tune panel so Alan can freeze the feel at the gate. */
+@keyframes px-pay-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 166, 62, 0);
+  }
+  50% {
+    box-shadow: 0 0 16px 2px rgba(242, 166, 62, 0.55);
+  }
+}
+.px-pay-processing {
+  animation: px-pay-pulse 1s ease-in-out infinite;
 }

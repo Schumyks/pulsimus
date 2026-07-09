@@ -19,6 +19,8 @@ type DraftTicketProps = {
    * keeping payment IN the ticket (spec §3.1 paso 2).
    */
   footer?: ReactNode;
+  /** Amber pulse around the ticket while a "pay now" is processing (R4). */
+  pulsing?: boolean;
 };
 
 const ENTER_TRANSITION =
@@ -29,7 +31,7 @@ const ENTER_TRANSITION =
  * visitante arma el pedido (§3.1 paso 1 de la spec) — no conoce el momento
  * de pago, eso lo envuelve el director en R4/R5 alrededor de `onConfirm`.
  */
-export default function DraftTicket({ lines, total, onConfirm, footer }: DraftTicketProps) {
+export default function DraftTicket({ lines, total, onConfirm, footer, pulsing = false }: DraftTicketProps) {
   const reduced = useReducedMotion();
   const visibleLines = lines.filter((line) => line.qty > 0);
   const hasItems = visibleLines.length > 0 && total > 0;
@@ -66,7 +68,11 @@ export default function DraftTicket({ lines, total, onConfirm, footer }: DraftTi
 
   return (
     <div style={wrapperStyle} className="mt-6 flex flex-col gap-3">
-      <div className="overflow-hidden rounded-lg border border-dashed border-noche/25 bg-white">
+      <div
+        className={`overflow-hidden rounded-lg border border-dashed border-noche/25 bg-white${
+          pulsing ? " px-pay-processing" : ""
+        }`}
+      >
         <div className="px-4 pt-4 pb-3 text-noche">
           <p className="text-xs font-medium tracking-[0.15em] text-bruma">
             TU PEDIDO
