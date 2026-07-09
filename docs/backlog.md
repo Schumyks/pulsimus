@@ -41,6 +41,16 @@ _Sin parqueos._
 ### BL-08 · ¿Ventana de período del tablero al store? · prioridad baja (decisión de arquitectura, a veredicto de Alan)
 - **Origen:** build F4T (director, 2026-07-09). El plan sugería la ventana `today|week|month` en el store; quedó como React state en `Tablero.tsx` (selectores puros con `period` como arg) para **desacoplar** — un toggle del tablero no re-renderiza El mostrador. Reversible; si algún día otra sección necesita leer el período activo, mover al store es trivial.
 
+### BL-09 · Densidad del tablero — que entre TODO sin scroll · prioridad **alta** (ajuste del gate F4T, PRE-merge)
+- **Origen:** Alan, revisión en dev local (2026-07-09 ~23:40).
+- **Problema:** el tablero pide scroll para ver todos los paneles. Peor: al tocar el toggle **Día/Semana/Mes**, los datos que se actualizan quedan **debajo del fold** → el usuario no ve el feedback del toggle inmediatamente (la acción no confirma visualmente).
+- **Deseo:** que la sección entre completa en una pantalla (o al menos que los números que responden al toggle estén siempre en viewport). El toggle debe dar feedback inmediato y visible.
+- **Direcciones posibles (sin comprometer):** compactar el grid (alturas de panel, tipografías, gaps) · reordenar para que los KPIs sensibles al período queden arriba/always-visible · un flash/pulse breve en los valores que cambian al togglear · revisar el layout fila-ancha+3+2 vs. un layout más denso. Respetar `useReducedMotion`.
+
+### BL-10 · Mejoras del lado La Espiga (mostrador) — post-QA · prioridad media-alta (a definir tras QA de Alan)
+- **Origen:** Alan, revisión en dev local (2026-07-09 ~23:40): *"aún hay cosas a mejorar, especialmente en el lado de La Espiga"*.
+- **Estado:** sin especificar todavía — Alan hace un QA más fino **mañana (2026-07-10)** y baja los ítems concretos acá. Placeholder para no perder la señal.
+
 ## F4 (versión chip-FLIP) · — ⚠️ SUPERSEDED por F4R (la rama `f4-mostrador` es su base)
 
 ### BL-02 · Chips del mostrador = orden real con trazabilidad completa · ✅ RESUELTO Y CONSTRUIDO en F4R (rama `f4-mostrador`, esperando gate) · prioridad **alta**

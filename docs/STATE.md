@@ -3,7 +3,7 @@
 > Estado vivo de **la landing de la agencia** (repo `pulsimus/`, deploy `pulsimus.vercel.app`).
 > Fuente única de la verdad **volátil de la landing**. Actualizar al cierre de cada sesión que toque la landing.
 > **Reglas de negocio / pipeline / metodología de la AGENCIA** viven un nivel arriba → [../../docs/STATE.md](../../docs/STATE.md).
-> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Último trabajo real de landing: **2026-07-09 ~18:35** (F4T CONSTRUIDO en `f4-tablero`: El tablero — sección nueva, 6 paneles + toggle de período + coreografía de carga + `?tune`, alimentado por el store compartido; verificado con Playwright sobre build de PROD incl. el **eco Reservas→mostrador** end-to-end; gate armado en `gate-f4t/`. Esperando revisión de Alan. Antes ~14:45: F4R construido en `f4-mostrador`).
+> Migrado a su propio archivo el 2026-07-07 (antes vivía mezclado en el STATE raíz). Última actualización: **2026-07-09 23:42** (Alan hizo una **primera revisión en dev local** de ambos gates: *le gusta en general*, pero dejó feedback → BL-09 (densidad del tablero: que entre sin scroll, el toggle Día/Semana/Mes actualiza datos fuera del viewport) y BL-10 (mejoras del lado La Espiga/mostrador, sin especificar). **QA fino de Alan → mañana 2026-07-10.** Antes ~18:35: F4T CONSTRUIDO en `f4-tablero` (El tablero — 6 paneles + toggle + coreografía + `?tune`, verificado Playwright sobre build de PROD incl. **eco Reservas→mostrador**; gate en `gate-f4t/`). Antes ~14:45: F4R construido en `f4-mostrador`).
 
 ## Qué es
 
@@ -28,7 +28,7 @@ Riel **GitHub → Vercel**: cada push a `main` auto-deploya a `pulsimus.vercel.a
 
 ## Próximos pasos (landing)
 
-1. **→ ARRANCÁ ACÁ: revisión de los gates F4R y F4T por Alan** (preview logueado + `?tune` + veredicto de copy en cada uno). F4T ya está CONSTRUIDO (rama `f4-tablero`). Cuando Alan cierre cada gate: congelar timings (`flowParams.ts` para F4R / `tableroParams.ts` para F4T) + borrar los `TunePanel`/`?tune` + **mergear F4R primero, después F4T** (decisión suya; el tablero se apila sobre el mostrador).
+1. **→ ARRANCÁ ACÁ: QA fino de Alan sobre `f4-tablero`** (dev local ya levanta en `localhost:3000`; rama `f4-tablero` trae F4R+F4T juntos). Primera revisión ✅ hecha (le gusta). Próximo: (a) **aplicar BL-09** — densidad del tablero, que entre sin scroll y el toggle dé feedback visible (ajuste PRE-merge); (b) recoger de Alan los ítems concretos del **lado La Espiga/mostrador** → llenar BL-10; (c) veredictos de copy (h2/sub del tablero) + forma default de Pagos + JSON de `?tune` de cada pieza. Cuando cierre: congelar timings (`flowParams.ts` F4R / `tableroParams.ts` F4T) + borrar `TunePanel`/`?tune` + **mergear F4R primero, después F4T** (decisión suya).
 2. **Latido SANO** — ✅ hecho en F4R (panel dueño, ~66bpm, intensifica al entrar orden).
 3. **Limpieza (opcional, pendiente de OK de Alan):** borrar `f3-pulse-proto` y `f3-motion` (remotas + previews) — ya redundantes.
 4. **Módulo EN** de la landing antes del pitch a Prudence (vuelve el 13/07) — OJO: F4R+F4T son ~2 días de ventanas de cuota; el pitch del 13 puede necesitar priorizarse.
