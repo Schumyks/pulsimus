@@ -85,12 +85,90 @@ html.px-intro-pending body {
   visibility: hidden;
 }
 
+/* --- Healthy heartbeat (El mostrador) ----------------------------------- */
+/* The counterpart to Dolores' sick beat: the sample section is the PROOF the
+   infra works, so it beats HEALTHY — same halo language, but faster (~66 bpm),
+   even double-tap, subtler (content is the protagonist here), short rest, in
+   saturated brand amber (alive, vs. the sick pale amber). Values are defaults;
+   Alan freezes the feel at the gate. */
+@keyframes px-card-beat-healthy {
+  0%   { box-shadow: 0 0 10px 0.4px rgba(242, 166, 62, 0.05); }
+  12%  { box-shadow: 0 0 16px 2.8px rgba(242, 166, 62, 0.13); }  /* lub */
+  24%  { box-shadow: 0 0 10px 0.4px rgba(242, 166, 62, 0.05); }
+  36%  { box-shadow: 0 0 15px 2.5px rgba(242, 166, 62, 0.12); }  /* dub (even, close) */
+  56%  { box-shadow: 0 0 10px 0.4px rgba(242, 166, 62, 0.05); }  /* short settle + rest */
+  100% { box-shadow: 0 0 10px 0.4px rgba(242, 166, 62, 0.05); }
+}
+.px-card-lit-healthy {
+  animation: px-card-beat-healthy 0.92s ease-in-out infinite;
+}
+
+/* One-shot intensify when a fresh order lands — the business "beats" on a sale.
+   Swaps in for the healthy loop for its duration, then reverts. */
+@keyframes px-card-beat-pulse {
+  0%   { box-shadow: 0 0 12px 1px rgba(242, 166, 62, 0.12); }
+  28%  { box-shadow: 0 0 26px 6px rgba(242, 166, 62, 0.40); }
+  100% { box-shadow: 0 0 12px 1px rgba(242, 166, 62, 0.10); }
+}
+.px-card-beat-pulse {
+  animation: px-card-beat-pulse 0.9s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .px-beat-soft,
   .px-beat-strong,
   .px-card-lit,
-  .px-pulse-star {
+  .px-card-lit-healthy,
+  .px-card-beat-pulse,
+  .px-pulse-star,
+  .px-pay-processing {
     animation: none;
   }
   .px-pulse-star { opacity: 0; }
+}
+
+/* Ticket's torn-paper edge (F4). */
+.px-ticket-teeth {
+  height: 8px;
+  background:
+    linear-gradient(45deg, #F6EFE1 4px, transparent 0) 0 0 / 8px 8px repeat-x,
+    linear-gradient(-45deg, #F6EFE1 4px, transparent 0) 4px 0 / 8px 8px repeat-x;
+}
+
+/* --- F4R · payment moment + envelope journey ---------------------------- */
+
+/* Amber pulse around the ticket while a "pay now" is processing (the theater
+   before the envelope forms). Looping glow; duration is overridden inline from
+   the ?tune panel so Alan can freeze the feel at the gate. */
+@keyframes px-pay-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 166, 62, 0);
+  }
+  50% {
+    box-shadow: 0 0 16px 2px rgba(242, 166, 62, 0.55);
+  }
+}
+.px-pay-processing {
+  animation: px-pay-pulse 1s ease-in-out infinite;
+}
+
+/* --- F4T · tablero ------------------------------------------------------- */
+
+/* One-shot amber ring acknowledging a period toggle on the panels whose data
+   just re-tweened (BL-09: the toggle must confirm visually). The overlay span
+   remounts per toggle (keyed), so the animation replays; reduced-motion never
+   mounts it. */
+@keyframes tablero-flash {
+  0% {
+    box-shadow: inset 0 0 0 1.5px rgba(242, 166, 62, 0.55);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: inset 0 0 0 1.5px rgba(242, 166, 62, 0);
+    opacity: 0;
+  }
+}
+.tablero-flash {
+  animation: tablero-flash 700ms ease-out forwards;
 }

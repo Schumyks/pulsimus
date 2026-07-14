@@ -24,12 +24,17 @@ _Sin parqueos._
 ## F3 · Intro domesticada + motion kit — 🔵 completa en `f3-motion` (incl. latido narrativo tuneado), espera decisión de merge a `main`
 
 ### BL-01 · Scroll con "pulso" — la página debe sentirse viva · prioridad **media**
-- **Origen:** Alan (audio, 2026-07-04).
-- **Problema:** la marca martilla el "pulso", pero el **acto de scrollear** no lo transmite. El motion actual late en los `PulseDivider` y en los reveals `[data-rv]`, pero el scroll en sí se siente inerte.
-- **Deseo:** que scrollear hacia abajo dé sensación de vida/pulso — que la página "esté viva" mientras el usuario baja, no solo en los elementos que aparecen.
-- **Dirección posible (sin comprometer):** scroll-driven animations, easing/inercia en reveals, latido sutil sincronizado con el desplazamiento, parallax discreto. Respetar `useReducedMotion` end-to-end.
+- **Origen:** Alan (audio, 2026-07-04). **Reiterado y ampliado por Alan el 2026-07-14** (sesión de auditoría) → prioridad sube a **alta**.
+- **Problema:** la marca martilla el "pulso", pero el **acto de scrollear** no lo transmite. El motion actual late en los `PulseDivider` y en los reveals `[data-rv]`, pero el scroll en sí se siente inerte. Alan (14/07): *"siento que le falta vida a Pulsimus"* — hoy la página es tipografía sobre un fondo hueso plano, sin fondo activo.
+- **Deseo (ampliado 14/07):** **capas de movimiento en el fondo** — al scrollear, los objetos de fondo NO se mueven todos a la misma velocidad (parallax multi-capa); usar el fondo para **animar el sitio a medida que se scrollea**; que la página sea más reactiva en general.
+- **Referencias de Alan (14/07, capturas en research de auditoría):**
+  - `phinxlab.com` (ex-empleador) — fondo estelar oscuro con partículas geométricas flotando a distintas profundidades + tipografía display gigante (outline/sólida) + color blocking full-bleed por sección. "Me gusta cómo usan el fondo a favor."
+  - `ancla.digital` — franjas de color full-bleed por sección con separadores de onda; el fondo cambia de color y marca el ritmo del scroll.
+- **Traducción al lenguaje Faro Ámbar (dirección posible, sin comprometer):** constelación/partículas del símbolo pulso→estrella en capas parallax sobre las franjas noche · la línea de electro como elemento de fondo que recorre/conecta secciones al scrollear · scroll-driven animations (CSS `animation-timeline` / IO) · latido sutil sincronizado con el desplazamiento. Respetar `useReducedMotion` end-to-end y presupuesto de performance (LCP/CLS).
+- **Recurso disponible:** Higgsfield para generar assets de imagen/video si hicieran falta (regla de canal: tandas las genera Alan en su UI web; curación de Alan = fuente de verdad).
+- **Estado:** pendiente de **refinamiento a tarea-contrato CON Alan** (barrido QA: qué secciones, densidad, mobile, performance, reduced-motion, fuera-de-alcance) antes de construir.
 
-## F4R+F4T · Mostrador ciclo-completo + El tablero — 🟠 diseño cerrado, build pendiente (spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md))
+## F4R+F4T · Mostrador ciclo-completo + El tablero — 🔵 AMBAS construidas, esperan gate (F4R en `f4-mostrador`, F4T en `f4-tablero`) · spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md)
 
 ### BL-07 · Iteraciones v2 del módulo tablero · prioridad baja (post-F4T)
 - **Origen:** brainstorming del 2026-07-09 (curación de widgets, spec §8).
@@ -38,9 +43,26 @@ _Sin parqueos._
 - **Canal de entrada** — en la demo todo entra por Web, no discrimina nada; cobra sentido multi-canal.
 - **Descartado con causa (no revivir):** predicciones ("mañana vas a vender X") — humo en una demo, mata credibilidad.
 
+### BL-08 · ¿Ventana de período del tablero al store? · prioridad baja (decisión de arquitectura, a veredicto de Alan)
+- **Origen:** build F4T (director, 2026-07-09). El plan sugería la ventana `today|week|month` en el store; quedó como React state en `Tablero.tsx` (selectores puros con `period` como arg) para **desacoplar** — un toggle del tablero no re-renderiza El mostrador. Reversible; si algún día otra sección necesita leer el período activo, mover al store es trivial.
+
+### BL-09 · Densidad del tablero — que entre TODO sin scroll · ✅ RESUELTO Y CONSTRUIDO (2026-07-14, en `f4-tablero`, esperando gate) · prioridad **alta**
+- **Origen:** Alan, revisión en dev local (2026-07-09 ~23:40).
+- **Problema:** el tablero pedía scroll y el toggle **Día/Semana/Mes** actualizaba datos debajo del fold (sin feedback visible).
+- **Resuelto con:** layout 3+3 (fila 1 = paneles sensibles al período, pegados al toggle; fila 2 = operativos), compactación de paddings/gaps/tracks, y **flash ámbar one-shot** en los paneles al togglear (`tablero-flash`, respeta reduced-motion). Sección 1590px → **860px** a 1440×900, verificado sobre build de PROD (invariantes 58/58, eco end-to-end, mobile sin overflow). Detalle y trade-offs a veredicto: [`gate-f4t/report.md`](gate-f4t/report.md) § Addendum BL-09.
+
+### BL-11 · Video/animación de fondo en loop para una sección · prioridad media (a refinar con Alan)
+- **Origen:** Alan (nota mid-sesión, 2026-07-14): *"idea para la sección Cómo trabajamos (o alguna sección): incorporar video de fondo o animación generada que quede en loop, de un negocio o corazón latiendo"*.
+- **Idea:** fondo ambiental en loop (video generado con Higgsfield, o animación) detrás de una sección — candidatas: Proceso/"Cómo trabajamos" o el CTA. Motivo: sumar vida (mismo tema que [[BL-01]], distinta técnica: asset en loop vs. capas parallax en código).
+- **A resolver en el refinamiento (antes de construir):** (1) tensión con la regla "demo = CÓDIGO jamás video" — aplica a las piezas de demo, un fondo ambiental es otra cosa, pero confirmarlo con Alan; (2) peso/performance (LCP, datos en mobile) y `prefers-reduced-motion` (el loop se congela); (3) legibilidad del texto encima; (4) canal Higgsfield: tandas las genera Alan en su UI web (0 créditos), curación de Alan = fuente de verdad.
+
+### BL-10 · Mejoras del lado La Espiga (mostrador) — post-QA · prioridad media-alta (a definir tras QA de Alan)
+- **Origen:** Alan, revisión en dev local (2026-07-09 ~23:40): *"aún hay cosas a mejorar, especialmente en el lado de La Espiga"*.
+- **Estado:** sin especificar todavía — Alan hace un QA más fino **mañana (2026-07-10)** y baja los ítems concretos acá. Placeholder para no perder la señal.
+
 ## F4 (versión chip-FLIP) · — ⚠️ SUPERSEDED por F4R (la rama `f4-mostrador` es su base)
 
-### BL-02 · Chips del mostrador = orden real con trazabilidad completa · ✅ RESUELTO POR DISEÑO (build pendiente en F4R) · prioridad **alta**
+### BL-02 · Chips del mostrador = orden real con trazabilidad completa · ✅ RESUELTO Y CONSTRUIDO en F4R (rama `f4-mostrador`, esperando gate) · prioridad **alta**
 - **Origen:** Alan (audio, 2026-07-04).
 - **Problema:** los chips están **sosos** — hoy son "datos nomás", no parecen una orden real.
 - **Deseo:** que el panel receptor (lado mostrador) muestre el **registro completo de la operación**. Si el cliente pide *6 medialunas*, el receptor ve: **quién** la pidió · **hora** del pedido · **cómo paga** · **para cuándo** la quiere · **canal** de entrada.

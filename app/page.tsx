@@ -1,5 +1,7 @@
 import Hero from "./components/Hero";
 import Dolores from "./components/Dolores";
+import Mostrador from "./components/Mostrador";
+import Tablero from "./components/Tablero";
 import Proceso from "./components/Proceso";
 import CtaFooter from "./components/CtaFooter";
 import Intro from "./components/Intro";
@@ -43,7 +45,7 @@ export default function Home() {
           </a>
           <a
             href="#contacto"
-            className="rounded-full bg-ambar px-5 py-2 text-sm font-medium text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar"
+            className="rounded-full bg-ambar px-4 py-1.5 text-xs font-medium whitespace-nowrap text-noche transition-colors hover:bg-ambar/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ambar sm:px-5 sm:py-2 sm:text-sm"
           >
             Agendá tu diagnóstico
           </a>
@@ -53,7 +55,8 @@ export default function Home() {
       <main>
         <Hero />
         <Dolores />
-        {/* F4 · El mostrador (pieza firma) — hueco reservado, se integra después */}
+        <Mostrador />
+        <Tablero />
         <Proceso />
         {/* F5 · Ejemplos (slot vivo, nace oculto) — hueco reservado */}
         <CtaFooter />
