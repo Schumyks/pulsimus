@@ -21,7 +21,7 @@ _Sin parqueos._
 ## F2 · Secciones estáticas (hero · dolores · proceso · CTA shell+footer) — ✅ LIVE en `main` (+ revisión de voz)
 _Sin parqueos._
 
-## F3 · Intro domesticada + motion kit — 🔵 completa en `f3-motion` (incl. latido narrativo tuneado), espera decisión de merge a `main`
+## F3 · Intro domesticada + motion kit — ✅ LIVE en `main`
 
 ### BL-01 · Scroll con "pulso" — la página debe sentirse viva · prioridad **media**
 - **Origen:** Alan (audio, 2026-07-04). **Reiterado y ampliado por Alan el 2026-07-14** (sesión de auditoría) → prioridad sube a **alta**.
@@ -34,7 +34,15 @@ _Sin parqueos._
 - **Recurso disponible:** Higgsfield para generar assets de imagen/video si hicieran falta (regla de canal: tandas las genera Alan en su UI web; curación de Alan = fuente de verdad).
 - **Estado:** pendiente de **refinamiento a tarea-contrato CON Alan** (barrido QA: qué secciones, densidad, mobile, performance, reduced-motion, fuera-de-alcance) antes de construir.
 
-## F4R+F4T · Mostrador ciclo-completo + El tablero — 🔵 AMBAS construidas, esperan gate (F4R en `f4-mostrador`, F4T en `f4-tablero`) · spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md)
+## F4R+F4T · Mostrador ciclo-completo + El tablero — ✅ LIVE en `main` (merge 2026-07-14, OK de Alan "deployar tal como está"; fixes chicos diferidos a BL-12) · spec: [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md) · plan: [`f4r-f4t-plan.md`](f4r-f4t-plan.md)
+
+### BL-12 · Paquete de pulido post-deploy (tablero + mostrador) · prioridad media-alta — **acumulador del próximo lote**
+- **Origen:** QA de Alan sobre el preview (2026-07-14): decidió deployar tal como está y mandar los fixes chicos en UN paquete más grande, no de a uno.
+- **Ítems confirmados por Alan (14/07):**
+  1. **La cola "⚡ Reservas por confirmar" no tiene scroll interno** — con muchas órdenes la card se estira y rompe el one-viewport de BL-09. Fix: mismo patrón que Retiros (`max-h` + `overflow-y-auto` + mask fade). Bug, va primero.
+  2. **"TICKET PROM." a 1 línea** — a 357px de panel quiebra a 2 líneas y rompe la estructura de la card.
+- **Veredictos que Alan YA dio (14/07, no volver a preguntar):** layout 3+3 ✓ · intensidad del flash del toggle ✓.
+- **Acá se suman:** los ítems de BL-10 (lado La Espiga) cuando Alan los baje, y lo que salga de su QA sobre producción.
 
 ### BL-07 · Iteraciones v2 del módulo tablero · prioridad baja (post-F4T)
 - **Origen:** brainstorming del 2026-07-09 (curación de widgets, spec §8).
@@ -84,7 +92,16 @@ _Sin parqueos de mejora todavía._
 ## F6 · Panel de QA — ⚪ pendiente
 _Sin parqueos._
 
-## Módulo EN — ⚪ pendiente (post-v1, antes del pitch a Prudence, vuelve 2026-07-13)
+## Sección nueva "Quién es Alan" (post-agenda) — 🟠 A REFINAR con Alan antes de construir
+
+### BL-13 · Sección "Quiénes somos / Quién es Alan" · prioridad **alta** (pedido directo de Alan, 2026-07-14)
+- **Origen:** Alan (14/07): *"Tenemos que agregar una sección post agenda. Quiénes somos (quién soy en este caso). Porque al final del sitio firmo yo, Alan. QUIÉN ES ALAN es algo que falta."*
+- **Problema real que resuelve:** el form cierra con "Te leo y escucho yo, Alan." — una firma personal sin cara ni historia detrás. La auditoría del 14/07 lo confirma: la prueba social/humana es el arma estándar del mercado y la landing no tiene ninguna. Para una agencia unipersonal, el "quién" ES parte de la prueba.
+- **Ubicación tentativa:** después de la sección `#contacto` (¿o entre Proceso y contacto? — decidir con Alan).
+- **A refinar CON Alan (barrido pendiente):** contenido (historia QA→builder, por qué negocios de barrio, Copenhague+argentino) · foto real vs ilustración (curación de Alan) · tono (voseo, primera persona) · qué NO decir (integridad: sin métricas infladas) · CTA propio o no · mobile · EN futuro.
+- **Insumo:** el posicionamiento "builder full-stack que dirige, con background QA y de diseño" ya está escrito en el perfil de Alan; la voz canónica en `CONTEXT.md`.
+
+## Módulo EN — ⚪ pendiente · **prioridad BAJADA por Alan (14/07: "baja Prudence")** — se retoma cuando el pitch a Prudence vuelva a subir
 
 ### BL-05 · Selector de idioma "mundo 3D" · prioridad baja (objeciones sin resolver)
 - **Origen:** Alan (2026-07-02), referenciado desde `roadmap.md` §Parqueado.
