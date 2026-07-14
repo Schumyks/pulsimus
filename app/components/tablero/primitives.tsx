@@ -166,7 +166,7 @@ export function Bar({
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-0.5">
       <div className="flex items-baseline justify-between gap-3 text-sm">
         <span className={peak ? "font-semibold text-hueso" : "text-hueso/75"}>
           {label}
@@ -178,7 +178,7 @@ export function Bar({
           {note ? <span className="ml-2 text-hueso/45">{note}</span> : null}
         </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-hueso/8">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-hueso/8">
         <div className="h-full rounded-full" style={fillStyle} />
       </div>
     </div>

@@ -2,7 +2,8 @@
 
 /**
  * Panel 1 of El tablero — "⚡ Reservas por confirmar" (design-spec §4.3.1).
- * Full-width row, THE actionable panel: the owner (the visitor, wearing the
+ * THE actionable panel (since BL-09 it shares the operative 3-up row instead
+ * of owning a full-width one): the owner (the visitor, wearing the
  * other hat) confirms `reservation_pending` orders from here. Confirming
  * echoes back up to the mostrador's mini-dashboard for free — `Ticket.tsx`
  * re-derives its status badge from `order.status` on every render, so this
@@ -103,9 +104,9 @@ export default function ReservationsQueue({ active }: PanelProps) {
   }, [pending, sealing]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-xl font-semibold text-hueso">⚡ Reservas por confirmar</h3>
+        <h3 className="text-lg font-semibold text-hueso">⚡ Reservas por confirmar</h3>
         <span className="shrink-0 rounded-full bg-ambar px-2.5 py-0.5 text-sm font-semibold text-noche">
           {pending.length}
         </span>
@@ -121,7 +122,7 @@ export default function ReservationsQueue({ active }: PanelProps) {
               <li
                 key={reservation.number}
                 style={rowEntryStyle(index, active, reduced)}
-                className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+                className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2.5 ${
                   isSealed
                     ? "border-ambar/40 bg-ambar/10"
                     : "border-hueso/10 bg-hueso/5"

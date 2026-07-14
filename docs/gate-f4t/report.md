@@ -123,3 +123,37 @@ tap). Decime si preferís donut de fábrica.
   buildear. (Documentado para la próxima sesión que trabaje en un worktree.)
 - **Preview** (protegido, solo Alan): rama `f4-tablero` en Vercel al pushear. Producción
   (`main`) **sin tocar**.
+
+---
+
+## Addendum BL-09 (2026-07-14) — densidad + feedback del toggle
+
+Primera revisión de Alan (09/07): el tablero pedía scroll y el toggle actualizaba datos
+fuera del viewport. Aplicado PRE-merge sobre `f4-tablero`:
+
+- **Layout 3+3 en una pantalla**: la fila full-width de Reservas se fue; ahora son dos
+  filas de 3 paneles. **Fila 1 = lo que responde al toggle** (Vistazo · Qué se vende ·
+  Cuándo te piden), pegada al control; fila 2 = lo operativo (Reservas ⚡ · Pagos ·
+  Retiros). Sección: **1590px → 860px** a 1440×900 (entra completa; medida sobre build
+  de PROD).
+- **Feedback del toggle**: anillo ámbar one-shot (`tablero-flash`, 700ms, inset 1.5px)
+  sobre los 5 paneles sensibles al período (la cola queda fuera: vive en presente), que
+  se suma al re-tween de counters/barras. Bajo `prefers-reduced-motion` no se monta
+  (verificado: 0 overlays, datos cambian instantáneo).
+- **Compactación**: paddings de sección/frames, gaps de paneles, tracks de barra a 1.5px,
+  lista de retiros con `max-h` 248px (scroll interno con fade).
+- **Re-verificado sobre build de PROD**: invariantes **58/58** · eco Reservas→mostrador
+  end-to-end (pendientes 2→1, badge del ticket cambia sin recarga) · mobile 390px sin
+  overflow horizontal · consola limpia (los únicos errores en la sesión de test fueron
+  el cliente HMR de una página dev vieja reintentando contra un server apagado —
+  artefacto del entorno de test, no de la app).
+- **Capturas**: `gate-bl09-desktop-hoy.png` · `gate-bl09-desktop-semana.png` ·
+  `gate-bl09-mobile.png`.
+
+**A veredicto de Alan (se suma a la lista del gate):**
+1. El trade-off del layout: la cola de Reservas pierde el ancho completo (spec §4.3.1
+   decía full-width) a cambio de que TODO entre en una pantalla. Reversible.
+2. Intensidad del flash del toggle (hoy sutil: ámbar 55% → 0 en 700ms). Si lo querés
+   más presente, es un número en `globals.css` (`tablero-flash`).
+3. En "El día de un vistazo", el label "TICKET PROM." quiebra a 2 líneas a 357px de
+   panel — ¿lo acortamos ("TICKET") o queda?

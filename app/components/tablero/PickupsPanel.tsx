@@ -77,14 +77,14 @@ export default function PickupsPanel({ period, active }: PanelProps) {
   const title = period === "today" ? "Retiros de hoy" : "Próximos retiros";
 
   return (
-    <div className="flex flex-col gap-4">
-      <h3 className="text-xl font-semibold text-hueso">{title}</h3>
+    <div className="flex flex-col gap-3">
+      <h3 className="text-lg font-semibold text-hueso">{title}</h3>
 
       {pickups.length === 0 ? (
         <p className="py-6 text-center text-sm text-hueso/50">Sin retiros por ahora.</p>
       ) : (
         <ul
-          className="flex max-h-[360px] flex-col gap-2 overflow-y-auto py-1"
+          className="flex max-h-[248px] flex-col gap-2 overflow-y-auto py-1"
           style={{ maskImage: SCROLL_FADE, WebkitMaskImage: SCROLL_FADE }}
         >
           {pickups.map((pickup, index) => {

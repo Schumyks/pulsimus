@@ -51,7 +51,7 @@ function Stat({ label, value, format, active, reduced }: StatProps) {
         active={active}
         reduced={reduced}
         format={format}
-        className="text-xl font-semibold text-hueso md:text-2xl"
+        className="text-lg font-semibold text-hueso md:text-xl"
       />
     </div>
   );
@@ -123,12 +123,12 @@ export default function SummaryPanel({ period, active }: SummaryPanelProps) {
   const costos = Math.round(bruto - moms - ganancia);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-3">
       <h3 className="text-xs font-medium tracking-[0.2em] text-ambar">
         EL DÍA DE UN VISTAZO
       </h3>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         <Stat
           label="FACTURADO"
           value={totals.facturado}
@@ -154,7 +154,7 @@ export default function SummaryPanel({ period, active }: SummaryPanelProps) {
 
       <DeltaLine pct={delta.pct} label={DELTA_LABEL[period]} />
 
-      <div className="flex flex-col gap-1.5 border-t border-hueso/15 pt-4">
+      <div className="flex flex-col gap-1 border-t border-hueso/15 pt-3">
         <BreakdownRow label="Bruto" value={bruto} active={active} reduced={reduced} />
         <BreakdownRow label="− IVA (moms)" value={moms} active={active} reduced={reduced} />
         <BreakdownRow label="− Costos" value={costos} active={active} reduced={reduced} />

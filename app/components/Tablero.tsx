@@ -56,11 +56,13 @@ type FrameProps = {
   active: boolean;
   reduced: boolean;
   staggerMs: number;
+  /** Increments on each period change; retriggers the amber acknowledge flash. */
+  flash?: number;
   className?: string;
   children: ReactNode;
 };
 
-function Frame({ index, active, reduced, staggerMs, className = "", children }: FrameProps) {
+function Frame({ index, active, reduced, staggerMs, flash = 0, className = "", children }: FrameProps) {
   const style: CSSProperties = reduced
     ? {}
     : {
@@ -71,8 +73,17 @@ function Frame({ index, active, reduced, staggerMs, className = "", children }: 
   return (
     <div
       style={style}
-      className={`rounded-2xl border border-hueso/10 bg-noche p-6 md:p-7 ${className}`}
+      className={`relative rounded-2xl border border-hueso/10 bg-noche p-4 md:p-5 ${className}`}
     >
+      {/* Remounting only this overlay (key) replays the flash without touching
+          the frame's stagger transition. Period-sensitive frames only. */}
+      {flash > 0 && !reduced ? (
+        <span
+          key={flash}
+          aria-hidden="true"
+          className="tablero-flash pointer-events-none absolute inset-0 rounded-2xl"
+        />
+      ) : null}
       {children}
     </div>
   );
@@ -81,6 +92,7 @@ function Frame({ index, active, reduced, staggerMs, className = "", children }: 
 export default function Tablero() {
   const reduced = useReducedMotion();
   const [period, setPeriod] = useState<Period>("today");
+  const [flash, setFlash] = useState(0);
   const [active, setActive] = useState(false);
   const [params, setParams] = useState<TableroParams>(DEFAULT_TABLERO_PARAMS);
   const [tuneOpen, setTuneOpen] = useState(false);
@@ -122,48 +134,57 @@ export default function Tablero() {
       className="bg-noche text-hueso"
       style={VIZ_VARS}
     >
-      <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
+      <div className="mx-auto max-w-6xl px-6 py-10 md:py-12">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-3xl">
             <h2
               id="tablero-title"
               className="text-3xl font-semibold text-hueso md:text-4xl"
             >
               El resultado del día, sin hacer cuentas.
             </h2>
-            <p className="mt-4 text-lg text-bruma">
+            <p className="mt-2 text-sm text-bruma md:text-base">
               Lo que todo negocio de barrio necesita saber —y casi nunca sabe—.
               El mismo mostrador, visto de adentro.
             </p>
           </div>
-          <PeriodToggle period={period} onChange={setPeriod} />
+          <PeriodToggle
+            period={period}
+            onChange={(next) => {
+              if (next !== period) setFlash((f) => f + 1);
+              setPeriod(next);
+            }}
+          />
         </div>
 
         <TableroChoreoContext.Provider
           value={{ countMs: params.countMs, barMs: params.barMs }}
         >
-          <div className="mt-12 flex flex-col gap-6">
-            <Frame index={0} active={active} reduced={reduced} staggerMs={stagger}>
-              <ReservationsQueue period={period} active={active} />
-            </Frame>
-
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <Frame index={1} active={active} reduced={reduced} staggerMs={stagger}>
+          {/* Density contract (BL-09): two 3-up rows so the whole board fits one
+              desktop viewport. Row 1 = the period-sensitive charts, glued to the
+              toggle so its feedback lands in-view; row 2 = the operative panels
+              (the queue keeps its ⚡ but trades full-width for density). */}
+          <div className="mt-5 flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <Frame index={0} active={active} reduced={reduced} staggerMs={stagger} flash={flash}>
                 <SummaryPanel period={period} active={active} />
               </Frame>
-              <Frame index={2} active={active} reduced={reduced} staggerMs={stagger}>
+              <Frame index={1} active={active} reduced={reduced} staggerMs={stagger} flash={flash}>
                 <SalesPanel period={period} active={active} />
               </Frame>
-              <Frame index={3} active={active} reduced={reduced} staggerMs={stagger}>
+              <Frame index={2} active={active} reduced={reduced} staggerMs={stagger} flash={flash}>
                 <HoursPanel period={period} active={active} />
               </Frame>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <Frame index={4} active={active} reduced={reduced} staggerMs={stagger}>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <Frame index={3} active={active} reduced={reduced} staggerMs={stagger}>
+                <ReservationsQueue period={period} active={active} />
+              </Frame>
+              <Frame index={4} active={active} reduced={reduced} staggerMs={stagger} flash={flash}>
                 <PaymentsPanel period={period} active={active} />
               </Frame>
-              <Frame index={5} active={active} reduced={reduced} staggerMs={stagger}>
+              <Frame index={5} active={active} reduced={reduced} staggerMs={stagger} flash={flash}>
                 <PickupsPanel period={period} active={active} />
               </Frame>
             </div>

@@ -44,7 +44,7 @@ export default function SalesPanel({ period, active }: SalesPanelProps) {
   const max = Math.max(1, ...units.map((unit) => unit.units));
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div>
         <h3 className="text-xs font-medium tracking-[0.2em] text-ambar">
           QUÉ SE VENDE
@@ -52,7 +52,7 @@ export default function SalesPanel({ period, active }: SalesPanelProps) {
         <p className="mt-1 text-sm text-hueso/45">{PERIOD_SUBTITLE[period]}</p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2.5">
         {units.map((unit, index) => {
           const info = period === "today" ? stockByProduct.get(unit.productId) : undefined;
           const low = info ? info.remaining / info.batchSize <= STOCK_WARN_RATIO : false;

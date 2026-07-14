@@ -109,7 +109,7 @@ export default function HoursPanel({ period, active }: HoursPanelProps) {
   const format = period === "today" ? formatInt : formatKr;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div>
         <h3 className="text-xs font-medium tracking-[0.2em] text-ambar">
           CUÁNDO TE PIDEN
@@ -117,7 +117,7 @@ export default function HoursPanel({ period, active }: HoursPanelProps) {
         <p className="mt-1 text-sm text-hueso/45">{PERIOD_SUBTITLE[period]}</p>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1.5">
         {rows.map((row, index) => (
           <Bar
             key={row.key}
