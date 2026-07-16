@@ -3,6 +3,7 @@ import Dolores from "./components/Dolores";
 import Mostrador from "./components/Mostrador";
 import Tablero from "./components/Tablero";
 import Proceso from "./components/Proceso";
+import QuienSoy from "./components/quien-soy/QuienSoy";
 import CtaFooter from "./components/CtaFooter";
 import Intro from "./components/Intro";
 import Reveals from "./components/motion/Reveals";
@@ -58,6 +59,7 @@ export default function Home() {
         <Mostrador />
         <Tablero />
         <Proceso />
+        <QuienSoy />
         {/* F5 · Ejemplos (slot vivo, nace oculto) — hueco reservado */}
         <CtaFooter />
       </main>
