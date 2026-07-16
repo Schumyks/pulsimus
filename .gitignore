@@ -48,3 +48,7 @@ next-env.d.ts
 
 # session handoffs (never committed)
 Handoffs/
+
+# claude local state
+.claude/settings.local.json
+.claude/worktrees/

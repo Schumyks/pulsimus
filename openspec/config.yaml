@@ -1,0 +1,21 @@
+schema: spec-driven
+
+context: |
+  Landing de la agencia Pulsimus ("El pulso de tu negocio") — repo Schumyks/pulsimus.
+  Stack: Next 16 (App Router) + Tailwind v4 (@theme inline, tokens Faro Ámbar) + Bun.
+  Deploy: push a main → Vercel (pulsimus.vercel.app + www.pulsimus.dk). main = producción; el merge a main es EXCLUSIVO de Alan (gate humano).
+  Leer node_modules/next/dist/docs/ antes de escribir código Next (versión con breaking changes vs. training data).
+  Convenciones duras del proyecto:
+  - Verificación SIEMPRE sobre build de PROD (gotcha: Turbopack dev puede no recompilar globals.css por límite inotify).
+  - Playwright CLI para verificación visual: capturas en UN comando atómico (la sesión se pierde entre llamadas).
+  - Demo = CÓDIGO, jamás video. La página demuestra ejecutando, no afirmando.
+  - Copy en voseo rioplatense, EN LA VOZ DE ALAN: sin em dashes, oraciones cortas, sin jerga técnica, sin nombrar terceros, sin superlativos no verificables, integridad estricta (nada inflado).
+  - Motion: respetar prefers-reduced-motion end-to-end; patrón ?tune (TunePanel) para calibrar animaciones en vivo.
+  - Lenguaje del negocio: CONTEXT.md en la raíz de Agencia (../CONTEXT.md). Estado vivo: docs/STATE.md. Backlog contractual: docs/backlog.md.
+
+rules:
+  proposal:
+    - Referenciar la tarea-contrato del backlog (docs/backlog.md) cuando exista
+  tasks:
+    - Toda task lleva su verificación explícita (comando o criterio observable)
+    - Marcar los gates de Alan como tasks HITL explícitas — nada se mergea a main sin su OK
