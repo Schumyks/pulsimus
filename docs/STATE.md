@@ -24,14 +24,9 @@ Riel **GitHub → Vercel**: cada push a `main` auto-deploya a `pulsimus.vercel.a
 ## Próximos pasos (landing) — replan de Alan del 14/07
 
 1. **→ ARRANCÁ ACÁ: sección "Quién es Alan" (BL-13)** — pedido directo de Alan (post-agenda, "al final del sitio firmo yo"). PRIMERO refinarla a tarea-contrato CON él (barrido en `backlog.md` § BL-13), después construir.
-2. **Mail del dominio — SOLO falta cargar 4 registros DNS** (Alan lo hace en Simply → pulsimus.dk → DNS → Añadir registro; su intento del 14/07 falló porque el Tipo quedó en AAAA — debe ser el tipo de cada fila):
-   | Tipo | Nombre | Valor | Prio |
-   |---|---|---|---|
-   | MX | `@` | `mx.simply.com` | 10 |
-   | TXT | `@` | `v=spf1 include:spf.simply.com -all` | — |
-   | CNAME | `simplycom1._domainkey` | `dkim1.simply.com` | — |
-   | CNAME | `simplycom2._domainkey` | `dkim2.simply.com` | — |
-   (Opcional: TXT `_dmarc` = `v=DMARC1; p=none; rua=mailto:hola@pulsimus.dk`.) **Hasta esto, el correo a `hola@`/`hello@` REBOTA.** Al cargarlos: verificar con `dig +short pulsimus.dk MX` + mandar mail de prueba, luego cablear Gmail (reenvío en Simply + "Enviar como" `smtp.simply.com:587`, usuario = dirección completa, una vez por casilla). El sitio en el dominio ya está ✅ (no tocar A/CNAME existentes).
+2. **Mail del dominio — ✅ FUNCIONANDO end-to-end (16/07):** registros DNS verificados vía `dig` (MX `10 mx.simply.com` + SPF + DKIM 1/2; A/CNAME del sitio intactos) y **mail de prueba recibido en la bandeja de `hola@` en webmail.simply.com** (login: dirección completa + contraseña de la casilla). Falta cerrar:
+   1. **Cablear Gmail** (una vez por casilla): reenvío en Simply (panel → pulsimus.dk → Mail → casilla) + en Gmail "Enviar como" con `smtp.simply.com:587`, usuario = dirección completa, contraseña de la casilla, TLS.
+   2. **Opcional (recomendado para no caer en spam de Gmail):** TXT `_dmarc` = `v=DMARC1; p=none; rua=mailto:hola@pulsimus.dk` — aún no cargado (verificado 16/07).
 3. **BL-12 · paquete de pulido** (acumulando): scroll interno de la cola Reservas (bug) + "TICKET PROM." a 1 línea + ítems BL-10 cuando bajen + limpieza `?tune`/TunePanel + borrar ramas redundantes.
 4. **BL-01 · fondo vivo** (alta, refinar antes de construir) y **BL-11 · video loop** (media) — la capa "vida" post-auditoría.
 5. **Prudence/módulo EN: BAJADO por Alan (14/07).** F5 (Cal.com + forms) sigue bloqueada por prerequisitos.

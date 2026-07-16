@@ -85,20 +85,61 @@ _Sin parqueos._
 - **Qué es:** render AI de un mostrador físico noche + franja ámbar + madera clara con el latido al frente — paleta calcada a los tokens. Sirve como referencia de *feel* ("chapa noche, canto ámbar, fondo hueso") para los paneles de la demo, **no** como asset.
 
 ## F5 · CTA real (Cal.com + forms) — ⚪ pendiente (bloqueada por prerequisitos de Alan)
-- **Prerequisitos de Alan** (§12 del brief, no son parqueos — son gates de arranque): registrar `pulsimus.dk` · backorder `pulsimus.com` (vence 2026-08-02) · mail `hola@pulsimus.dk` · cuenta Cal.com + evento "Diagnóstico gratis" · elegir servicio de forms.
+- **Prerequisitos de Alan** (§12 del brief, no son parqueos — son gates de arranque): registrar `pulsimus.dk` ✅ · backorder `pulsimus.com` (vence 2026-08-02) · mail `hola@pulsimus.dk` ✅ (16/07; falta cablear Gmail) · cuenta Cal.com + evento "Diagnóstico gratis" · elegir servicio de forms.
+- **Intención declarada (16/07):** Alan planea comprar los dominios de España y Argentina (`pulsimus.es`, `.com.ar`/`.ar`) para buscar clientes en esas regiones → la landing debe mantenerse geo-neutral (sin anclarse a Copenhague en el copy).
 
 _Sin parqueos de mejora todavía._
 
 ## F6 · Panel de QA — ⚪ pendiente
 _Sin parqueos._
 
-## Sección nueva "Quién es Alan" (post-agenda) — 🟠 A REFINAR con Alan antes de construir
+## Sección nueva "Quién está del otro lado" — 🔵 CONTRATO CERRADO (16/07), lista para build por pasos
 
 ### BL-13 · Sección "Quiénes somos / Quién es Alan" · prioridad **alta** (pedido directo de Alan, 2026-07-14)
 - **Origen:** Alan (14/07): *"Tenemos que agregar una sección post agenda. Quiénes somos (quién soy en este caso). Porque al final del sitio firmo yo, Alan. QUIÉN ES ALAN es algo que falta."*
 - **Problema real que resuelve:** el form cierra con "Te leo y escucho yo, Alan." — una firma personal sin cara ni historia detrás. La auditoría del 14/07 lo confirma: la prueba social/humana es el arma estándar del mercado y la landing no tiene ninguna. Para una agencia unipersonal, el "quién" ES parte de la prueba.
 - **Ubicación tentativa:** después de la sección `#contacto` (¿o entre Proceso y contacto? — decidir con Alan).
 - **A refinar CON Alan (barrido pendiente):** contenido (historia QA→builder, por qué negocios de barrio, Copenhague+argentino) · foto real vs ilustración (curación de Alan) · tono (voseo, primera persona) · qué NO decir (integridad: sin métricas infladas) · CTA propio o no · mobile · EN futuro.
+- **Prep listo (14/07, sesión AFK):** [`bl13-refinamiento.md`](bl13-refinamiento.md) — 3 borradores de contenido en la voz canónica (A: oficio QA · B: argentino en CPH · C: sin humo) + cuestionario de 8 veredictos con recomendación. Alan reacciona ahí y de eso sale la tarea-contrato.
+- **Refinamiento en curso (16/07, chat — segunda ronda):** BL-13 evolucionó a **pieza scrollytelling** (sección anclada, intro + paneles por fase que cambian al scrollear). Decidido: foto a la izquierda ✔ · ancla al scroll ✔ · titular panel Diseño "que tu web se vea como tu negocio merece" ✔ · paneles nombrados por FASE del proyecto, no por rol (Diseño/Construcción/Calidad) ✔ · **cada panel debe DEMOSTRAR, no narrar** (rechazados: historia de la tienda como contenido del panel, "la prueba sos vos scrolleando", Disney en el panel 3) · **SIN "argentino en Copenhague"** (Alan planea dominios .es/.ar para expandirse; la sección queda geo-neutral) · intro sin "yo puedo hacer algo mejor" (le suena creído; copy a definir después) · secuencia: planificar la pieza completa, lanzar por pasos (paso 1 = versión apilada estática) · canal: prototipo en código, no Claude Design (gotcha FG: comportamiento JS fino se corrige local igual).
+- **Veredictos de Alan (16/07, vía toki — parciales):** ✔ ubicación: **entre Proceso y contacto** · ✔ imagen: **foto real con tratamiento estilo Faro Ámbar** ("ilustración de foto real, estilo ámbar"), curación de Alan · ✔ título: **"Quién está del otro lado"** · ✔ unipersonal: implícito · ✔ CTA: sin CTA propio (fluye al form, que queda justo debajo) · ✔ LinkedIn personal: SÍ, como ícono discreto bajo la foto · 🟠 **ABIERTO — dirección de contenido**: ninguno de los 3 borradores lo convenció (A "soso", B flojo el "en tu idioma", C el approach que más le gustó pero no del todo); se resuelve en chat · 🟠 ~~ABIERTO — mención Disney~~ → RESUELTO 16/07: **Disney AFUERA en todas partes** ("no me convence, a la mierda"). Resultado crudo: `~/.toki/result-bl13.json`.
+
+---
+
+#### TAREA-CONTRATO BL-13 (cerrada con Alan, 16/07/2026)
+
+> **⚙️ Build formalizado en OpenSpec (16/07):** [`openspec/changes/bl13-quien-soy/`](../openspec/changes/bl13-quien-soy/) — proposal + spec (10 requirements con escenarios) + design (D1-D6) + `tasks.md` (15 tasks con verificación por task, gates de Alan como HITL). **Para el build, la fuente ejecutable es el cambio OpenSpec**; este contrato queda como acta del refinamiento. Skins+galería (BL-16/14) = cambio futuro `bl16-skins`.
+
+**Objetivo:** la prueba humana que a la landing le falta (auditoría 14/07), construida como **pieza scrollytelling** que demuestra las capacidades de Alan EJECUTANDO, no narrando. Es la tercera pieza mayor de la landing (hermana del mostrador y el tablero).
+
+**Ubicación:** entre Proceso y `#contacto`. La pieza desemboca en el form.
+
+**Estructura (5 estaciones, cada panel ocupa el viewport COMPLETO; la sección se ancla al scrollear y transiciona entre estaciones con animaciones cuidadas — pedido explícito de Alan):**
+1. **Intro** — foto real de Alan (tratamiento estilo Faro Ámbar, curación suya) a la izquierda + ícono LinkedIn (perfil personal) debajo + presentación corta.
+2. **Panel DISEÑO** — titular aprobado: *"Que tu web se vea como tu negocio merece."* Izquierda: botón "Cambiar skin" + selector de 3 marcas (Faro Ámbar default + 2 skins de primera clase → [[BL-16]]). Derecha: pitch de diseño de marca (*branding desde cero, manual de uso de marca* — verdad verificable: el brand book de Faro Ámbar existe) + acceso a la galería de construcción de las marcas (→ [[BL-14]]).
+3. **Panel CONSTRUCCIÓN** — mensaje: *"te escucho y te construyo a medida"* (titular final a redactar). Demo: 2-3 fichas de necesidad en idioma de mostrador ("tomo pedidos por WhatsApp", "doy turnos", "vendo por Instagram"); al tocar una, la mini-web del panel SE ARMA ante los ojos con la forma de esa necesidad; tocar otra la rearma distinta.
+4. **Panel CALIDAD** — mensaje: *"la calidad es la experiencia"* (perfeccionismo punta a punta; NO "que nada llegue roto", demasiado básico). Demo **"sin alma / con alma"**: la misma pieza dos veces — plantilla genérica inerte vs versión con feedback, animación y flujo en cada detalle. Sin nombrar WordPress ni terceros.
+5. **Remate** — el credo, solo, como momento alto: *"Para mí, la calidad es algo que nace del corazón."* → suelta el ancla → form.
+
+**Reglas de copy (redacción final pendiente, es el único abierto):** en LA VOZ DE ALAN — partir de su muestra de voz transcripta (16/07, Engram) y sus frases aprobadas: *"Hace diez años que trabajo en calidad y diseño web"* · *"la calidad es la experiencia"* · *"si hay que hacerlo, hay que hacerlo bien; no vale la pena trabajar algo si no está bien hecho"*. Prohibido: em dashes, jerga (QA/dev/checks), Disney, geografía (geo-neutral por expansión .es/.ar), superlativos no verificables ("la más rápida" → "una de las más rápidas"), nombrar terceros, tono "creído" ("yo puedo hacer algo mejor" rechazado), voz de copywriter (4 borradores rechazados dan fe).
+
+**Criterios de aceptación (barrido QA):**
+- **Flujo feliz:** desktop 1440×900 — la sección ancla, las 5 estaciones transicionan con el scroll, los 3 demos responden, el remate suelta al form.
+- **Mobile (375):** versión APILADA sin ancla (cada estación full-viewport apilada, reveals suaves); demos operables por tap; sin overflow horizontal.
+- **`prefers-reduced-motion`:** apilado estático, demos en su estado final (con alma / skin default), cero animación de armado.
+- **Estados de los demos:** skin se resetea al recargar (sin persistencia); fichas de Construcción con una activa por vez; toggle Calidad arranca en "con alma".
+- **Performance:** verificación sobre build de PROD (gotcha Turbopack/inotify); sin FOUC al cambiar skin; presupuesto LCP/CLS de la landing intacto.
+- **Accesibilidad:** operable por teclado (sin scroll-jacking que atrape el foco), contraste de tokens, `aria` en toggles/fichas.
+- **Reversa:** cada paso entra por rama + gate de Alan; el paso N no rompe el paso N-1 shipeado.
+
+**Lanzamiento por pasos (gates de Alan en cada uno):**
+- **P1 · Estructura + copy real:** las 5 estaciones full-viewport APILADAS (sin ancla), foto, LinkedIn, copy final, demos como composición estática. → la prueba humana entra a prod ya.
+- **P2 · Coreografía:** ancla + transiciones entre estaciones + demos Construcción y Calidad interactivos.
+- **P3 · Skins + galería:** BL-16 completo (2 skins nuevos diseñados de verdad) + galería/manual de marca (BL-14).
+
+**Insumos de Alan (gates de arranque):** P1: foto real elegida + veredicto del copy · P3: dirección estética de los 2 skins nuevos.
+**Fuera de alcance v1:** EN · timeline/CV · logos de empleadores · link GitHub · sonido (evaluar recién en P2/P3, muted por defecto si entra).
+**Canal:** prototipo y build EN CÓDIGO (rama `bl13-quien-soy`), verificación Playwright sobre build de prod; Claude Design solo si un skin pide exploración estética.
 - **Insumo:** el posicionamiento "builder full-stack que dirige, con background QA y de diseño" ya está escrito en el perfil de Alan; la voz canónica en `CONTEXT.md`.
 
 ## Módulo EN — ⚪ pendiente · **prioridad BAJADA por Alan (14/07: "baja Prudence")** — se retoma cuando el pitch a Prudence vuelva a subir
@@ -113,8 +154,25 @@ _Sin parqueos._
 ### BL-06 · Primer contenido del slot Ejemplos · prioridad media
 - **Origen:** `landing-brief.md` §Post-v1.
 - **Qué:** primera muestra en el slot (FG/La Estancia con consentimiento de Agustín, o anonimizada). Sin tocar la estructura de la sección.
+- **Insumo nuevo (16/07):** Alan conserva en Figma (al menos parte de) sus diseños de la tienda gamer de Logg (2016+, armador de PC incluido) — candidatos a prueba de trabajo pasado para este slot o para [[BL-14]]. Evaluar derechos/consentimiento antes de publicar (marca de un ex-empleador).
 
 ---
 
 ## Sin fase asignada
-_Vacío._
+
+### BL-14 · Galería "lo que puedo hacer conmigo, lo puedo hacer para el cliente" · prioridad media (a refinar)
+- **Origen:** Alan (16/07, veredictos toki de BL-13, pregunta de la foto): *"Galería de fotos que demuestren dominio de marcas, estilos. Lo que puedo hacer conmigo, lo puedo hacer para el cliente. Toma la idea para avanzarla luego en otra sección."*
+- **Idea:** una galería (sección propia, NO dentro de BL-13) de autorretratos/fotos de Alan tratados en distintos estilos de marca, demostrando rango de dirección de arte. Funciona como prueba de capacidad sin necesitar casos de clientes.
+- **A refinar antes de construir:** relación con el slot Ejemplos (¿compite o convive?) · pipeline de generación (Higgsfield, canal: tandas las genera Alan, curación de Alan = fuente de verdad) · cuántos estilos · performance/peso.
+
+### BL-16 · Skins de la landing — demo viva de rango de diseño · prioridad media (disparado desde el panel Diseño de BL-13)
+- **Origen:** Alan (16/07, refinando BL-13): *"Quiero hacer distintos skins para la página. Como no tengo otros sitios para recomendar, muestro que puedo hacer distintos diseños sobre una misma página."*
+- **Alcance DECIDIDO por Alan (16/07, 2ª ronda):** el reskin es de **TODA la página**, no de un componente contenido — *"la idea es tocar un botón y que se muestre en todo el sitio la capacidad"*. Botón tipo "Cambiar skin" en el panel Diseño de BL-13; al activarlo, llevar al usuario arriba de todo (o señalizar fuerte) para que note y explore el cambio completo.
+- **Postura de marca (Alan, textual):** *"Es mi marca y la puedo manejar como quiera. Si quiero tener tres diseños de marca distintos para Pulsimus, los tengo. Faro Ámbar es uno de ellos."* → los skins son diseños de marca de primera clase, Faro Ámbar es el default.
+- **Regla de costo/calidad (del director, aceptación pendiente):** cada skin es un PASE DE DISEÑO COMPLETO sobre todas las secciones (incl. mostrador La Espiga y tablero, que tienen paletas propias) — un skin "solo recolor" se ve barato y desmiente el mensaje. Mejor 1-2 skins excelentes que 4 mediocres.
+- **A refinar antes de construir:** cuántos skins v1 y sus direcciones estéticas · técnica (tokens Tailwind v4 `@theme` → swap de variables CSS; assets por skin) · default Faro Ámbar + sin persistencia (se resetea al recargar) · performance/FOUC · reduced-motion en la transición.
+- **Nota de secuencia:** paso TARDÍO de BL-13 — necesita el panel Diseño existente y los skins diseñados.
+
+### BL-15 · Presencia LinkedIn de Pulsimus · prioridad baja (tarea externa, no de código)
+- **Origen:** Alan (16/07, veredictos toki de BL-13): *"Después creamos LinkedIn para Pulsimus y para que se vea reflejado en mi cuenta de LinkedIn."*
+- **Qué:** crear la página de empresa Pulsimus en LinkedIn + reflejar el rol en el perfil personal de Alan. Se coordina con el pitch a Agustín (¿qué se publica primero?). No bloquea nada de la landing; el ícono de LinkedIn de BL-13 apunta al perfil personal mientras tanto.
