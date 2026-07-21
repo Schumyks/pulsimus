@@ -36,6 +36,7 @@ Espacio abierto, galaxias lejanas casi quietas (capa Z1). El protagonista navega
 ### 2 · DOLORES — El cinturón
 Para llegar al pulso hay que cruzar el campo de asteroides. Cada roca lleva el nombre de un dolor real — **los nombres salen del copy vigente de `Dolores.tsx`**, no se inventan nuevos. Asteroides antropomorfizados: caras de piedra que se ríen, alguno lo roza. El protagonista esquiva **solo**, como esquiva un dueño todos los días.
 - **Concepto:** velocidad de escape — el esfuerzo que vuelve a caer.
+- **Dirección de Alan (21/07, gate del plan de operación):** la sección Dolores **SE FUSIONA con esta escena** (la sección ES el cinturón; las cards actuales se transforman en rocas con el nombre tallado). **Interacción: el visitante DESTRUYE los asteroides (point & click / tap) para avanzar** — refuerza la narrativa de superar las adversidades que todo dueño negocia. Detalles (avance bloqueado vs recompensa, teclado, mobile, reduced-motion) se resuelven en el boceto de E2.
 
 ### 3 · MOSTRADOR — El aterrizaje
 Aterriza y arma la tienda con los restos de la nave: mal estado pero entrañable (cartel torcido pintado a mano). Con el scroll, **la transformación**: el cartel se endereza y se enciende (neón ámbar), la vitrina se ilumina, el primer alien mira el escaparate.
@@ -45,6 +46,7 @@ Aterriza y arma la tienda con los restos de la nave: mal estado pero entrañable
 - **Detrás** = la operación real (la trastienda: papeles, el caos que el cliente no ve).
 - **Concepto:** gravedad — con presencia, la tienda atrae.
 - **Nota:** es el set-piece #2 del sitio (hermano de la supernova).
+- **Dirección de Alan (21/07, gate del plan de operación):** el demo standalone del mostrador (La Espiga) "por sí solo tiene poco": el ciclo de pedido **se representa EN la escena** — el alien hace el pedido y el dueño lo recibe — y en la narrativa del sitio se entiende igual. Si conviene marcarlo como punto de avance explícito dentro de la escena, se evalúa en el boceto de E4. Supersede la idea de conservar el componente demo como pieza aparte.
 
 ### 4 · PROCESO — Como arriba, es abajo
 La sección se parte en dos mitades espejadas. **Arriba el cielo:** cuerpos entrando en órbita, fase a fase. **Abajo la tierra:** la tienda construyéndose, fase a fase (brief → diseño → build → lanzamiento). Remate: *"así como un satélite orbita un planeta, un cliente orbita el negocio"* — la última fase muestra la primera órbita capturada: **el primer cliente que vuelve**.

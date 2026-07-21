@@ -15,13 +15,11 @@ import { DEFAULT_STAR_PARAMS, type StarParams } from "./starParams";
  * expanding front (`.sw-pending` mask in star.css). A bare click also
  * pulses, so the visitor can feel the heartbeat. While the pointer rests,
  * the star drifts on a slow breathing orbit instead of freezing.
- * Umbral zones are stages for designed scenes: the standard scene is the
- * Nano Banana cloud plates (public/clouds/processed, luminance-alpha
- * WebP) drawn as three parallax layers clipped to the umbral band — the
- * front bank opens a soft hole around the star to let it pass. Bespoke
- * set pieces (galaxy explosion, etc.) will replace the standard scene on
- * chosen umbrales when the Claude Design round lands. Lenis smooths the
- * native scroll (anchors stay working via `anchors: true`).
+ * Umbral zones are stages for designed scenes from the narrative script
+ * (docs/bl17-guion-narrativo.md). The photographic cloud banks were
+ * REMOVED (Alan, 21/07): they fought the flat canon and told no story.
+ * Flat clouds return later as the "landing on the planet" scene. Lenis
+ * smooths the native scroll (anchors stay working via `anchors: true`).
  */
 
 const AMBAR = { r: 242, g: 166, b: 62 };
@@ -45,14 +43,6 @@ type Ring = {
 };
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-/** Cloud plate variants per layer (public/clouds/processed). Umbral i cycles
- * through them so neighboring umbrales never show the same bank. */
-const CLOUD_PLATES = {
-  a: ["a1", "a2"], // wispy, far
-  b: ["b1", "b2", "b3", "b4"], // mid cumulus
-  c: ["c1", "c2", "c3", "c4"], // dense front bank
-} as const;
 
 function bodyColor(alpha = 1) {
   return `rgba(${HUESO.r}, ${HUESO.g}, ${HUESO.b}, ${alpha})`;
@@ -101,11 +91,6 @@ export default function StarLayer({
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    // Offscreen buffer for the front cloud bank (so the star-hole punch-out
-    // never erases what is already painted on the main canvas).
-    const off = document.createElement("canvas");
-    const offCtx = off.getContext("2d")!;
-
     let vw = 0;
     let vh = 0;
     const resizeCanvas = () => {
@@ -115,28 +100,10 @@ export default function StarLayer({
       canvas.width = Math.round(vw * dpr);
       canvas.height = Math.round(vh * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      off.width = vw;
-      off.height = vh;
     };
 
-    // Cloud plates load lazily; a plate draws once its image is ready.
-    const plates = new Map<string, HTMLImageElement>();
-    for (const names of Object.values(CLOUD_PLATES)) {
-      for (const name of names) {
-        const img = new Image();
-        img.src = `/clouds/processed/${name}.webp`;
-        plates.set(name, img);
-      }
-    }
-    const plateFor = (layer: keyof typeof CLOUD_PLATES, umbralIndex: number) => {
-      const names = CLOUD_PLATES[layer];
-      const img = plates.get(names[umbralIndex % names.length]);
-      return img && img.complete && img.naturalWidth > 0 ? img : null;
-    };
-
-    // --- Sections that get built by the visitor's passage + umbral bands ---
+    // --- Sections that get built by the visitor's passage ---
     let sections: RevealSection[] = [];
-    let umbrales: Bounds[] = [];
     let measured = false;
     const measure = () => {
       resizeCanvas();
@@ -154,12 +121,6 @@ export default function StarLayer({
         });
       }
       sections = next;
-      umbrales = [...document.querySelectorAll<HTMLElement>("[data-umbral]")]
-        .map((el) => {
-          const rect = el.getBoundingClientRect();
-          return { top: rect.top + window.scrollY, height: rect.height };
-        })
-        .filter((b) => b.height > 0);
       measured = false; // re-run the initial visibility pass with fresh bounds
     };
     measure();
@@ -260,121 +221,6 @@ export default function StarLayer({
       return true;
     };
 
-    /** Standard umbral scene: three parallax cloud plates clipped to the
-     * band. Back/mid draw under the star; the front bank draws over it via
-     * the offscreen buffer, with a soft hole punched around the star so the
-     * clouds open and let it through. */
-    /** Soft band edges: erase a feather strip of cloud pixels at the top and
-     * bottom of the clip region so plates dissolve into sky instead of
-     * cutting on a hard horizontal line. destination-out only touches what
-     * the given context already holds. */
-    const featherEdges = (
-      target: CanvasRenderingContext2D,
-      top: number,
-      height: number,
-      feather = 48,
-    ) => {
-      target.save();
-      target.globalCompositeOperation = "destination-out";
-      let g = target.createLinearGradient(0, top, 0, top + feather);
-      g.addColorStop(0, "rgba(0,0,0,1)");
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      target.fillStyle = g;
-      target.fillRect(0, top, vw, feather);
-      g = target.createLinearGradient(0, top + height - feather, 0, top + height);
-      g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(1, "rgba(0,0,0,1)");
-      target.fillStyle = g;
-      target.fillRect(0, top + height - feather, vw, feather);
-      target.restore();
-    };
-
-    const drawPlate = (
-      target: CanvasRenderingContext2D,
-      img: HTMLImageElement,
-      i: number,
-      now: number,
-      cy: number,
-      scaleW: number,
-      driftAmp: number,
-      driftSpeed: number,
-      alpha: number,
-      clipTop: number,
-      clipH: number,
-    ) => {
-      const w = vw * scaleW;
-      const h = w * (img.naturalHeight / img.naturalWidth);
-      const x = (vw - w) / 2 + Math.sin(now * driftSpeed + i * 1.7) * driftAmp;
-      target.save();
-      target.beginPath();
-      target.rect(0, clipTop, vw, clipH);
-      target.clip();
-      target.globalAlpha = alpha;
-      target.drawImage(img, x, cy - h / 2, w, h);
-      target.restore();
-    };
-
-    const drawCloudBands = (front: boolean, now: number, s: number) => {
-      for (let i = 0; i < umbrales.length; i++) {
-        const band = umbrales[i];
-        const topV = band.top - s;
-        if (topV > vh + 60 || topV + band.height < -60) continue;
-        // Depth: shift each layer against the band's distance from the
-        // viewport center; horizontal drift keeps them alive.
-        const depthShift = topV + band.height / 2 - vh / 2;
-        const clipTop = topV;
-        const clipH = band.height;
-
-        if (!front) {
-          const a = plateFor("a", i);
-          const b = plateFor("b", i);
-          if (a) drawPlate(ctx, a, i, now, topV + band.height * 0.3 + depthShift * 0.1, 1.25, 26, 0.05, 0.5, clipTop, clipH);
-          if (b) drawPlate(ctx, b, i, now, topV + band.height * 0.55 + depthShift * 0.05, 1.15, 18, 0.035, 0.72, clipTop, clipH);
-          if (a || b) featherEdges(ctx, clipTop, clipH);
-        } else {
-          const c = plateFor("c", i);
-          if (!c || !pos) continue;
-          const holeR = 130;
-          const starInBand = pos.y > clipTop - holeR && pos.y < clipTop + clipH + holeR;
-          if (!starInBand) {
-            // Cheap path: no hole to punch — draw straight to the main
-            // canvas. The feather also nibbles ring/star pixels on the band
-            // edge strips, but the star is out of band here and rings rarely
-            // cross it; the offscreen roundtrip costs more than that risk.
-            drawPlate(ctx, c, i, now, topV + band.height * 0.82, 1.2, 12, 0.025, 0.92, clipTop, clipH);
-            featherEdges(ctx, clipTop, clipH);
-            continue;
-          }
-          // Star inside the bank: render on a band-sized region of the
-          // offscreen buffer, punch the hole there, then blit — never erasing
-          // what the main canvas already has.
-          const bandH = Math.min(Math.ceil(clipH), vh);
-          const srcTop = Math.max(0, clipTop);
-          const visH = Math.min(bandH, vh - srcTop);
-          if (visH <= 0) continue;
-          offCtx.clearRect(0, 0, vw, bandH + 2);
-          offCtx.save();
-          offCtx.translate(0, -clipTop);
-          drawPlate(offCtx, c, i, now, topV + band.height * 0.82, 1.2, 12, 0.025, 1, clipTop, clipH);
-          featherEdges(offCtx, clipTop, clipH);
-          const g = offCtx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, holeR);
-          g.addColorStop(0, "rgba(0,0,0,1)");
-          g.addColorStop(0.55, "rgba(0,0,0,0.85)");
-          g.addColorStop(1, "rgba(0,0,0,0)");
-          offCtx.globalCompositeOperation = "destination-out";
-          offCtx.fillStyle = g;
-          offCtx.beginPath();
-          offCtx.arc(pos.x, pos.y, holeR, 0, Math.PI * 2);
-          offCtx.fill();
-          offCtx.restore();
-          ctx.save();
-          ctx.globalAlpha = 0.92;
-          ctx.drawImage(off, 0, srcTop - clipTop, vw, visH, 0, srcTop, vw, visH);
-          ctx.restore();
-        }
-      }
-    };
-
     let lastTime = performance.now() / 1000;
     const render = () => {
       const p = paramsRef.current;
@@ -432,8 +278,6 @@ export default function StarLayer({
         rings.push(ring);
       }
 
-      drawCloudBands(false, now, s);
-
       for (let i = rings.length - 1; i >= 0; i--) {
         if (!drawRing(rings[i], now, p)) rings.splice(i, 1);
       }
@@ -444,8 +288,6 @@ export default function StarLayer({
       const size = p.sizeBase * beat * clickKick;
       const glow = 36 * p.glowScale * clickKick;
       drawSeed(ctx, pos.x, pos.y, size, glow);
-
-      drawCloudBands(true, now, s);
     };
     gsap.ticker.add(render);
 
