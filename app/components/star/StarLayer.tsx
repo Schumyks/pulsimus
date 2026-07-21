@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import Lenis from "lenis";
+import { acquireScrollEngine, releaseScrollEngine } from "../motion/scrollEngine";
 import { STAR_STATIONS } from "./starScript";
 import { DEFAULT_STAR_PARAMS, type StarParams } from "./starParams";
 
@@ -86,10 +86,7 @@ export default function StarLayer({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const lenis = new Lenis({ anchors: true });
-    const raf = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
+    acquireScrollEngine();
 
     let vw = 0;
     let vh = 0;
@@ -293,8 +290,7 @@ export default function StarLayer({
 
     return () => {
       gsap.ticker.remove(render);
-      gsap.ticker.remove(raf);
-      lenis.destroy();
+      releaseScrollEngine();
       ro.disconnect();
       window.removeEventListener("resize", measure);
       window.removeEventListener("pointermove", onPointerMove);
