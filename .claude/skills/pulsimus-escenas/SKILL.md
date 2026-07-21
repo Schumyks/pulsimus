@@ -112,6 +112,10 @@ del viewport a mitad de animación).
 - Copilot/LLM olvidan `registerPlugin`, usan easing con scrub, dejan
   `markers: true`, y escriben `end` estático para horizontal scroll (usar
   función: `end: () => …` para que recalcule en resize).
+- Tras CADA `bun run build`, reiniciar el `next start` local que siga corriendo
+  (`fuser -k 3199/tcp` + relanzar): un server viejo sobre un `.next`
+  reemplazado sirve chunks rotos y las capas interactivas (cielo / estrella /
+  pulso) mueren en silencio, sin error visible (nos pasó el 21/07).
 
 ## 6 · Checklist por escena (antes de darla por hecha)
 
