@@ -7,17 +7,21 @@ import QuienSoy from "./components/quien-soy/QuienSoy";
 import CtaFooter from "./components/CtaFooter";
 import Intro from "./components/Intro";
 import Reveals from "./components/motion/Reveals";
+import StarLayerGate from "./components/star/StarLayerGate";
+import Umbral from "./components/star/Umbral";
+import UnifiedTunePanel from "./components/dev/UnifiedTunePanel";
 
 export default function Home() {
   return (
     <>
       <Intro />
       <Reveals />
-      <header className="sticky top-0 z-50 h-[72px] border-b border-noche/10 bg-hueso/85 backdrop-blur">
+      <StarLayerGate />
+      <header className="sticky top-0 z-50 h-[72px] border-b border-hueso/10 bg-noche/85 backdrop-blur">
         <nav className="mx-auto flex h-full max-w-6xl items-center justify-between px-6">
           <a
             href="#inicio"
-            className="flex items-center gap-3 font-semibold uppercase tracking-[0.22em] text-noche focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ambar"
+            className="flex items-center gap-3 font-semibold uppercase tracking-[0.22em] text-hueso focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ambar"
           >
             {/* Landing target for the intro's FLIP travel; the Intro toggles its opacity. */}
             <svg
@@ -30,7 +34,7 @@ export default function Home() {
             >
               <path
                 d="M6 37 H24 L31 30 L38 37 L48 15 L58 45 L66 37 H82 L97 16"
-                stroke="#1B2140"
+                stroke="#F6EFE1"
                 strokeWidth={5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -55,14 +59,21 @@ export default function Home() {
 
       <main>
         <Hero />
+        <Umbral />
         <Dolores />
+        <Umbral />
         <Mostrador />
+        <Umbral />
         <Tablero />
+        <Umbral />
         <Proceso />
+        <Umbral />
         <QuienSoy />
+        <Umbral />
         {/* F5 · Ejemplos (slot vivo, nace oculto) — hueco reservado */}
         <CtaFooter />
       </main>
+      <UnifiedTunePanel />
     </>
   );
 }

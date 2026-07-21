@@ -1,0 +1,15 @@
+/*
+ * Star-wave reveal (BL-17): sections start masked-out and get uncovered by
+ * the expanding pulse wave. StarLayer adds `.sw-pending` to each unrevealed
+ * section (only when the choreography is mounted — no JS, no hiding), sets
+ * the wave origin (--swx/--swy, section-local px) at ring birth, then drives
+ * --swr per frame; when the wave completes it removes the class. The soft
+ * 140px band trails the visual ring front so content "condenses" in.
+ */
+.sw-pending {
+  mask-image: radial-gradient(
+    circle at var(--swx, 50%) var(--swy, 0px),
+    #000 var(--swr, 0px),
+    transparent calc(var(--swr, 0px) + 140px)
+  );
+}

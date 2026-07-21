@@ -6,19 +6,19 @@ export default function Hero() {
     <section
       id="inicio"
       aria-labelledby="hero-title"
-      className="scroll-mt-[72px] bg-hueso"
+      className="scroll-mt-[72px]"
     >
       <div
         className="mx-auto max-w-6xl px-6 py-24 md:py-32 lg:py-40"
         data-rv="hero"
       >
-        <p className="text-xs font-medium tracking-[0.2em] text-bruma uppercase sm:text-sm">
+        <p className="text-xs font-medium tracking-[0.2em] text-hueso/60 uppercase sm:text-sm">
           Agencia web para negocios de barrio
         </p>
 
         <h1
           id="hero-title"
-          className="mt-6 max-w-3xl text-4xl leading-[1.15] font-semibold text-noche sm:text-5xl md:text-6xl"
+          className="mt-6 max-w-3xl text-4xl leading-[1.15] font-semibold text-hueso sm:text-5xl md:text-6xl"
         >
           <span className="block">Tu negocio ya tiene su ritmo.</span>
           <span className="block">
@@ -30,7 +30,7 @@ export default function Hero() {
           </span>
         </h1>
 
-        <p className="mt-6 max-w-xl text-lg font-normal text-bruma">
+        <p className="mt-6 max-w-xl text-lg font-normal text-hueso/70">
           Webs donde tus clientes piden fácil y vos ves todo ordenado.
         </p>
 
@@ -43,7 +43,7 @@ export default function Hero() {
           </a>
           <a
             href="#contacto"
-            className={`${ctaBase} border border-noche/20 text-noche hover:border-noche/40`}
+            className={`${ctaBase} border border-hueso/20 text-hueso hover:border-hueso/40`}
           >
             Contame tu caso
           </a>

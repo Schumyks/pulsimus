@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulsimus · Set-piece supernova</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noche:#1B2140; --noche-prof:#12162e; --hueso:#F6EFE1;
+    --ambar:#F2A63E; --bruma:#6A719E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--noche-prof)}
+  body{font-family:'Outfit',system-ui,sans-serif;color:var(--hueso)}
+  #stage{position:fixed;inset:0}
+  canvas{position:absolute;inset:0;width:100%;height:100%}
+
+  /* ---------- chrome debug (no forma parte del set-piece) ---------- */
+  .chrome{position:fixed;z-index:10;user-select:none;transition:opacity .35s ease}
+  .chrome.hidden{opacity:0;pointer-events:none}
+
+  .brand{top:26px;left:26px;line-height:1.35}
+  .brand .wm{font:600 14px/1 'Outfit',sans-serif;letter-spacing:.22em;color:var(--hueso)}
+  .brand .sub{font:500 10px/1 'Outfit',sans-serif;letter-spacing:.14em;color:var(--bruma);margin-top:5px}
+
+  .transport{
+    left:50%;bottom:26px;transform:translateX(-50%);
+    width:min(680px,calc(100vw - 48px));
+    background:rgba(18,22,46,.62);border:1px solid rgba(106,113,158,.24);
+    border-radius:16px;padding:14px 18px 16px;backdrop-filter:blur(10px);
+    box-shadow:0 12px 40px rgba(0,0,0,.35);
+  }
+  .tline{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .phase{display:flex;align-items:center;gap:9px;font:600 13px/1 'Outfit',sans-serif}
+  .phase .dot{width:7px;height:7px;border-radius:50%;background:var(--ambar);box-shadow:0 0 10px var(--ambar)}
+  .pval{font:500 12px/1 'Outfit',sans-serif;letter-spacing:.04em;color:var(--bruma);font-variant-numeric:tabular-nums}
+  .row{display:flex;align-items:center;gap:14px}
+
+  .play{
+    flex:0 0 auto;width:38px;height:38px;border-radius:50%;
+    background:var(--ambar);border:none;cursor:pointer;display:grid;place-items:center;
+    color:var(--noche-prof);transition:transform .12s ease,box-shadow .2s ease;
+    box-shadow:0 4px 16px rgba(242,166,62,.32);
+  }
+  .play:hover{transform:scale(1.06);box-shadow:0 6px 22px rgba(242,166,62,.45)}
+  .play:active{transform:scale(.96)}
+  .play svg{width:16px;height:16px;display:block}
+
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;flex:1;height:6px;border-radius:99px;
+    background:linear-gradient(90deg,var(--ambar) var(--fill,0%),rgba(106,113,158,.3) var(--fill,0%));
+    outline:none;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+    background:var(--hueso);border:3px solid var(--ambar);cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.4);
+  }
+  input[type=range]::-webkit-slider-thumb:active{cursor:grabbing}
+  input[type=range]::-moz-range-thumb{
+    width:15px;height:15px;border-radius:50%;background:var(--hueso);
+    border:3px solid var(--ambar);cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.4);
+  }
+  input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:transparent}
+
+  .hint{
+    position:fixed;left:50%;bottom:98px;transform:translateX(-50%);z-index:10;
+    font:500 11px/1 'Outfit',sans-serif;letter-spacing:.06em;color:var(--bruma);
+    opacity:.7;pointer-events:none;text-align:center;
+  }
+  .hint .kbd{opacity:.6}
+  .eye{
+    position:fixed;z-index:11;right:26px;bottom:30px;width:34px;height:34px;border-radius:9px;cursor:pointer;
+    background:rgba(27,33,64,.55);border:1px solid rgba(106,113,158,.28);display:grid;place-items:center;
+    color:var(--bruma);backdrop-filter:blur(8px);transition:color .2s ease,border-color .2s ease;
+  }
+  .eye:hover{color:var(--hueso);border-color:rgba(106,113,158,.55)}
+  .eye svg{width:17px;height:17px}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+
+<div class="chrome brand">
+  <div class="wm">PULSIMUS</div>
+  <div class="sub">SET-PIECE · ACRECIÓN → SUPERNOVA</div>
+</div>
+
+<div class="chrome transport" id="transport">
+  <div class="tline">
+    <div class="phase"><span class="dot" id="pdot"></span><span id="phaseName">Vacío</span></div>
+    <div class="pval">progreso <span id="pnum">0.00</span></div>
+  </div>
+  <div class="row">
+    <button class="play" id="play" aria-label="Reproducir">
+      <svg id="playicon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <input type="range" id="scrub" min="0" max="1000" value="0" step="1">
+  </div>
+</div>
+
+<div class="hint chrome" id="hint">Scrolleá sobre la escena · arrastrá el slider · <span class="kbd">espacio</span> reproduce · <span class="kbd">H</span> oculta la UI</div>
+
+<button class="eye chrome" id="eye" aria-label="Ocultar interfaz" title="Ocultar interfaz (H)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+</button>
+
+<script>
+/* ==========================================================================
+   PULSIMUS · SET-PIECE SUPERNOVA — «Acreción → supernova»
+
+   La pantalla arranca VACÍA (solo cielo estrellado). Las partículas ENTRAN
+   desde fuera de cuadro, chupadas hacia el centro como un agujero negro,
+   acelerando al acercarse. Al llegar ORBITAN, se ACUMULAN, se densifican
+   hasta formar una estrella compacta e intensa que EXPLOTA en supernova,
+   dejando nebulosa + campo estelar (el sitio nace).
+
+   Un solo archivo, canvas 2D + JS vanilla. Sin dependencias.
+
+   ARQUITECTURA: todo el estado visual es FUNCIÓN PURA del progreso `p` (0→1).
+   Cada partícula sabe dónde está para cualquier `p` (incluso "aún no nació" o
+   "ya explotó"). Por eso slider, scroll y autoplay scrubean idéntico, sin jank.
+   Las estelas son motion-blur real: se re-muestrea la partícula en p-δ.
+
+   Para la landing real: reemplazá el slider por el progreso de scroll de la
+   sección (0 = entra en viewport, 1 = clímax), llamá setP(ese_valor) y ocultá
+   el chrome. Reajustá TODA la coreografía tocando SOLO el objeto TUNING.
+   ========================================================================== */
+
+const TUNING = {
+  /* ---- paleta ESTRICTA Faro Ámbar (rgb) ---- */
+  color: {
+    noche:     [27, 33, 64],    // #1B2140  fondo base
+    nocheProf: [18, 22, 46],    // #12162e  fondo profundo / vignette
+    hueso:     [246, 239, 225], // #F6EFE1  luz caliente / blanco de marca
+    ambar:     [242, 166, 62],  // #F2A63E  ACENTO — la única luz protagonista
+    bruma:     [106, 113, 158], // #6A719E  SOPORTE — estrellas de fondo
+  },
+
+  /* ---- fases: umbrales del progreso p (0..1) ---- */
+  phase: {
+    emptyEnd:  0.08,  // pantalla vacía (cielo nocturno)
+    coreIn:    0.20,  // el núcleo empieza a encenderse con la acumulación
+    inflowEnd: 0.55,  // la mayoría del polvo ya llegó y orbita
+    climax:    0.66,  // UMBRAL → dispara la supernova
+    flashPeak: 0.69,  // pico del flash
+    explodeEnd:0.88,  // la onda ya llenó la pantalla
+    settleEnd: 1.00,  // nebulosa + campo estelar (el sitio nace)
+  },
+
+  /* ---- geometría (fracciones; discR/orbit sobre el lado menor, start sobre la diagonal) ---- */
+  geom: {
+    discR:       0.42,  // escala de la zona de órbita cerca del centro
+    tilt:        0.62,  // achatado del disco (1 = de frente, 0 = de canto)
+    coreCenterY: 0.50,  // 0.5 = centro vertical exacto
+    debrisReach: 0.62,  // alcance de la eyección (× diagonal → sale de cuadro)
+  },
+
+  /* ---- núcleo (la estrella que se forma al acumularse) ---- */
+  core: {
+    r:        0.13,  // radio del cuerpo con acumulación máxima
+    coronaMul:3.1,   // extensión de la corona respecto al cuerpo
+    spin:     6.5,   // velocidad angular al orbitar
+    kepler:   4.0,   // cuánto acelera el giro al densificarse (rotación diferencial)
+    infall:   2.4,   // curva de succión: >1 = arranca lento lejos y se precipita al centro
+    inhale:   0.12,  // contracción de anticipación justo antes del estallido
+  },
+
+  /* ---- polvo / debris (pool reutilizado; pico de vivas ≤ ~400) ---- */
+  dust: {
+    count: 340, sizeBase: 0.012, sharpFrac: 0.42, persistFrac: 0.42,
+    startFar: [0.85, 1.13],   // radio de nacimiento (× diagonal) → fuera de cuadro
+    orbitNear:[0.03, 0.23],   // radio de órbita donde se acumulan (× discR)
+    enterUpto: 0.34,          // ventana de aparición escalonada (stream)
+    travel:   [0.18, 0.28],   // duración del viaje de entrada (en p)
+    swirl:    [2.0, 5.2],     // cuánto se enrosca al caer (radianes)
+    trail: 2, trailDp: 0.006, trailFade: 0.5,
+  },
+  spark: { count: 60,  size: 0.006 },
+  bgStar:{ count: 150, size: 0.0032, drift: 0.05 },
+
+  /* ---- explosión ---- */
+  boom: {
+    rings: 3, ringStagger: 0.022, ringLife: 0.30, ringSpeed: 1.15,
+    flashMax: 0.95, debrisSpread: 0.34, coolStart: 0.10,
+  },
+
+  /* ---- payoff: el wordmark emerge del flash ---- */
+  wordmark: { show: true },
+
+  autoplaySecs: 8,
+};
+
+/* ========================================================================== */
+const TP = TUNING.phase, TC = TUNING.color, TG = TUNING.geom, TCore = TUNING.core, TD = TUNING.dust;
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d', { alpha:false });
+
+let W=0, H=0, DPR=1, cx=0, cy=0, baseR=0, maxDim=0, maxReach=0;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  cx = W/2; cy = H*TG.coreCenterY; baseR = Math.min(W,H);
+  maxDim = Math.hypot(W,H);
+  maxReach = maxDim * TG.debrisReach;
+  buildGlows();
+}
+window.addEventListener('resize', resize);
+
+/* ---------- helpers ---------- */
+const clamp01 = x => x<0?0:x>1?1:x;
+const lerp = (a,b,t) => a+(b-a)*t;
+function smooth(a,b,x){ const t=clamp01((x-a)/(b-a)); return t*t*(3-2*t); }
+const easeOut = t => 1-Math.pow(1-t,3);
+const rgba = (c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+function mulberry32(s){ return function(){ s|=0;s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const now = ()=>performance.now();
+
+/* ---------- glow sprites cacheados ---------- */
+const glows = {};
+function makeGlow(c){                     // partícula BLANDA (halo difuso)
+  const s=64, oc=document.createElement('canvas'); oc.width=oc.height=s;
+  const g=oc.getContext('2d'); const grd=g.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+  grd.addColorStop(0, rgba(c,1)); grd.addColorStop(0.25, rgba(c,0.85));
+  grd.addColorStop(0.55, rgba(c,0.28)); grd.addColorStop(1, rgba(c,0));
+  g.fillStyle=grd; g.fillRect(0,0,s,s); return oc;
+}
+function makeSharp(c){                    // partícula NÍTIDA (núcleo sólido + halo corto)
+  const s=64, oc=document.createElement('canvas'); oc.width=oc.height=s;
+  const g=oc.getContext('2d'); const grd=g.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+  grd.addColorStop(0, rgba(c,1)); grd.addColorStop(0.34, rgba(c,1));
+  grd.addColorStop(0.5, rgba(c,0.55)); grd.addColorStop(0.72, rgba(c,0.12)); grd.addColorStop(1, rgba(c,0));
+  g.fillStyle=grd; g.fillRect(0,0,s,s); return oc;
+}
+function buildGlows(){
+  glows.ambar = makeGlow(TC.ambar);  glows.ambarS = makeSharp(TC.ambar);
+  glows.hueso = makeGlow(TC.hueso);  glows.huesoS = makeSharp(TC.hueso);
+  glows.bruma = makeGlow(TC.bruma);  glows.brumaS = makeSharp(TC.bruma);
+}
+const pick = (tone, sharp) => glows[tone + (sharp?'S':'')];
+
+/* ---------- estado ---------- */
+const state = { p:0, playing:false, hidden:false, playT0:0, playFrom:0 };
+
+/* ---------- partículas (params estáticos; posición = f(p)) ---------- */
+let dust=[], sparks=[], bgStars=[];
+function build(){
+  const rng = mulberry32(20260718);
+  const N = TD.count;
+  dust = new Array(N);
+  for(let i=0;i<N;i++){
+    dust[i] = {
+      a0:        rng()*Math.PI*2,                                    // ángulo de origen (de dónde entra)
+      startFrac: lerp(TD.startFar[0], TD.startFar[1], rng()),        // radio de nacimiento (fuera de cuadro)
+      orbitFrac: lerp(TD.orbitNear[0], TD.orbitNear[1], Math.pow(rng(),1.6)), // radio de órbita (sesgo denso)
+      enterP:    0.02 + Math.pow(rng(),1.15)*TD.enterUpto,           // aparición escalonada
+      travel:    lerp(TD.travel[0], TD.travel[1], rng()),            // duración del viaje
+      swirl:     lerp(TD.swirl[0], TD.swirl[1], rng()),              // enroscado al caer
+      tone:      rng()<0.5 ? 'ambar':'hueso',
+      sharp:     rng() < TD.sharpFrac,                               // ¿nítida o difusa?
+      dir:       rng()*Math.PI*2,                                    // dirección de eyección
+      spd:       0.25 + Math.pow(rng(),0.7)*0.95,                    // velocidad de eyección
+      persist:   rng() < TD.persistFrac,                            // ¿queda como estrella?
+      tw:        0.4 + rng()*1.6,                                    // fase de titileo
+    };
+  }
+  sparks = new Array(TUNING.spark.count);
+  for(let i=0;i<sparks.length;i++) sparks[i]={ dir: rng()*Math.PI*2, r: 0.88+rng()*0.2 };
+  bgStars = new Array(TUNING.bgStar.count);
+  for(let i=0;i<bgStars.length;i++) bgStars[i]={
+    x: rng(), y: rng(), depth: rng(),
+    tone: rng()<0.72 ? 'bruma':'hueso',
+    sz: 0.5+rng()*1.4, tw: 0.3+rng()*1.8, base: 0.25+rng()*0.55,
+  };
+}
+
+/* ========================================================================== */
+/*  posición de UNA partícula en función de p (o null si no está en escena)     */
+/* ========================================================================== */
+function sampleDust(d,p){
+  const discR = baseR*TG.discR;
+  const orbitR = d.orbitFrac*discR;
+
+  if(p >= TP.climax){
+    // ---------- EYECCIÓN: debris desde el centro ----------
+    const te=p-TP.climax, win=TP.explodeEnd-TP.climax;
+    const spread=easeOut(clamp01(te/win)) + Math.max(0,(te-win))*0.15;
+    const dist=d.spd*spread*maxReach*(0.5+TUNING.boom.debrisSpread);
+    let tone;
+    if(te < TUNING.boom.coolStart*0.4) tone='hueso';
+    else if(te < TUNING.boom.coolStart*1.6) tone='ambar';
+    else tone = d.persist ? 'bruma' : 'ambar';
+    let a;
+    if(d.persist){ const tw=0.5+0.5*Math.sin(now()*0.001*d.tw + d.a0*10); a=lerp(1,0.55*tw,clamp01(te/win)); }
+    else a=clamp01(1 - te/(win*0.9));
+    if(a<=0.02) return null;
+    return { x:cx+Math.cos(d.dir)*dist, y:cy+Math.sin(d.dir)*dist, depth:1, a,
+             sz: baseR*TD.sizeBase*(1.3-Math.min(0.8,te*1.2))*(d.sharp?0.66:1),
+             spr: pick(tone,d.sharp), phase:'debris' };
+  }
+
+  if(p < d.enterP) return null;                     // aún no nace: fuera de escena
+  const arrival = d.enterP + d.travel;
+  let radius, ang, a, sz, hot;
+
+  if(p < arrival){
+    // ---------- ENTRADA: chupada hacia el centro (acelera) ----------
+    const t  = (p - d.enterP)/d.travel;             // 0..1
+    const ef = Math.pow(t, TCore.infall);            // succión: lento lejos, rush cerca
+    radius = lerp(d.startFrac*maxDim, orbitR, ef);
+    ang = d.a0 + d.swirl*t;                           // se enrosca al caer
+    a  = smooth(0,0.10,t) * (0.45+0.55*t);           // fade-in al nacer, brilla al acercarse
+    sz = baseR*TD.sizeBase*(0.65+0.55*t)*(d.sharp?0.62:1);
+    hot = t>0.72;
+  } else {
+    // ---------- ÓRBITA + ACUMULACIÓN: se densifica hacia el centro ----------
+    const accum = smooth(arrival, TP.climax, p);      // 0..1
+    radius = orbitR*(1 - 0.94*accum);
+    const tf = 1 - radius/orbitR;                     // más denso = gira más rápido
+    ang = d.a0 + d.swirl + (p-arrival)*TCore.spin*(1 + TCore.kepler*tf);
+    a  = 0.85 + 0.15*accum;
+    sz = baseR*TD.sizeBase*(0.9+0.35*accum)*(d.sharp?0.62:1);
+    hot = true;
+  }
+
+  const x = cx + Math.cos(ang)*radius;
+  const y = cy + Math.sin(ang)*radius*TG.tilt;
+  const depth = Math.sin(ang);                        // >0 = delante del sol
+  return { x, y, depth, a: Math.min(1, a*(0.75+0.25*depth)),
+           sz: sz*(0.85+0.35*depth), spr: pick(hot?'hueso':d.tone, d.sharp), phase:'flow' };
+}
+
+/* ---------- pintado con estela (motion-blur real por re-muestreo) ---------- */
+function paintEchoes(d,p){
+  for(let k=TD.trail;k>=1;k--){
+    const e=sampleDust(d, p - k*TD.trailDp);
+    if(!e || e.phase==='debris') continue;
+    const es=e.sz*(1-0.12*k);
+    ctx.globalAlpha=e.a*Math.pow(TD.trailFade,k);
+    ctx.drawImage(e.spr, e.x-es*3, e.y-es*3, es*6, es*6);
+  }
+}
+function paintDot(o){ ctx.globalAlpha=o.a; ctx.drawImage(o.spr, o.x-o.sz*3, o.y-o.sz*3, o.sz*6, o.sz*6); }
+
+/* ========================================================================== */
+/*  DIBUJO                                                                      */
+/* ========================================================================== */
+function drawBackground(dens){
+  const g = ctx.createRadialGradient(cx,cy,0, cx,cy, baseR*0.85);
+  g.addColorStop(0, rgba(TC.nocheProf,1));
+  g.addColorStop(0.6, rgba(TC.noche,1));
+  g.addColorStop(1, rgba(TC.nocheProf,1));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  const t = now()*0.001;
+  ctx.globalCompositeOperation='lighter';
+  for(const s of bgStars){
+    const pull = TUNING.bgStar.drift * dens * (1-s.depth);   // leve arrastre hacia el núcleo
+    const sx = lerp(s.x*W, cx, pull), sy = lerp(s.y*H, cy, pull);
+    const tw = s.base * (0.55 + 0.45*Math.sin(t*s.tw + s.x*20));
+    const sz = baseR * TUNING.bgStar.size * s.sz;
+    ctx.globalAlpha = tw;
+    ctx.drawImage(s.tone==='hueso'?glows.hueso:glows.bruma, sx-sz*3, sy-sz*3, sz*6, sz*6);
+  }
+  ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+}
+
+/* ---- el sol: crece con la acumulación (corona + cuerpo + centro caliente) ---- */
+function coreRadius(dens,p){
+  let r = baseR*(0.006 + TCore.r*easeOut(dens));
+  const over = smooth(TP.inflowEnd, TP.climax, p);
+  r *= (1 + 0.16*over);                                     // se hincha al saturar
+  r *= (1 - TCore.inhale*smooth(TP.climax-0.045, TP.climax, p)); // inhalación de anticipación
+  return r;
+}
+function drawCore(dens,p,alpha){
+  const over = smooth(TP.inflowEnd, TP.climax, p);
+  const r = coreRadius(dens,p), R = r*TCore.coronaMul;
+
+  const gc = ctx.createRadialGradient(cx,cy,0, cx,cy,R*(1+0.04*Math.sin(now()*0.0016)));
+  gc.addColorStop(0, rgba(TC.ambar, 0.5*alpha));
+  gc.addColorStop(0.5, rgba(TC.ambar, 0.16*alpha));
+  gc.addColorStop(1, rgba(TC.ambar, 0));
+  ctx.fillStyle=gc; ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+
+  const gb = ctx.createRadialGradient(cx,cy,0, cx,cy,r*1.35);
+  gb.addColorStop(0, rgba(TC.hueso, (0.55+0.45*over)*alpha));
+  gb.addColorStop(0.35, rgba(TC.ambar, 0.98*alpha));
+  gb.addColorStop(0.8, rgba(TC.ambar, 0.5*alpha));
+  gb.addColorStop(1, rgba(TC.ambar, 0));
+  ctx.fillStyle=gb; ctx.beginPath(); ctx.arc(cx,cy,r*1.35,0,7); ctx.fill();
+  ctx.globalAlpha=1;
+}
+
+/* ---- onda expansiva ---- */
+function drawShockwave(p){
+  if(p<TP.climax) return;
+  const B=TUNING.boom;
+  ctx.globalCompositeOperation='lighter'; ctx.lineCap='round';
+  for(let k=0;k<B.rings;k++){
+    const te=p-(TP.climax+k*B.ringStagger); if(te<0) continue;
+    const life=clamp01(te/B.ringLife);
+    const rad=easeOut(life)*B.ringSpeed*maxReach;
+    const a=(1-life)*(1-life); if(a<=0.01) continue;
+    ctx.globalAlpha=a*0.55; ctx.lineWidth=lerp(baseR*0.03,1.5,life);
+    ctx.strokeStyle=rgba(TC.ambar,1); ctx.beginPath(); ctx.arc(cx,cy,rad,0,7); ctx.stroke();
+    ctx.globalAlpha=a*0.9; ctx.lineWidth=lerp(baseR*0.008,0.8,life);
+    ctx.strokeStyle=rgba(TC.hueso,1); ctx.beginPath(); ctx.arc(cx,cy,rad,0,7); ctx.stroke();
+  }
+  ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+}
+
+/* ---- flash del clímax ---- */
+function drawFlash(p){
+  const fa = smooth(TP.climax,TP.flashPeak,p) * (1-smooth(TP.flashPeak,TP.explodeEnd,p)) * TUNING.boom.flashMax;
+  if(fa<=0.01) return;
+  ctx.globalCompositeOperation='lighter';
+  const R=maxDim*0.65, g=ctx.createRadialGradient(cx,cy,0, cx,cy,R);
+  g.addColorStop(0, rgba(TC.hueso, fa));
+  g.addColorStop(0.28, rgba(TC.ambar, fa*0.85));
+  g.addColorStop(0.7, rgba(TC.ambar, fa*0.18));
+  g.addColorStop(1, rgba(TC.ambar,0));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='source-over';
+}
+
+/* ---- chispas en el frente de la onda ---- */
+function drawSparks(p){
+  if(p<TP.climax) return;
+  const te=p-TP.climax, win=TP.explodeEnd-TP.climax;
+  const k=clamp01(te/(win*0.85)), a=(1-k)*0.9; if(a<=0.02) return;
+  const rad=easeOut(k)*maxReach, sz=baseR*TUNING.spark.size;
+  ctx.globalCompositeOperation='lighter';
+  for(const s of sparks){
+    const rr=rad*s.r;
+    ctx.globalAlpha=a; ctx.drawImage(glows.hueso, cx+Math.cos(s.dir)*rr-sz*3, cy+Math.sin(s.dir)*rr-sz*3, sz*6, sz*6);
+  }
+  ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+}
+
+/* ---- nebulosa que queda: el fondo del sitio ---- */
+const NEB=[ {dx:-0.12,dy:-0.06,r:0.5,c:'ambar',a:0.10},
+            {dx: 0.14,dy: 0.05,r:0.62,c:'ambar',a:0.07},
+            {dx: 0.02,dy: 0.10,r:0.70,c:'bruma',a:0.10},
+            {dx:-0.10,dy: 0.08,r:0.45,c:'bruma',a:0.08} ];
+function drawNebula(p){
+  const neb=smooth(TP.explodeEnd-0.02, 1.0, p); if(neb<=0.01) return;
+  const t=now()*0.0003;
+  ctx.globalCompositeOperation='lighter';
+  NEB.forEach((n,i)=>{
+    const R=baseR*n.r*(0.85+0.15*Math.sin(t*6+i));
+    const nx=cx+(n.dx+0.01*Math.sin(t*4+i))*baseR, ny=cy+(n.dy+0.01*Math.cos(t*3+i))*baseR;
+    const col=n.c==='ambar'?TC.ambar:TC.bruma;
+    const g=ctx.createRadialGradient(nx,ny,0,nx,ny,R);
+    g.addColorStop(0, rgba(col, n.a*neb)); g.addColorStop(1, rgba(col,0));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(nx,ny,R,0,7); ctx.fill();
+  });
+  ctx.globalCompositeOperation='source-over';
+}
+
+/* ---- wordmark: la marca emerge del flash ---- */
+let fontReady=false;
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>fontReady=true);
+function drawWordmark(p){
+  if(!TUNING.wordmark.show) return;
+  const wm=smooth(TP.flashPeak+0.03, 0.99, p); if(wm<=0.01) return;
+  const a=easeOut(wm), rise=(1-a)*baseR*0.03, fam=fontReady?"'Outfit'":'system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  const fs=Math.min(W*0.075,64);
+  ctx.font=`600 ${fs}px ${fam}`; ctx.letterSpacing=(fs*0.22)+'px';
+  ctx.fillStyle=rgba(TC.hueso,a); ctx.fillText('PULSIMUS', cx, cy - fs*0.15 + rise);
+  const cs2=Math.min(W*0.015,13);
+  ctx.font=`500 ${cs2}px ${fam}`; ctx.letterSpacing=(cs2*0.5)+'px';
+  ctx.fillStyle=rgba(TC.ambar, a*0.9);
+  ctx.fillText('E L   P U L S O   D E   T U   N E G O C I O', cx, cy + fs*0.55 + rise);
+  ctx.letterSpacing='0px';
+}
+
+/* ========================================================================== */
+function draw(p){
+  const dens = easeOut(smooth(TP.emptyEnd, TP.climax, p));              // acumulación 0..1
+  const coreAlpha = smooth(TP.coreIn, TP.coreIn+0.24, p) * (1 - smooth(TP.climax, TP.flashPeak, p));
+  drawBackground(dens);
+
+  ctx.globalCompositeOperation='lighter';
+  if(p < TP.climax){
+    // disco con profundidad: polvo DETRÁS del sol → sol → polvo DELANTE
+    const back=[], front=[];
+    for(const d of dust){ const o=sampleDust(d,p); if(!o) continue; (o.depth<0?back:front).push([d,o]); }
+    for(const [d,o] of back){ paintEchoes(d,p); paintDot(o); }
+    if(coreAlpha>0.01) drawCore(dens,p,coreAlpha);
+    for(const [d,o] of front){ paintEchoes(d,p); paintDot(o); }
+  } else {
+    if(coreAlpha>0.01) drawCore(dens,p,coreAlpha);
+    for(const d of dust){ const o=sampleDust(d,p); if(o) paintDot(o); }   // debris
+  }
+  ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+
+  drawSparks(p);
+  drawShockwave(p);
+  drawFlash(p);
+  drawNebula(p);
+  drawWordmark(p);
+}
+
+/* ---------- loop / autoplay ---------- */
+function tick(){
+  if(state.playing){
+    let np = state.playFrom + (now()-state.playT0)/1000/TUNING.autoplaySecs;
+    if(np>=1){ np=1; state.playing=false; setPlayIcon(false); }
+    setP(np);
+  }
+  draw(state.p);
+  requestAnimationFrame(tick);
+}
+
+/* ---------- UI ---------- */
+const scrub=document.getElementById('scrub');
+const pnum=document.getElementById('pnum');
+const phaseName=document.getElementById('phaseName');
+const pdot=document.getElementById('pdot');
+function phaseInfo(p){
+  if(p<TP.emptyEnd)   return ['Vacío — cielo nocturno', TC.bruma];
+  if(p<TP.inflowEnd)  return ['Atracción — el polvo cae al centro', TC.ambar];
+  if(p<TP.climax)     return ['Acumulación — se densifica', TC.hueso];
+  if(p<TP.flashPeak)  return ['Clímax — ¡supernova!', TC.hueso];
+  if(p<TP.explodeEnd) return ['Onda expansiva', TC.ambar];
+  return ['Nebulosa — nace el sitio', TC.bruma];
+}
+function setP(p){
+  state.p=clamp01(p);
+  const v=Math.round(state.p*1000);
+  if(+scrub.value!==v) scrub.value=v;
+  scrub.style.setProperty('--fill',(state.p*100)+'%');
+  pnum.textContent=state.p.toFixed(2);
+  const [nm,col]=phaseInfo(state.p);
+  phaseName.textContent=nm;
+  pdot.style.background=rgba(col,1);
+  pdot.style.boxShadow=`0 0 10px ${rgba(col,0.9)}`;
+}
+scrub.addEventListener('input',()=>{ stopPlay(); setP(scrub.value/1000); });
+
+const playBtn=document.getElementById('play'), playIcon=document.getElementById('playicon');
+function setPlayIcon(pl){ playIcon.innerHTML = pl ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>'; }
+function startPlay(){ if(state.p>=1) setP(0); state.playing=true; state.playT0=now(); state.playFrom=state.p; setPlayIcon(true); }
+function stopPlay(){ if(state.playing){ state.playing=false; setPlayIcon(false); } }
+playBtn.addEventListener('click',()=> state.playing?stopPlay():startPlay());
+
+addEventListener('wheel', e=>{ stopPlay(); setP(state.p + e.deltaY*0.0006); }, {passive:true});
+
+const eye=document.getElementById('eye');
+function toggleUI(){ state.hidden=!state.hidden; document.querySelectorAll('.chrome').forEach(el=>el.classList.toggle('hidden',state.hidden)); }
+eye.addEventListener('click',toggleUI);
+
+addEventListener('keydown',e=>{
+  if(e.key===' '){ e.preventDefault(); state.playing?stopPlay():startPlay(); }
+  else if(e.key==='h'||e.key==='H') toggleUI();
+  else if(e.key==='ArrowRight'){ stopPlay(); setP(state.p+0.01); }
+  else if(e.key==='ArrowLeft'){ stopPlay(); setP(state.p-0.01); }
+});
+
+/* ---------- init ---------- */
+resize(); build(); setP(0);
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

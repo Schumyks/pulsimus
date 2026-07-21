@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${outfit.variable} font-sans bg-hueso text-noche`}>
+      <body className={`${outfit.variable} font-sans bg-noche text-hueso`}>
         <script dangerouslySetInnerHTML={{ __html: introGuard }} />
         {children}
       </body>

@@ -59,22 +59,22 @@ function PulseDivider() {
 
 export default function Dolores() {
   return (
-    <section id="dolores" aria-labelledby="dolores-title" className="bg-hueso">
+    <section id="dolores" aria-labelledby="dolores-title">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <h2
           id="dolores-title"
           data-rv=""
-          className="max-w-3xl text-3xl font-semibold text-noche md:text-4xl"
+          className="max-w-3xl text-3xl font-semibold text-hueso md:text-4xl"
         >
           Instagram es tu vidriera, no tu mostrador.
         </h2>
 
         <div className="mt-14 max-w-4xl" data-rv="" data-rv-d="100">
-          <p className="text-2xl leading-snug font-medium text-noche/85 md:text-3xl">
+          <p className="text-2xl leading-snug font-medium text-hueso/85 md:text-3xl">
             “Sin las redes hoy no existo. Todo pasa por ahí. Y gestionarlo
             entero es difícil y lleva mucho tiempo.”
           </p>
-          <p className="mt-6 flex items-start gap-3 text-lg font-semibold text-noche md:text-xl">
+          <p className="mt-6 flex items-start gap-3 text-lg font-semibold text-hueso md:text-xl">
             <span
               className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-ambar"
               aria-hidden="true"
@@ -89,7 +89,7 @@ export default function Dolores() {
               key={item.sello}
               data-rv=""
               data-rv-d={index * 120}
-              className="px-card-lit flex flex-col rounded-2xl bg-noche/[0.03] p-8 md:p-10"
+              className="px-card-lit flex flex-col rounded-2xl bg-hueso p-8 md:p-10"
             >
               <div className="flex-1">
                 <p className="text-xs font-medium tracking-[0.2em] text-bruma">

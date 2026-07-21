@@ -14,10 +14,11 @@ import SalesPanel from "./tablero/SalesPanel";
 import HoursPanel from "./tablero/HoursPanel";
 import PaymentsPanel from "./tablero/PaymentsPanel";
 import PickupsPanel from "./tablero/PickupsPanel";
-import TableroTunePanel from "./tablero/TableroTunePanel";
+import { useTunePane } from "./dev/tuneRegistry";
 import { TableroChoreoContext } from "./tablero/primitives";
 import {
   DEFAULT_TABLERO_PARAMS,
+  TABLERO_PARAM_META,
   type TableroParams,
 } from "./tablero/tableroParams";
 import { useReducedMotion } from "./motion/useReducedMotion";
@@ -95,15 +96,15 @@ export default function Tablero() {
   const [flash, setFlash] = useState(0);
   const [active, setActive] = useState(false);
   const [params, setParams] = useState<TableroParams>(DEFAULT_TABLERO_PARAMS);
-  const [tuneOpen, setTuneOpen] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    // Client-only gate: the ?tune panel depends on window.location, absent
-    // during SSR. Reading it in an effect avoids a hydration mismatch.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only URL gate, resolves after hydration
-    if (new URLSearchParams(window.location.search).has("tune")) setTuneOpen(true);
-  }, []);
+  useTunePane({
+    key: "tablero",
+    label: "Tablero",
+    order: 2,
+    meta: TABLERO_PARAM_META,
+    params,
+    onChange: setParams,
+  });
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -131,7 +132,7 @@ export default function Tablero() {
       id="tablero"
       ref={sectionRef}
       aria-labelledby="tablero-title"
-      className="bg-noche text-hueso"
+      className="text-hueso"
       style={VIZ_VARS}
     >
       <div className="mx-auto max-w-6xl px-6 py-10 md:py-12">
@@ -191,8 +192,6 @@ export default function Tablero() {
           </div>
         </TableroChoreoContext.Provider>
       </div>
-
-      {tuneOpen && <TableroTunePanel params={params} onChange={setParams} />}
     </section>
   );
 }

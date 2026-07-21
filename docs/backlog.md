@@ -172,6 +172,17 @@ _Sin parqueos._
 - **Regla de costo/calidad (del director, aceptación pendiente):** cada skin es un PASE DE DISEÑO COMPLETO sobre todas las secciones (incl. mostrador La Espiga y tablero, que tienen paletas propias) — un skin "solo recolor" se ve barato y desmiente el mensaje. Mejor 1-2 skins excelentes que 4 mediocres.
 - **A refinar antes de construir:** cuántos skins v1 y sus direcciones estéticas · técnica (tokens Tailwind v4 `@theme` → swap de variables CSS; assets por skin) · default Faro Ámbar + sin persistencia (se resetea al recargar) · performance/FOUC · reduced-motion en la transición.
 - **Nota de secuencia:** paso TARDÍO de BL-13 — necesita el panel Diseño existente y los skins diseñados.
+- **Efecto de transición del reskin (Alan, 18/07):** al tocar "Cambiar skin", un **BARRIDO** recorre la página (izq→der o arriba→abajo) y los componentes cambian de estilo **uno por uno** a medida que pasa el barrido, en tiempo real. Factible **nativo** con View Transitions API + máscara animada (probablemente sin el truco del video-overlay); si el cambio nativo fuera instantáneo, una capa de video/opacidad sincronizada al barrido lo simula. Candidato a ser el **cierre animado narrativo** de la V1.
+- **Parte de la V1 completa** (Alan, 18/07): junto con la estrella [[BL-17]], completar quien-soy [[BL-13]] y el cierre animado narrativo.
+
+### BL-17 · Estrella narrativa a nivel sitio — hilo conductor de toda la landing · prioridad **ALTA** (dirección V1 de Alan, 2026-07-18)
+- **Origen:** Alan (18/07). Narrativa: la estrella de Pulsimus existe quieta en el vacío → un evento la acciona → viaja por el sitio al scrollear → sus **pulsos dan vida y CONSTRUYEN las secciones** → cierra con el logo. *El scroll ES el viaje; el viaje ES el sitio construyéndose.*
+- **Alcance V1 (DECIDIDO):** se construye en **2D + pseudo-3D** — Canvas 2D + GSAP ScrollTrigger + Lenis; parallax por capas / profundidad fingida, **sin shaders**. Capa aditiva **ENCIMA** de las secciones reales (no rebuild). Tiene que ser "wow" para vender igual.
+- **Ferrari (PRÓXIMA ÉPICA, diferido):** versión WebGL/Three.js (partículas volumétricas, brillo 3D). La coreografía GSAP del boceto 2D se **REUSA** al subir a WebGL. Diferido por costo (~800k–1.5M+) y foco (facturar antes que pulir la vidriera; la landing aún no se muestra).
+- **Fundamento técnico (research 18/07, Engram obs 327 + summary):** video horneado (Higgsfield) descartado — no interactúa con el DOM. Referencias: [journey.zajno.com](https://journey.zajno.com/) (narrativa/transiciones, **favorito de Alan**), [igloo.inc](https://www.igloo.inc/) (cámara viaja por lugares), [loopspeed.co.uk](https://www.loopspeed.co.uk/) (partículas construyen formas → para **demos/experiencias puntuales**, no motor principal). Las 3 son WebGL.
+- **Relación:** materializa [[BL-01]] (scroll con pulso, página viva). Es el paraguas de la **V1 COMPLETA** = esta estrella + completar quien-soy [[BL-13]] + los 3 skins [[BL-16]] + el cierre animado narrativo.
+- **Estimación piloto 2D:** ~450–800k tokens / ~65–115 min (Heavy, área nueva GSAP/Lenis/Canvas en Next 16). Arrancar por **spike Fase 1** (fundación GSAP+Lenis+canvas SSR-safe) para de-riskear antes de comprometer el resto.
+- **Modelo:** se trabaja con **Fable** (visual/creativo/narrativo).
 
 ### BL-15 · Presencia LinkedIn de Pulsimus · prioridad baja (tarea externa, no de código)
 - **Origen:** Alan (16/07, veredictos toki de BL-13): *"Después creamos LinkedIn para Pulsimus y para que se vea reflejado en mi cuenta de LinkedIn."*

@@ -15,7 +15,7 @@ export default function CtaFooter() {
       <section
         id="contacto"
         aria-labelledby="cta-title"
-        className="bg-noche text-hueso"
+        className="text-hueso"
       >
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="max-w-2xl" data-rv="">
@@ -179,10 +179,14 @@ export default function CtaFooter() {
         </div>
       </section>
 
-      <footer className="border-t border-hueso/15 bg-noche text-hueso">
+      <footer className="border-t border-hueso/15 text-hueso">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="font-semibold uppercase tracking-[0.22em] text-hueso">
+            {/* Landing target for the star journey layer (BL-17). */}
+            <p
+              id="footer-brand"
+              className="font-semibold uppercase tracking-[0.22em] text-hueso"
+            >
               PULSIMUS
             </p>
             <p className="mt-1 text-sm text-hueso/70">El pulso de tu negocio</p>

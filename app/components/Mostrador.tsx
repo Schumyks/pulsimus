@@ -7,12 +7,16 @@ import PaymentMoment from "./mostrador/PaymentMoment";
 import AutofillForm from "./mostrador/AutofillForm";
 import Envelope from "./mostrador/Envelope";
 import OwnerPanel from "./mostrador/OwnerPanel";
-import TunePanel from "./dev/TunePanel";
+import { useTunePane } from "./dev/tuneRegistry";
 import { useReducedMotion } from "./motion/useReducedMotion";
 import { PRODUCTS } from "../lib/demo/products";
 import { useDemoActions } from "../lib/demo/hooks";
 import { peekNextOrder, type PaymentMethod } from "../lib/demo/store";
-import { DEFAULT_FLOW_PARAMS, type FlowParams } from "./mostrador/flowParams";
+import {
+  DEFAULT_FLOW_PARAMS,
+  FLOW_PARAM_META,
+  type FlowParams,
+} from "./mostrador/flowParams";
 
 /**
  * El mostrador — la pieza firma. Orquesta el ciclo completo del negocio sobre
@@ -53,7 +57,14 @@ export default function Mostrador() {
   const [customer, setCustomer] = useState<CustomerData | null>(null);
   const [flight, setFlight] = useState<Flight | null>(null);
   const [params, setParams] = useState<FlowParams>(DEFAULT_FLOW_PARAMS);
-  const [tuneOpen, setTuneOpen] = useState(false);
+  useTunePane({
+    key: "mostrador",
+    label: "Mostrador",
+    order: 1,
+    meta: FLOW_PARAM_META,
+    params,
+    onChange: setParams,
+  });
   // Healthy heartbeat of the owner panel: it beats subtly (see globals.css) and
   // intensifies once each time a fresh order lands — the business beats on a sale.
   const [pulseKey, setPulseKey] = useState(0);
@@ -71,14 +82,6 @@ export default function Mostrador() {
   const later = useCallback((fn: () => void, ms: number) => {
     const id = window.setTimeout(fn, ms);
     timers.current.push(id);
-  }, []);
-
-  useEffect(() => {
-    // Client-only gate: the ?tune panel depends on window.location, absent
-    // during SSR. A lazy state initializer would hydration-mismatch (server
-    // false / client true), so it's read once post-mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only URL gate, must resolve after hydration
-    if (new URLSearchParams(window.location.search).has("tune")) setTuneOpen(true);
   }, []);
 
   useEffect(() => clearTimers, [clearTimers]);
@@ -197,16 +200,16 @@ export default function Mostrador() {
     );
 
   return (
-    <section id="mostrador" aria-labelledby="mostrador-title" className="bg-hueso">
+    <section id="mostrador" aria-labelledby="mostrador-title">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <h2
           id="mostrador-title"
           data-rv=""
-          className="max-w-3xl text-3xl font-semibold text-noche md:text-4xl"
+          className="max-w-3xl text-3xl font-semibold text-hueso md:text-4xl"
         >
           Tocá los dos lados del mostrador.
         </h2>
-        <p data-rv="" data-rv-d="100" className="mt-4 max-w-2xl text-lg text-bruma">
+        <p data-rv="" data-rv-d="100" className="mt-4 max-w-2xl text-lg text-hueso/70">
           La Espiga no existe. El mostrador, sí. Pedí algo y mirá cómo te llega.
         </p>
 
@@ -214,14 +217,14 @@ export default function Mostrador() {
           <div
             data-rv=""
             data-rv-d="120"
-            className="rounded-2xl border border-noche/10 p-6 md:p-8"
+            className="rounded-2xl border border-hueso/15 p-6 md:p-8"
           >
-            <p className="text-xs font-medium tracking-[0.2em] text-bruma">
+            <p className="text-xs font-medium tracking-[0.2em] text-hueso/60">
               LO QUE VE TU CLIENTE
             </p>
             <div className="mt-6">
-              <p className="text-xl font-semibold text-noche">La Espiga</p>
-              <p className="mt-1 text-sm text-bruma">
+              <p className="text-xl font-semibold text-hueso">La Espiga</p>
+              <p className="mt-1 text-sm text-hueso/60">
                 Panadería de barrio · Pedidos para retirar
               </p>
             </div>
@@ -280,7 +283,7 @@ export default function Mostrador() {
 
         <p
           data-rv=""
-          className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-noche md:text-3xl"
+          className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-hueso md:text-3xl"
         >
           Esto que acabás de tocar es lo que hacemos: los dos lados del
           mostrador. El que ve tu cliente, y el que ves vos.
@@ -288,7 +291,7 @@ export default function Mostrador() {
         <p
           data-rv=""
           data-rv-d="100"
-          className="mt-6 flex items-center gap-2 text-sm text-bruma"
+          className="mt-6 flex items-center gap-2 text-sm text-hueso/60"
         >
           <span
             className="h-1.5 w-1.5 shrink-0 rounded-full bg-ambar"
@@ -307,8 +310,6 @@ export default function Mostrador() {
           onArrive={onEnvelopeArrive}
         />
       )}
-
-      {tuneOpen && <TunePanel params={params} onChange={setParams} />}
     </section>
   );
 }

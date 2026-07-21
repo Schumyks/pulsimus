@@ -34,11 +34,11 @@ export default function Proceso() {
         <div className="max-w-2xl" data-rv="">
           <h2
             id="proceso-title"
-            className="text-3xl font-semibold text-noche md:text-4xl"
+            className="text-3xl font-semibold text-hueso md:text-4xl"
           >
             Cómo trabajamos
           </h2>
-          <p className="mt-4 font-normal text-bruma">
+          <p className="mt-4 font-normal text-hueso/70">
             Sin vueltas y en tu idioma.
           </p>
         </div>
@@ -61,11 +61,11 @@ export default function Proceso() {
                   >
                     <span
                       aria-hidden
-                      className="text-4xl font-semibold text-noche/30 md:text-5xl"
+                      className="text-4xl font-semibold text-hueso/30 md:text-5xl"
                     >
                       {paso.rotulo}
                     </span>
-                    <h3 className="text-xl font-semibold text-noche underline-offset-4 hover:underline">
+                    <h3 className="text-xl font-semibold text-hueso underline-offset-4 hover:underline">
                       {paso.titulo}
                     </h3>
                   </a>
@@ -73,11 +73,11 @@ export default function Proceso() {
                   <div className="flex h-12 items-center gap-4">
                     <span
                       aria-hidden
-                      className="text-4xl font-semibold text-noche/30 md:text-5xl"
+                      className="text-4xl font-semibold text-hueso/30 md:text-5xl"
                     >
                       {paso.rotulo}
                     </span>
-                    <h3 className="text-xl font-semibold text-noche">
+                    <h3 className="text-xl font-semibold text-hueso">
                       {paso.titulo}
                     </h3>
                   </div>
@@ -86,11 +86,11 @@ export default function Proceso() {
                 {!esUltimo && (
                   <span
                     aria-hidden
-                    className="absolute top-6 left-full hidden h-px w-10 bg-noche/15 lg:block"
+                    className="absolute top-6 left-full hidden h-px w-10 bg-hueso/15 lg:block"
                   />
                 )}
 
-                <p className="mt-4 font-normal leading-relaxed text-noche/80">
+                <p className="mt-4 font-normal leading-relaxed text-hueso/80">
                   {paso.descripcion}
                 </p>
               </li>
@@ -99,11 +99,11 @@ export default function Proceso() {
         </ol>
 
         <p
-          className="mt-14 max-w-2xl text-lg text-noche/80"
+          className="mt-14 max-w-2xl text-lg text-hueso/80"
           data-rv=""
           data-rv-d="100"
         >
-          <span className="font-semibold text-noche">
+          <span className="font-semibold text-hueso">
             ¿Pensás que una web es cara?
           </span>{" "}
           El diagnóstico es gratis y te digo exactamente cuánto sale. Sin
@@ -111,7 +111,7 @@ export default function Proceso() {
         </p>
 
         <p
-          className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-noche md:text-3xl"
+          className="mt-16 max-w-3xl text-2xl leading-snug font-semibold text-hueso md:text-3xl"
           data-rv=""
           data-rv-d="150"
         >

@@ -52,3 +52,8 @@ Handoffs/
 # claude local state
 .claude/settings.local.json
 .claude/worktrees/
+
+# Cloud source plates (Higgsfield originals, 3168px, ~43MB) — pipeline INPUT
+# only. The site ships public/clouds/processed/ (WebP). Keep the raw plates
+# local as source; do not bloat the repo history with them.
+/public/clouds/*.png
