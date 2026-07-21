@@ -309,7 +309,7 @@ export default function StarLayer({
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-40"
+      className="pointer-events-none fixed inset-0 h-full w-full z-40"
       aria-hidden="true"
     />
   );

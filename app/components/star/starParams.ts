@@ -26,7 +26,7 @@ export type StarParams = {
 };
 
 export const DEFAULT_STAR_PARAMS: StarParams = {
-  chase: 3.5,
+  chase: 8,
   sizeBase: 12,
   glowScale: 1,
   pulseMs: 1100,

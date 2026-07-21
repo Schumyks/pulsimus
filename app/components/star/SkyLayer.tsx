@@ -104,7 +104,7 @@ export default function SkyLayer() {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none fixed inset-0 -z-10"
+      className="pointer-events-none fixed inset-0 h-full w-full -z-10"
       aria-hidden="true"
     />
   );
