@@ -102,6 +102,11 @@ del viewport a mitad de animación).
   (radial/`drop-shadow` ámbar #F2A63E) — así puede LATIR.
 - Verificación: SIEMPRE Playwright sobre build de prod (gotcha Turbopack/
   inotify), con pasadas mobile (375) y reduced-motion además de desktop.
+- TODO loop por-frame (canvas, partículas, blobs) va gateado por visibilidad:
+  un booleano que ScrollTrigger onEnter/onLeave prende y apaga, chequeado
+  antes de calcular nada (patrón Artifex — bl17-referencias-analisis.md).
+- Todo lo scroll-driven se DESTRUYE al desmontar (contraejemplo real: Seed
+  Journey acumula 190+ errores de state machines vivos tras navegar).
 
 ## 5 · Pitfalls que ya nos mordieron (no repetir)
 
@@ -112,6 +117,9 @@ del viewport a mitad de animación).
 - Copilot/LLM olvidan `registerPlugin`, usan easing con scrub, dejan
   `markers: true`, y escriben `end` estático para horizontal scroll (usar
   función: `end: () => …` para que recalcule en resize).
+- En tests Playwright de escenas, scrollear con wheel POR PASOS además de
+  `scrollTo` directo: los saltos grandes de posición rompen motores de scrub
+  (crashes reproducidos en 5/6 sitios de referencia analizados).
 - Tras CADA `bun run build`, reiniciar el `next start` local que siga corriendo
   (`fuser -k 3199/tcp` + relanzar): un server viejo sobre un `.next`
   reemplazado sirve chunks rotos y las capas interactivas (cielo / estrella /
