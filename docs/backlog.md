@@ -191,6 +191,13 @@ _Sin parqueos._
 - **Estimación piloto 2D:** ~450–800k tokens / ~65–115 min (Heavy, área nueva GSAP/Lenis/Canvas en Next 16). Arrancar por **spike Fase 1** (fundación GSAP+Lenis+canvas SSR-safe) para de-riskear antes de comprometer el resto.
 - **Modelo:** se trabaja con **Fable** (visual/creativo/narrativo).
 
+### BL-18 · Rive como herramienta de assets animados/interactivos · prioridad media (candidato a evaluar, NO adoptado)
+- **Origen:** Alan (21/07 noche, cierre de sesión): "Rive parece ser una plataforma interesante. ¿Se puede conectar con Claude vía MCP?"
+- **Qué es:** editor de animación interactiva (state machines, rigging por huesos, data binding) que exporta `.riv` livianos; el runtime web (`@rive-app/canvas`/`webgl`) es open source y gratis. Encaja con el nivel 2 del canon (rigging por capas de protagonistas) y con demos interactivos (fichas de Construcción BL-13, asteroides destruibles E2).
+- **MCP verificado (21/07):** existen DOS vías. (1) [MCP oficial de Rive](https://rive.app/docs/editor/ai/mcp) — controla el EDITOR desktop, pero **solo Windows/macOS** → en el Linux de Alan hoy NO corre (gotcha duro). (2) [RiveMCP comunitario](https://rivemcp.stunning.gg/) — headless, genera/edita `.riv` por código sin editor (139 tools, `npx rivemcp`), corre en Linux; **3 exports gratis por máquina, después licencia paga**. Editor Rive: plan free para crear; premium desde ~9 USD/mes.
+- **Costo de tokens (aclaración conceptual):** NINGÚN MCP es gratis en tokens de Claude — cada tool call, schema y resultado consume contexto de la sesión. Lo que puede ser gratis es el lado Rive (herramienta local). No confundir las dos monedas.
+- **A resolver en el spike (cuando una escena lo pida, no antes):** calidad real del RiveMCP comunitario en Linux · si 3 exports alcanzan para evaluar · integración `.riv` + ScrollTrigger (Rive tiene scroll binding propio, ¿convive con el motor único?) · peso/perf vs sprites+CSS del canon · ROI vs dispersión (el canon actual cubre la V1; Rive es candidato para nivel 2 / BL-16, no prerequisito).
+
 ### BL-15 · Presencia LinkedIn de Pulsimus · prioridad baja (tarea externa, no de código)
 - **Origen:** Alan (16/07, veredictos toki de BL-13): *"Después creamos LinkedIn para Pulsimus y para que se vea reflejado en mi cuenta de LinkedIn."*
 - **Qué:** crear la página de empresa Pulsimus en LinkedIn + reflejar el rol en el perfil personal de Alan. Se coordina con el pitch a Agustín (¿qué se publica primero?). No bloquea nada de la landing; el ícono de LinkedIn de BL-13 apunta al perfil personal mientras tanto.

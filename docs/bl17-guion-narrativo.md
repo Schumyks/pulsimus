@@ -150,6 +150,17 @@ minimal or no outlines, no text,
 - **Mapa tentativo de escenas** (a refinar uno por uno con Alan): E0 supernova+escape (intro revamp) · E1 radar/zoom al pulso (transición Hero→Dolores) · E2 el cinturón de asteroides (umbral grande) · E3 aterrizaje entre nubes flat (pre-Mostrador) · E4 la tienda dollhouse (Mostrador) · E5 órbitas (Proceso) · E6 mission control (Tablero) · E7 constelación final (CTA).
 - **Motor técnico:** GSAP ScrollTrigger (pin/scrub) + Lenis — ya presentes en el stack (StarLayer los usa). El sistema de escenas ES el build principal de BL-17; arrancar por spike de 1 escena punta a punta.
 
+## Referencias de dirección aportadas por Alan (21/07 noche)
+
+> Alan: "algunos dan en el clavo con lo que busco lograr pero con otros estilos; otros son para tomar ideas, narrativas o transiciones". Se minan durante el BOCETO de cada escena (no antes) — junto con la referencia madre [journey.zajno.com](https://journey.zajno.com/).
+
+- https://www.sbs.com.au/mygrandmotherslingo/ — narrativa interactiva por capítulos.
+- https://ponpon-mania.com/ — personaje animado protagonista, tono lúdico.
+- http://species-in-pieces.com/ — morphs/transiciones de formas planas (afín al canon flat).
+- https://brand.dropbox.com/logo — presentación de sistema de marca (útil para BL-13 panel Diseño / BL-14).
+- https://seedjourney.croptrust.org/ — journey scrollytelling por etapas.
+- https://eszterbial.com/projects/artifex — case study con motion fino.
+
 ## Abierto (no bloquea producción del set de prueba)
 
 - Guión fino de Quien-soy y CTA (revisables por Alan).
