@@ -57,3 +57,7 @@ Handoffs/
 # only. The site ships public/clouds/processed/ (WebP). Keep the raw plates
 # local as source; do not bloat the repo history with them.
 /public/clouds/*.png
+
+# Space asset source plates (Higgsfield originals) — pipeline INPUT only.
+# The site ships processed WebP under public/space/.
+/space-src/
