@@ -46,23 +46,26 @@ Aterriza y arma la tienda con los restos de la nave: mal estado pero entrañable
 - **Detrás** = la operación real (la trastienda: papeles, el caos que el cliente no ve).
 - **Concepto:** gravedad — con presencia, la tienda atrae.
 - **Nota:** es el set-piece #2 del sitio (hermano de la supernova).
+- **Dirección de Alan (22/07) — el aterrizaje (E3) se cuenta COMPLETO:** no son solo nubes: el protagonista desciende CON su nave — primero las capas altas de la atmósfera, después las nubes flat, y toca tierra. Recién al aterrizar arranca la transformación de la tienda (E4).
 - **Dirección de Alan (21/07, gate del plan de operación):** el demo standalone del mostrador (La Espiga) "por sí solo tiene poco": el ciclo de pedido **se representa EN la escena** — el alien hace el pedido y el dueño lo recibe — y en la narrativa del sitio se entiende igual. Si conviene marcarlo como punto de avance explícito dentro de la escena, se evalúa en el boceto de E4. Supersede la idea de conservar el componente demo como pieza aparte.
 
 ### 4 · PROCESO — Como arriba, es abajo
 La sección se parte en dos mitades espejadas. **Arriba el cielo:** cuerpos entrando en órbita, fase a fase. **Abajo la tierra:** la tienda construyéndose, fase a fase (brief → diseño → build → lanzamiento). Remate: *"así como un satélite orbita un planeta, un cliente orbita el negocio"* — la última fase muestra la primera órbita capturada: **el primer cliente que vuelve**.
 - **Conceptos:** stages del cohete + órbitas = clientes recurrentes.
+- **Dirección de Alan (22/07) — beat de crecimiento:** tras la primera órbita capturada, un paso más: entran MÁS objetos en órbita del planeta/negocio — la sensación de crecimiento va más allá de un solo cliente.
 
 ### 5 · TABLERO — Mission control
 El mismo escritorio de la trastienda del Mostrador: papeles, post-its, caos. Con el scroll se ordena y se convierte en el tablero — y en pantalla, por primera vez, **el pulso regular**. El dueño ve su negocio entero por primera vez. Emoción de la sección: **orgullo**.
 - **Concepto:** el electrocardiograma del negocio.
 - **Leitmotiv EKG:** aparición 3 de 4 (el pulso regular en pantalla).
+- **Dirección de Alan (22/07) — mission control es INTERACTIVO:** el visitante ejecuta un par de acciones en el panel (adaptadas a la narrativa) que hacen AVANZAR el proceso en la tienda — entiende que el sistema es funcional de verdad, no un dibujo. Además, el panel ALOJA el switch de skins ([[BL-16]]): pasar por ahí y tocarlo muestra cómo cambia el sistema entero (antes vivía en el panel Diseño de quien-soy).
 
-### 6 · QUIEN-SOY — El navegante *(revisable)*
-El giro: *"este viaje que acabás de atravesar lo construí yo."* Los demos contratados en BL-13 operan **sobre el universo mismo**:
-- **Skin switch** (panel Diseño) → le cambia la piel a TODO lo visto (BL-16, ya contratado con barrido).
-- **Fichas de Construcción** → arman la tienda del protagonista con distintas formas.
-- **Toggle Calidad** → una escena del viaje "sin alma / con alma".
-Colofón de venta: "esto mismo hago con tu negocio".
+### 6 · QUIEN-SOY — El navegante *(REDEFINIDO por Alan, 22/07)*
+**Quien-soy sale de la película: pasa a PÁGINA APARTE del sitio**, linkeada siempre visible desde la barra de navegación — "si alguien realmente quiere saber quién está detrás, hace clic ahí". Así la historia del viaje no se mezcla con la biografía. Las demos contratadas en BL-13 **se redistribuyen dentro del viaje**, donde narrativamente trabajan:
+- **Skin switch** → vive en el panel de mission control (E6): el usuario pasa por ahí, lo toca y ve cambiar el sistema entero (BL-16, barrido contratado).
+- **Fichas de Construcción** → candidato a vivir donde se CONSTRUYE: dentro de E4 (dollhouse) o E5 (órbitas/proceso) — se decide en esos bocetos; después de eso entra el tablero ya listo.
+- **Toggle Calidad** → a reubicar (página quien-soy o una escena); se decide al replanificar BL-13.
+El giro ("este viaje lo construí yo") y el colofón de venta ("esto mismo hago con tu negocio") viven en la página nueva.
 
 ### 7 · CTA — Mandá tu señal *(revisable)*
 La tienda del protagonista ya late en el mapa: un púlsar chiquito en el barrio. El form se reencuadra como **tu señal** (los campos ya existen: nombre, negocio, qué te duele, canal preferido). Del otro lado hay un humano escuchando (copy actual: "Te leo y escucho yo, Alan").
