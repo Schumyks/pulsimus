@@ -1,6 +1,6 @@
 ## Why
 
-La landing dejó de ser una página de secciones: la dirección gateada por Alan (21/07, dos rondas — `docs/bl17-plan-operacion.md`) la convierte en una **película de scroll** que cuenta el guión canónico (`docs/bl17-guion-narrativo.md`): escenas full-viewport de umbral variable, intercaladas con las secciones, producidas en orden narrativo E0→E7. Es un cambio de arquitectura (supersede la "capa aditiva" del 18/07) con principio rector "lo nuevo manda". El motor técnico (B1, scrollEngine con Lenis + ScrollTrigger) ya está en `main`-adyacente (`0484124`); falta la obra: las escenas. Este cambio formaliza el ciclo de producción para que cada corrida tenga contrato ejecutable y verificación por task — la deuda declarada al cierre del 21/07.
+La landing dejó de ser una página de secciones: la dirección gateada por Alan (21/07, dos rondas — `docs/direccion/plan-operacion.md`) la convierte en una **película de scroll** que cuenta el guión canónico (`docs/direccion/guion-narrativo.md`): escenas full-viewport de umbral variable, intercaladas con las secciones, producidas en orden narrativo E0→E7. Es un cambio de arquitectura (supersede la "capa aditiva" del 18/07) con principio rector "lo nuevo manda". El motor técnico (B1, scrollEngine con Lenis + ScrollTrigger) ya está en `main`-adyacente (`0484124`); falta la obra: las escenas. Este cambio formaliza el ciclo de producción para que cada corrida tenga contrato ejecutable y verificación por task — la deuda declarada al cierre del 21/07.
 
 Tarea-contrato madre: **BL-17** en [`docs/backlog.md`](../../../docs/backlog.md) (§ "Estrella narrativa a nivel sitio", pivote 21/07 "Arquitectura de escenas").
 
@@ -28,7 +28,7 @@ Tarea-contrato madre: **BL-17** en [`docs/backlog.md`](../../../docs/backlog.md)
 
 ## Impact
 
-- **Código**: `app/components/Intro.tsx` (revamp E0), `app/components/motion/scrollEngine.ts` (consumo, no rediseño), `app/page.tsx` y las secciones `Hero/Dolores/Mostrador/Proceso/Tablero/CTA` (transformación o reencuadre según destino), `app/globals.css` (keyframes idle), `public/space/` (assets nuevos por tanda, los genera Alan en Higgsfield UI según `docs/canon-assets-higgsfield.md`).
+- **Código**: `app/components/Intro.tsx` (revamp E0), `app/components/motion/scrollEngine.ts` (consumo, no rediseño), `app/page.tsx` y las secciones `Hero/Dolores/Mostrador/Proceso/Tablero/CTA` (transformación o reencuadre según destino), `app/globals.css` (keyframes idle), `public/space/` (assets nuevos por tanda, los genera Alan en Higgsfield UI según `docs/direccion/canon-assets.md`).
 - **Dependencias**: ya presentes (gsap, @gsap/react, ScrollTrigger, lenis). Sin dependencias nuevas.
-- **Fuentes de verdad**: guión (`docs/bl17-guion-narrativo.md`) · plan de operación (`docs/bl17-plan-operacion.md`) · canon de assets (`docs/canon-assets-higgsfield.md`) · skill `pulsimus-escenas` (reglas técnicas) · mapa de referencias (`docs/bl17-referencias-analisis.md`).
+- **Fuentes de verdad**: guión (`docs/direccion/guion-narrativo.md`) · plan de operación (`docs/direccion/plan-operacion.md`) · canon de assets (`docs/direccion/canon-assets.md`) · skill `pulsimus-escenas` (reglas técnicas) · mapa de referencias (`docs/direccion/referencias.md`).
 - **Riesgos**: perf (evidencia dura: los 6 sitios de referencia crashean — mitigado por reglas de la skill); scope creep por escena (mitigado por boceto+gate antes de codear); assets bloqueantes (mitigado: Alan genera por tanda antes del build de cada escena).

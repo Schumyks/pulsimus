@@ -16,7 +16,7 @@ import { DEFAULT_STAR_PARAMS, type StarParams } from "./starParams";
  * pulses, so the visitor can feel the heartbeat. While the pointer rests,
  * the star drifts on a slow breathing orbit instead of freezing.
  * Umbral zones are stages for designed scenes from the narrative script
- * (docs/bl17-guion-narrativo.md). The photographic cloud banks were
+ * (docs/direccion/guion-narrativo.md). The photographic cloud banks were
  * REMOVED (Alan, 21/07): they fought the flat canon and told no story.
  * Flat clouds return later as the "landing on the planet" scene. Lenis
  * smooths the native scroll (anchors stay working via `anchors: true`).

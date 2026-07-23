@@ -2,8 +2,8 @@
 
 > Sección nueva de la landing: lo que el registro del mostrador le da al dueño —
 > *"lo que todo negocio de barrio necesita saber y no sabe"*. Se apila sobre F4R,
-> rama `f4-tablero` (desde `f4-mostrador`). Diseño: [`f4r-f4t-design-spec.md`](../f4r-f4t-design-spec.md) §4 ·
-> Plan: [`f4r-f4t-plan.md`](../f4r-f4t-plan.md) §5. **El merge a `main` (producción) es decisión de Alan.**
+> rama `f4-tablero` (desde `f4-mostrador`). Diseño: [`f4r-f4t-design-spec.md`](../design-spec.md) §4 ·
+> Plan: [`f4r-f4t-plan.md`](../plan.md) §5. **El merge a `main` (producción) es decisión de Alan.**
 
 ## Qué se construyó
 

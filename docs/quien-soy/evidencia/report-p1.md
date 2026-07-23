@@ -1,6 +1,6 @@
 # Gate BL-13 · P1 (estructura apilada) — reporte de verificación
 
-> Fecha: 2026-07-16 · Rama: `bl13-quien-soy` · Cambio OpenSpec: [`bl13-quien-soy`](../../openspec/changes/bl13-quien-soy/) · Verificado sobre **build de PROD** (`bun run build` limpio + `next start`).
+> Fecha: 2026-07-16 · Rama: `bl13-quien-soy` · Cambio OpenSpec: [`bl13-quien-soy`](../../../openspec/changes/bl13-quien-soy/) · Verificado sobre **build de PROD** (`bun run build` limpio + `next start`).
 
 ## Qué se construyó (tasks 1.1–1.4)
 

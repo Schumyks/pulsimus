@@ -48,7 +48,7 @@
 
 - **Muere el path por scroll** (Alan: "el pathing per se es medio raro"). La estrella acompaña al cursor con chase suavizado; sin puntero, orbita respirando arriba a la derecha. El visitante construye el sitio por donde pasa: cuando una sección entra al viewport, la onda de reveal **nace en la estrella** (donde esté el cursor en ese momento). Click en el vacío = pulso + kick del latido (queda).
 - **Nubes procedurales AFUERA** (Alan: "parecen partículas gigantes"). Los umbrales quedan como escenarios de cielo limpio esperando **set-pieces diseñados**, distintos por umbral (ej. aprobado: "energía que se acumula en un sol/galaxia y explota" para el umbral → quien-soy).
-- **Pipeline de diseño**: prompts listos en [bl17-design-rounds.md](bl17-design-rounds.md) — Ronda 1 Nano Banana (capas de nubes sobre negro puro, alpha por luminancia, → `public/clouds/`), Ronda 2 Claude Design con Opus (prototipo HTML autocontenido del set-piece galaxia, 3 direcciones visuales primero). Arquitectura receptora: registry de escenas por umbral con interfaz `draw(ctx, rect, progress, starPos)`.
+- **Pipeline de diseño**: prompts listos en [bl17-design-rounds.md](../escenas/e0-supernova/design-supernova.md) — Ronda 1 Nano Banana (capas de nubes sobre negro puro, alpha por luminancia, → `public/clouds/`), Ronda 2 Claude Design con Opus (prototipo HTML autocontenido del set-piece galaxia, 3 direcciones visuales primero). Arquitectura receptora: registry de escenas por umbral con interfaz `draw(ctx, rect, progress, starPos)`.
 - El aterrizaje en el footer y el cierre del logo se rediseñarán sobre este motor (la estrella ya no viaja sola — el cierre será un set-piece/imán).
 
 ## Fuera de alcance de esta fase

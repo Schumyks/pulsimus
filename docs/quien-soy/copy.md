@@ -1,6 +1,6 @@
 # BL-13 · Copy de las 5 estaciones — "Quién está del otro lado"
 
-> Task 0.1 del cambio OpenSpec [`bl13-quien-soy`](../openspec/changes/bl13-quien-soy/tasks.md).
+> Task 0.1 del cambio OpenSpec [`bl13-quien-soy`](../../openspec/changes/bl13-quien-soy/tasks.md).
 > Fuente: muestra de voz de Alan (16/07) + frases aprobadas en el refinamiento. Estado: **BORRADOR — esperando veredicto de Alan.**
 > Reglas aplicadas: sin em dashes, sin jerga, sin Disney, sin geografía, sin terceros (WhatsApp/Instagram solo como canales del cliente, precedente de Dolores), sin superlativos, voseo.
 

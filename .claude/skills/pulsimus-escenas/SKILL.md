@@ -18,8 +18,8 @@ adaptado al stack y la dirección de Pulsimus.
 
 ## 1 · Jerarquía de fuentes (leer antes de construir)
 
-1. [`docs/bl17-guion-narrativo.md`](../../../docs/bl17-guion-narrativo.md) — QUÉ cuenta cada escena (§ Arquitectura de escenas: mapa E0–E7, umbral variable, timing por momento).
-2. [`docs/canon-assets-higgsfield.md`](../../../docs/canon-assets-higgsfield.md) — CÓMO se ven los assets.
+1. [`docs/bl17-guion-narrativo.md`](../../../docs/direccion/guion-narrativo.md) — QUÉ cuenta cada escena (§ Arquitectura de escenas: mapa E0–E7, umbral variable, timing por momento).
+2. [`docs/canon-assets-higgsfield.md`](../../../docs/direccion/canon-assets.md) — CÓMO se ven los assets.
 3. Esta skill — CÓMO se mueve todo.
 
 ## 2 · El motor (decisión cerrada)

@@ -1,6 +1,6 @@
 # F3 · Plan de ejecución — Intro domesticada + motion kit
 
-> Para una sesión de Claude Code corriendo en la PC de Alan (cwd `/home/alan/Projects/Agencia`), supervisada por él desde el celular. Ejecutar de punta a punta sin esperar respuestas intermedias, salvo los gates marcados. Este documento es la dirección completa de F3; la coreografía exacta está en [f3-intro-donante.md](f3-intro-donante.md) — autosuficiente, NO re-leer el HTML donante (`Pulsimus Landing.html`, gitignoreado: es la fuente ya extraída, releerlo es gastar de más).
+> Para una sesión de Claude Code corriendo en la PC de Alan (cwd `/home/alan/Projects/Agencia`), supervisada por él desde el celular. Ejecutar de punta a punta sin esperar respuestas intermedias, salvo los gates marcados. Este documento es la dirección completa de F3; la coreografía exacta está en [f3-intro-donante.md](donante.md) — autosuficiente, NO re-leer el HTML donante (`Pulsimus Landing.html`, gitignoreado: es la fuente ya extraída, releerlo es gastar de más).
 
 ## Contexto mínimo
 

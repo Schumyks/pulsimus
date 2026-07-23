@@ -2,7 +2,7 @@
 
 > Decisiones de copy/voz cerradas con Alan DESPUÉS de ver la F2 deployada.
 > **NADA está implementado todavía** — la F2 en `pulsimus.vercel.app` tiene el copy VIEJO. La próxima sesión escribe esto en los componentes.
-> Este documento **supersede** el copy de las secciones correspondientes en [`f2-section-specs.md`](f2-section-specs.md).
+> Este documento **supersede** el copy de las secciones correspondientes en [`f2-section-specs.md`](section-specs.md).
 
 ## Principios de voz (nuevos, permanentes)
 

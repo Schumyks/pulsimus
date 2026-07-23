@@ -31,7 +31,7 @@ La variante apilada (mobile/reduced) es el MISMO árbol sin track ni sticky: una
 
 ## D4 · Copy y assets
 
-- Copy: se redacta ANTES de P1 desde la muestra de voz de Alan (16/07, Engram) + frases aprobadas; doc `docs/bl13-copy.md` con el texto final gateado por Alan. Prohibiciones del contrato aplican (ver proposal §Non-goals y backlog §TAREA-CONTRATO).
+- Copy: se redacta ANTES de P1 desde la muestra de voz de Alan (16/07, Engram) + frases aprobadas; doc `docs/quien-soy/copy.md` con el texto final gateado por Alan. Prohibiciones del contrato aplican (ver proposal §Non-goals y backlog §TAREA-CONTRATO).
 - Foto: la provee Alan (curación suya, tratamiento estilo ámbar). `next/image`, `alt` descriptivo, peso optimizado. Placeholder bloqueante: P1 no shipea sin foto real.
 
 ## D5 · Mapeo de entrega
@@ -45,4 +45,4 @@ Fuera de este cambio: `bl16-skins` (reskin completo + galería/manual, gateado p
 
 ## D6 · Verificación
 
-Cada paso cierra con: `bun run build` + `next start` + Playwright CLI (patrón atómico): capturas desktop 1440 / mobile 375 / `reduced-motion`, consola limpia, y en P2 videos del recorrido completo + reversa + teclado. Reporte y assets en `docs/gate-bl13/`. Tax conocido: stale-build al rebuildear bajo server corriendo → `rm -rf .next` + rebuild + restart.
+Cada paso cierra con: `bun run build` + `next start` + Playwright CLI (patrón atómico): capturas desktop 1440 / mobile 375 / `reduced-motion`, consola limpia, y en P2 videos del recorrido completo + reversa + teclado. Reporte y assets en `docs/quien-soy/evidencia/`. Tax conocido: stale-build al rebuildear bajo server corriendo → `rm -rf .next` + rebuild + restart.

@@ -2,7 +2,7 @@
 
 > **Qué es:** el manual de decisiones para generar CUALQUIER asset visual del sitio — lo use Alan a mano en Higgsfield, Claude vía MCP, o Design. Acá vive el estilo, los templates de prompt, las specs técnicas por tipo de asset y el workflow completo.
 >
-> **Jerarquía:** [`bl17-guion-narrativo.md`](bl17-guion-narrativo.md) manda sobre el QUÉ (qué escena, qué personaje, qué emoción); este doc manda sobre el CÓMO se genera. Ante conflicto de estilo, gana este doc; ante conflicto de narrativa, gana el guión.
+> **Jerarquía:** [`bl17-guion-narrativo.md`](guion-narrativo.md) manda sobre el QUÉ (qué escena, qué personaje, qué emoción); este doc manda sobre el CÓMO se genera. Ante conflicto de estilo, gana este doc; ante conflicto de narrativa, gana el guión.
 >
 > **Curación:** la fuente de verdad de qué generación se aprueba es **Alan**. Este doc le da la checklist para curar (§ Anti-canon).
 

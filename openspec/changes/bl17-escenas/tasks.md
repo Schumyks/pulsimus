@@ -3,7 +3,7 @@
 ## 1. E0 · Supernova + escape (revamp intro)
 
 - [ ] 1.1 Boceto de dirección E0 (poses tienda/colapso/escape/pulso, timing, mobile/reduced) → 🚧 GATE Alan
-- [ ] 1.2 Tanda E0 según `docs/bl17-assets-direccion.md` (diseños de personaje + spike de VIDEO de la intro) generada por Alan; evaluación video vs canvas → decisión de canal con Alan
+- [ ] 1.2 Tanda E0 según `docs/direccion/assets-direccion.md` (diseños de personaje + spike de VIDEO de la intro) generada por Alan; evaluación video vs canvas → decisión de canal con Alan
 - [ ] 1.3 Build E0 sobre el motor de `Intro.tsx` ADAPTADO (eliminar acreción-nacimiento: estrella presente desde p=0; desestabilización + colapso/infall + inhale + explosión existente; handoff de la nebulosa remanente al cielo Z1; gates 1×/sesión, skip, `?intro`, reduced intactos)
 - [ ] 1.4 Verificación Playwright E0 + screenshots → 🚧 GATE visual Alan → commit
 

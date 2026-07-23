@@ -1,6 +1,6 @@
 # Prompts de imagen F4 — El mostrador (La Espiga)
 
-> Fecha: 2026-07-04 (v2) · Metodología heredada de [`clients/facha-gaucha/web/image-prompts.md`](../../clients/facha-gaucha/web/image-prompts.md).
+> Fecha: 2026-07-04 (v2) · Metodología heredada de [`clients/facha-gaucha/web/image-prompts.md`](../../../../clients/facha-gaucha/web/image-prompts.md).
 > **Regla de canal (feedback de Alan, 04/07): las tandas las genera ALAN por la UI web de Higgsfield (Unlimited + 2K = gratis). El agente entrega prompts, settings y checklist; NO genera por MCP.**
 > Diferencia clave con FG: **La Espiga es ficticia** — no hay foto real de referencia. La fidelidad acá es al TEMPLATE (consistencia de luz, ángulo y escala entre piezas) y al CONTEXTO DE USO de abajo.
 

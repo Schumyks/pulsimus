@@ -1,7 +1,7 @@
 # Plan de operación — BL-17 Arquitectura de escenas
 
 > **Estado: GATEADO por Alan (21/07, dos rondas) con dirección ampliada.** Este doc es la dirección escrita de TODA corrida sobre la landing — orden, criterios y gate por pieza, ANTES de tocar código. Nada se ejecuta sin su bloque aprobado acá.
-> Jerarquía: [`bl17-guion-narrativo.md`](bl17-guion-narrativo.md) (QUÉ) → [`canon-assets-higgsfield.md`](canon-assets-higgsfield.md) (CÓMO visual) → skill `pulsimus-escenas` (CÓMO técnico) → **este doc (EN QUÉ ORDEN y con qué gates)**.
+> Jerarquía: [`bl17-guion-narrativo.md`](guion-narrativo.md) (QUÉ) → [`canon-assets-higgsfield.md`](canon-assets.md) (CÓMO visual) → skill `pulsimus-escenas` (CÓMO técnico) → **este doc (EN QUÉ ORDEN y con qué gates)**.
 
 ## Dirección de Alan (gate del 21/07 — manda sobre todo lo anterior)
 
@@ -13,11 +13,11 @@
 
 ## Dirección de Alan (gate del 22/07 — boceto E0 + ajustes de escenas)
 
-- **Boceto E0 aprobado en estructura** ([`bl17-boceto-e0.md`](bl17-boceto-e0.md)): 4 actos, re-lectura del polvo como la tienda desarmándose. Abierto: canal de producción (canvas vs video, ver siguiente punto).
+- **Boceto E0 aprobado en estructura** ([`bl17-boceto-e0.md`](../escenas/e0-supernova/boceto.md)): 4 actos, re-lectura del polvo como la tienda desarmándose. Abierto: canal de producción (canvas vs video, ver siguiente punto).
 - **El clímax canvas SE ADAPTA, no se reusa verbatim (Alan, 22/07):** la animación actual cuenta un NACIMIENTO (acreción → estrella → explosión); la escena 0 es una MUERTE: la estrella ya existe, se desestabiliza, colapsa hacia adentro y rebota (física real verificada; el "inhale" actual ES el colapso y queda). Se reusa el sistema de partículas y la explosión (aprobada); se elimina la acreción-nacimiento. **La nebulosa remanente PERSISTE como fondo del sitio** (handoff al cielo Z1, lejos del planeta) — "destruye y siembra", literal.
 - **Pipeline de VIDEO entra como candidato de producción:** Alan genera en Higgsfield videos cortos bien dirigidos (personajes con acciones/reacciones, ~8s o micro-clips por beat) a partir de diseños de personaje; se unifican después. Candidato fuerte para la intro (una versión CSS simplificada "no tendría el mismo impacto"). Matiz del descarte del 18/07: aquello descartó video como MOTOR del scroll (no interactúa con el DOM); video como intro autoplay o como micro-clip de personaje es otra cosa y es válido.
-- **Doc paralelo de assets:** [`bl17-assets-direccion.md`](bl17-assets-direccion.md) — dirección de diseño de TODOS los assets (stills y videos) para que Alan genere en paralelo mientras se construye. Se mantiene vivo: cada boceto gateado le agrega su tanda.
-- **Storyboard (pedido de Alan 22/07):** [`bl17-storyboard.md`](bl17-storyboard.md) — el viaje completo E0–E7 en ~30 cuadros con prompt generable por cuadro. Rol: SINTONÍA visual antes de codear — Alan genera los boards en Higgsfield, se revisan juntos, y el storyboard gateado es insumo del boceto de cada escena (lo que no funcione se corrige en papel, donde es barato).
+- **Doc paralelo de assets:** [`bl17-assets-direccion.md`](assets-direccion.md) — dirección de diseño de TODOS los assets (stills y videos) para que Alan genere en paralelo mientras se construye. Se mantiene vivo: cada boceto gateado le agrega su tanda.
+- **Storyboard (pedido de Alan 22/07):** [`bl17-storyboard.md`](storyboard.md) — el viaje completo E0–E7 en ~30 cuadros con prompt generable por cuadro. Rol: SINTONÍA visual antes de codear — Alan genera los boards en Higgsfield, se revisan juntos, y el storyboard gateado es insumo del boceto de cada escena (lo que no funcione se corrige en papel, donde es barato).
 - **E3 ampliada:** no solo nubes — el protagonista DESCIENDE con su nave (capas de atmósfera → nubes → toca tierra) y aterriza.
 - **E5 ampliada:** beat de crecimiento tras la primera órbita — entran MÁS objetos en órbita (más clientes).
 - **E6 ampliada:** mission control levemente INTERACTIVO (un par de acciones del visitante hacen avanzar el proceso en la tienda) + ALOJA el switch de skins (BL-16).

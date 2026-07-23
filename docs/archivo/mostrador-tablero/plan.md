@@ -1,7 +1,7 @@
 # Plan de implementación · F4R + F4T
 
 > **Para ejecutar en sesión nueva.** Spec de diseño (fuente de verdad del QUÉ):
-> [`f4r-f4t-design-spec.md`](f4r-f4t-design-spec.md). Este doc es el CÓMO: fases,
+> [`f4r-f4t-design-spec.md`](design-spec.md). Este doc es el CÓMO: fases,
 > briefs de subagentes, verificación, presupuesto. Aprobado por Alan el 2026-07-09.
 
 ## 0 · Bootstrap de la sesión ejecutora

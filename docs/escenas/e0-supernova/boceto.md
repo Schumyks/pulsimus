@@ -72,4 +72,4 @@ Dirección de Alan en el gate: para la intro, una versión CSS/canvas simplifica
 
 **Costos duros a validar en el spike** (por eso es spike y no decisión ciega): peso (~3–6MB por 5–6s; las escenas oscuras comprimen bien), doble aspect desktop 16:9 / mobile 9:16 (dos renders o encuadre con acción centrada crop-safe), consistencia con el canon (generar DESDE los stills aprobados como referencia), y autoplay mobile (muted + playsinline — sin audio, ya cumplimos). ⚠️ Verificar también si el video en TU plan de Higgsfield descuenta créditos (el toggle Unlimited que conocemos es de imágenes).
 
-**Siguiente paso:** tanda E0 del doc de assets ([`bl17-assets-direccion.md`](bl17-assets-direccion.md) §3) — model sheets + 1 video de prueba de los actos 1–3. Lo montamos y decidimos el canal con datos.
+**Siguiente paso:** tanda E0 del doc de assets ([`bl17-assets-direccion.md`](../../direccion/assets-direccion.md) §3) — model sheets + 1 video de prueba de los actos 1–3. Lo montamos y decidimos el canal con datos.

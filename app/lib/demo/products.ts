@@ -6,7 +6,7 @@
  * hornea una vez y no se repone hasta mañana (soporta el panel "qué te
  * queda" / ⚠ se agota de El tablero, F4T).
  *
- * Calibración (ver docs/f4r-f4t-design-spec.md §2 + reporte de R1): estos
+ * Calibración (ver docs/archivo/mostrador-tablero/design-spec.md §2 + reporte de R1): estos
  * precios, combinados con los seeds de `seeds.ts`, cierran el día en
  * ~1.236 kr facturado / 14 pedidos / ticket prom. ~88 kr.
  */

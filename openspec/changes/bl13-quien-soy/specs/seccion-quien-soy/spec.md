@@ -103,4 +103,4 @@ Todo cierre de paso SHALL verificarse sobre build de PROD (`next build` + `next 
 #### Scenario: Gate de paso
 - **GIVEN** un paso (P1 o P2) declarado terminado
 - **WHEN** se corre la verificación Playwright sobre el build de prod
-- **THEN** existen las capturas de los 3 modos, la consola está limpia y el reporte queda en `docs/gate-bl13/`
+- **THEN** existen las capturas de los 3 modos, la consola está limpia y el reporte queda en `docs/quien-soy/evidencia/`

@@ -1,6 +1,6 @@
 # Dirección de assets — BL-17 (doc paralelo de generación)
 
-> **Para Alan:** qué generar y con qué dirección, para que produzcas en Higgsfield EN PARALELO mientras se construyen las escenas. El [`canon-assets-higgsfield.md`](canon-assets-higgsfield.md) manda el CÓMO (template maestro, anti-canon, 4 tipos); este doc lista el QUÉ, por escena, más el tipo nuevo: **video**.
+> **Para Alan:** qué generar y con qué dirección, para que produzcas en Higgsfield EN PARALELO mientras se construyen las escenas. El [`canon-assets-higgsfield.md`](canon-assets.md) manda el CÓMO (template maestro, anti-canon, 4 tipos); este doc lista el QUÉ, por escena, más el tipo nuevo: **video**.
 > **Doc VIVO:** cada boceto gateado agrega o afina su tanda. Regla de secuencia: no generar en serie más allá de la escena en producción +1 — el boceto de una escena puede cambiar su lista.
 > Workflow de siempre: vos generás y curás (UI web, toggle Unlimited para imágenes) → dejás crudos en `space-src/` → Claude procesa (pipeline sharp) y monta. Tu curación = fuente de verdad.
 
@@ -38,10 +38,10 @@ Subject del template maestro para sheets: `character model sheet of [PERSONAJE],
 ## 2 · VIDEOS (tipo nuevo — dirección de Alan, 22/07)
 
 **Dónde SÍ:**
-- **La intro E0** — el candidato mayor: autoplay puro, no depende del scroll. Recomendación híbrida en [`bl17-boceto-e0.md`](bl17-boceto-e0.md) § Addendum (video actos 1–3 + clímax canvas existente).
+- **La intro E0** — el candidato mayor: autoplay puro, no depende del scroll. Recomendación híbrida en [`bl17-boceto-e0.md`](../escenas/e0-supernova/boceto.md) § Addendum (video actos 1–3 + clímax canvas existente).
 - **Micro-clips de personaje** (2–4s): una reacción, una acción, un beat — como asset animado dentro de una escena, siempre **dentro de un marco/viñeta rectangular** que se funde con el fondo.
 
-**Fuentes de video (22/07 — dos en carrera):** Higgsfield (video desde still de referencia) y **Midjourney image-to-video animando los boards del storyboard** (el animatic; para E0, candidato directo a ser la pieza — validar resolución de export). Generador del look FINAL de assets: decisión parqueada hasta terminar los boards (ver nota en [`bl17-storyboard.md`](bl17-storyboard.md) § Midjourney — un solo dueño del estilo, MJ o Higgsfield, se compara lado a lado).
+**Fuentes de video (22/07 — dos en carrera):** Higgsfield (video desde still de referencia) y **Midjourney image-to-video animando los boards del storyboard** (el animatic; para E0, candidato directo a ser la pieza — validar resolución de export). Generador del look FINAL de assets: decisión parqueada hasta terminar los boards (ver nota en [`bl17-storyboard.md`](storyboard.md) § Midjourney — un solo dueño del estilo, MJ o Higgsfield, se compara lado a lado).
 
 **Dónde NO (límites técnicos, no de gusto):**
 - Nada ligado al **scrub del scroll**: el video no avanza/retrocede suave frame a frame en web — eso sigue siendo canvas/DOM+GSAP.

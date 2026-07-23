@@ -2,7 +2,7 @@
 
 > **Preparado en sesión AFK para que Alan decida en ~10 minutos.** NADA de esto está construido ni commiteado como decisión.
 > Flujo: Alan lee los 3 borradores → responde el cuestionario de veredictos → se arma la tarea-contrato en `backlog.md` → recién ahí se construye.
-> Origen y problema: [`backlog.md`](backlog.md) § BL-13. Voz canónica: [`f2-voz-revision.md`](f2-voz-revision.md) + glosario en `../../CONTEXT.md`.
+> Origen y problema: [`backlog.md`](../backlog.md) § BL-13. Voz canónica: [`f2-voz-revision.md`](../archivo/landing-secciones/voz-revision.md) + glosario en `../../CONTEXT.md`.
 
 ## Reglas que los borradores ya respetan (no re-decidir)
 

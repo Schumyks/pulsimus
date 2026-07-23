@@ -2,8 +2,8 @@
 
 > **Para qué:** ponernos en sintonía visual ANTES de codear. Vos generás 1 imagen por cuadro en Higgsfield (calidad boceto, sin curación fina — los personajes descriptos básico alcanzan) y con los boards a la vista validamos la narrativa juntos. Lo que no funcione se corrige acá, en papel, que es donde es barato.
 > **Cómo usarlo:** generá en orden, una escena por tanda. Guardá los cuadros como `storyboard/E0-1.png`, `E0-2.png`… No hace falta consistencia perfecta de personaje entre cuadros — esto es el plano, no la obra.
-> **Convención por cuadro:** **VEMOS** (composición: qué hay en pantalla y dónde) · **MOVIMIENTO** (qué anima en el sitio real — en el board queda congelado) · **COPY** (texto que el sitio pone en DOM; NO va dentro de la imagen) · **PROMPT** (subject para el template maestro del [canon](canon-assets-higgsfield.md); agregale el bloque base de siempre).
-> Fuentes: [guión](bl17-guion-narrativo.md) · [boceto E0](bl17-boceto-e0.md) · [plan de operación](bl17-plan-operacion.md) (dirección 22/07).
+> **Convención por cuadro:** **VEMOS** (composición: qué hay en pantalla y dónde) · **MOVIMIENTO** (qué anima en el sitio real — en el board queda congelado) · **COPY** (texto que el sitio pone en DOM; NO va dentro de la imagen) · **PROMPT** (subject para el template maestro del [canon](canon-assets.md); agregale el bloque base de siempre).
+> Fuentes: [guión](guion-narrativo.md) · [boceto E0](../escenas/e0-supernova/boceto.md) · [plan de operación](plan-operacion.md) (dirección 22/07).
 
 **El elenco en una línea (para los prompts):** el dueño = hombre sencillo y digno, delantal de tendero · la nave = furgoneta de reparto espacial con un mostrador de madera atado al techo (propuesta, gate tuyo pendiente) · el alien = criatura chiquita verde amistosa · la estrella de 4 puntas = el símbolo Pulsimus.
 
@@ -227,7 +227,7 @@ PROMPT: `a heartbeat line rising from below and transforming into a four-pointed
 
 ## Cómo seguimos con esto
 
-1. Generás los cuadros (E0 primero — son los mismos beats de la tanda E0 del [doc de assets](bl17-assets-direccion.md) §3, doble uso).
+1. Generás los cuadros (E0 primero — son los mismos beats de la tanda E0 del [doc de assets](assets-direccion.md) §3, doble uso).
 2. Los miramos juntos: lo que no se vea como lo imaginaste, se corrige ACÁ (papel barato) antes de que llegue a un boceto o a código.
 3. El storyboard gateado pasa a ser insumo del boceto de cada escena — y los cuadros aprobados, referencia visual directa para tus assets y videos finales.
 

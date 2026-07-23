@@ -1,8 +1,8 @@
 # Gate F4R · El mostrador reformado
 
 > Rework de la pieza firma: el mostrador pasa de un gesto suelto al **ciclo completo
-> del negocio, jugable**. Rama `f4-mostrador`. Diseño: [`f4r-f4t-design-spec.md`](../f4r-f4t-design-spec.md) ·
-> Plan: [`f4r-f4t-plan.md`](../f4r-f4t-plan.md). **El merge a `main` (producción) es decisión de Alan.**
+> del negocio, jugable**. Rama `f4-mostrador`. Diseño: [`f4r-f4t-design-spec.md`](../design-spec.md) ·
+> Plan: [`f4r-f4t-plan.md`](../plan.md). **El merge a `main` (producción) es decisión de Alan.**
 
 ## Qué se construyó
 

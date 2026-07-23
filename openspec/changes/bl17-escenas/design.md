@@ -2,7 +2,7 @@
 
 La landing tiene: intro supernova canvas autoplay (`Intro.tsx`, función pura de progreso `p`, TUNING con fases), cielo permanente (`SkyLayer`), estrella-cursor con pulso y reveal por sección (`StarLayer.tsx`), 7 secciones DOM, y desde B1 un **motor único de scroll** (`app/components/motion/scrollEngine.ts`: Lenis singleton con refcount + ScrollTrigger registrado + `lenis.on('scroll', ScrollTrigger.update)`). No existe todavía ninguna escena scroll pineada.
 
-La dirección está gateada y escrita en tres docs jerárquicos (guión → canon de assets → plan de operación) más la skill `pulsimus-escenas` (reglas técnicas) y el mapa de referencias (`docs/bl17-referencias-analisis.md`). Este design NO repite ese contenido: fija las decisiones técnicas transversales del build.
+La dirección está gateada y escrita en tres docs jerárquicos (guión → canon de assets → plan de operación) más la skill `pulsimus-escenas` (reglas técnicas) y el mapa de referencias (`docs/direccion/referencias.md`). Este design NO repite ese contenido: fija las decisiones técnicas transversales del build.
 
 ## Goals / Non-Goals
 
