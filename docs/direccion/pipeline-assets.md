@@ -43,3 +43,44 @@
 ## Recorte (chroma key)
 
 Higgsfield/MJ no dan transparencia → por eso las piezas se generan sobre **verde plano** y Claude hace el knockout por código (limpio, porque el fondo es uniforme — a diferencia de recortar sobre fondos complejos). `rembg` local y `remove_background` de Higgsfield (MCP, gasta créditos) cortan el **sujeto entero**, no piezas internas → la separación se hace en **generación** (piezas sueltas), no recortando piezas de un plano. Verde estándar: `#00B140` (a confirmar que no aparezca en ningún asset).
+
+---
+
+## Prompts para generar asset sheets (nano-banana, sobre verde)
+
+Dos usos. Rellenar `[OBJECT]`/`[partes]`, pegar la **regla fija** al final. Aspecto `21:9` si hay muchas piezas, `16:9` si pocas. Los genera Alan en la UI de Higgsfield (0 créditos).
+
+**A · DESPIECE** — separar un objeto en sus partes (para riggear):
+
+```
+From the [OBJECT] in this image, make a clean asset sheet: separate it into its
+individual parts as SEPARATE pieces, laid out in a neat grid with clear spacing.
+- Include ONLY parts of the [OBJECT]: [roof, awning, sign, window, door, wheels...].
+  Nothing else — no ground, no floor, no terrain, no sky, no planets, no stars,
+  no other buildings, no scene.
+- Each part fully visible and complete (not cropped), with green padding around it.
+- Keep the EXACT same flat-vector art style, colors and lighting as the source
+  (deep indigo #1B2140 + warm amber #F2A63E).
+- Isolate every part that could move on its own (door, sign, awning, window, wheel).
+```
+
+**B · VARIACIONES de la MISMA pieza** — la misma cosa con retoques (para elegir/estados):
+
+```
+From the [OBJECT] in this image, make an asset sheet of subtle DESIGN variations of
+THIS EXACT SAME [OBJECT] — it must stay clearly recognizable as the same [OBJECT] in
+every version (same core, same texture, same colors). Vary ONLY small design details:
+[rays / edges / proportions / internal detail]. Do NOT change the color, and do NOT
+create different kinds of objects (no different stars, moons, suns, bursts) — they are
+all THE SAME [OBJECT] with slight tweaks. Neat grid, green spacing.
+```
+
+**Regla fija** (pegar al final de A o B):
+
+```
+Solid pure chroma-key green background #00B140, flat and uniform, no gradient,
+no shadow cast on the background, no ground, no scene. No text, no labels,
+no captions, no watermark. Same flat-vector art style as the source.
+```
+
+**Aprendido (2026-07-23):** `"different versions / separate color layers"` hace que el modelo (1) cambie el **color** cuando querías el diseño, y (2) genere objetos **distintos** (soles, lunas, bursts) cuando querías la misma pieza con retoques. Por eso **B** insiste en *THIS EXACT SAME, recognizable, no different kinds*. Y `"No ground"` solo NO alcanza: hay que prohibir explícito suelo/cielo/planetas/otros edificios (se cuelan igual). Ver [[despiece]] de cada escena para el `[OBJECT]` y sus partes.
