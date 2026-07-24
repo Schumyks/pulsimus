@@ -1,0 +1,192 @@
+---
+name: asset-vectorizer
+description: >
+  Convierte un asset ilustrado GEOMÉTRICO generado por IA (sobre fondo verde) en un
+  SVG vectorial limpio, fiel y riggeable — recortando, leyendo su estructura, y
+  redibujándolo con primitivas + gradientes nativos. Use cuando haya que limpiar,
+  recortar, leer o vectorizar assets de una escena (carita/ventana, toldo, cartel,
+  puerta, tienda…) para el pipeline de escenas o para riggear en Rive. Palabras
+  gatillo: vectorizar asset, recortar chroma, limpiar borde, raster a SVG, calcar,
+  pieza para Rive.
+---
+
+# asset-vectorizer — raster ilustrado → SVG vectorial fiel
+
+> Estado: **spike validado con la carita (ventana E0)** el 2026-07-24. **Stress-test de la tienda hecho + gateado por Alan el 24/07** (asset complejo): el método rinde pero tiene techo — ver *Techo de fidelidad*.
+> **Doctrina (Alan, 24/07): la skill se pule para que funcione con CUALQUIER input.** La tienda/composite es el **test de estrés A PROPÓSITO** — se optimiza contra el peor caso para que, cuando lleguen las grillas de assets 2K/4K, la operativa ya esté al límite. **NO se regenera un asset para tapar un bache del método: se endurece el método.** Vive en el repo mientras se refina; promover a global cuando madure y se use en otro proyecto.
+
+## Dónde encaja en el pipeline (leer junto con [pipeline-assets.md](../../../docs/direccion/pipeline-assets.md))
+
+Esta skill es el **paso 5** (raster→SVG) del pipeline de assets. La cadena punta a punta:
+
+**3.** Alan genera el **sheet 4K DESARMADO** sobre verde (nano-banana despieza — mejor que un bbox) → **4.** Claude limpia (chroma) + separa (connected-components) → **una pieza PNG por archivo** → **5.** ESTA skill vectoriza cada pieza → SVG riggeable → **6.** rig + efectos ⚡.
+
+- **Input canónico:** una **pieza individual, limpia y completa** (del paso 4). NO un bbox de composición ensamblada — eso arrastra fondo/luz/vecinos y es solo fallback.
+- **Mejor input → mejor vector:** la pieza desarmada por banana a 4K, sin solapes ni luz horneada, es lo que habilita subir la fidelidad.
+- **PERO el método DEBE aguantar el composite igual** (doctrina Alan 24/07): a veces no hay individual (test de estrés, o assets que vienen juntos en un sheet). Cuando entra un composite, dos patas lo salvan **sin round-trips agente↔director**: **(1)** medí cada bbox con SCRIPT, nunca a ojo; **(2)** scoreá cada pieza enmascarando la fuente a su silueta. Detalle en *Aprendizajes del GATE* abajo.
+
+## Criterios de decisión (NORMA BASE — sellado 24/07)
+
+> El objetivo NO es "el método que más escala" — es **el que mejor CALCA cada pieza** (vectores de alta fidelidad). Se elige el camino que MAXIMIZA la fidelidad para ESA pieza. Un método escalable con resultado mediocre **no se usa**.
+> Referencia de calidad (NORMA BASE): [`face_smile_3.svg`](../../../space-src/e0-supernova/piezas/spike-rive/face_smile_3.svg) (score **8.31** vs el PNG con `score.mjs` a full-res) — carita con primitivas + bevels, calcada **del PNG en 1 sola pasada** con esta skill afinada. Las versiones previas (`face_smile.svg` v1 con glow inflado + borde inferior mal, y `face_smile_2.svg` v2) están archivadas en `spike-rive/_archive/`.
+>
+> ⛔ **REGLA DE ORO DEL CALCO: se redibuja SOBRE EL PNG, SIEMPRE.** Un SVG de referencia previo es **solo vara de score** (`score.mjs`), **NUNCA fuente para copiar**. Abrir el SVG de referencia durante el redibujo hace heredar sus errores y anula el ejercicio. La verdad está en el raster, no en un vector anterior.
+
+### Cómo el agente lee una pieza y elige el camino
+
+1. **Segmentar por color** → separar las PARTES (marco, cara, rasgos…). Script: `segment2.mjs` (clasifica por hue/frialdad, connected-components para instancias).
+2. **Clasificar cada parte por su FORMA:**
+   - **Primitiva** (círculo, rect redondeado, arco, elipse) → **primitiva nativa MEDIDA** (centro/bbox/radio de la segmentación). Ej: ojos = `<circle>`, cara = `<rect>`, boca = arco cúbico. Máxima limpieza, peso mínimo, fidelidad máxima en formas simples.
+   - **Forma libre / irregular** (contorno complejo, curva no primitiva) → **trace por máscara** (vtracer bw sobre la máscara de la parte).
+   - **Textura / orgánico** (grano, follaje, fuego) → NO vectorizar → raster o efecto de código ⚡.
+3. **Clasificar el RELLENO de cada parte:**
+   - Plano → color muestreado (promedio de la máscara).
+   - Gradiente → `linearGradient`/`radialGradient` muestreado del raster (franjas SOLO de esa parte).
+   - **Bevel / profundidad** (borde con luz-sombra que da volumen) → **SÍ se dibuja: es carácter del dibujo, NO luz dinámica.** (Distinto del glow/haz/split global de E0, que sí va por código.)
+   - **El depth es ASIMÉTRICO — medí los 4 bordes por separado, NO asumas bevel simétrico.** La luz viene de un lado (en la carita, arriba-izquierda) → el tono oscuro de profundidad asoma **solo del lado en sombra** (derecha), y los otros 3 bordes son de UN tono. Modelarlo como "sombra abajo+derecha" por defecto es el error clásico: en la carita el borde inferior es liso y el oscuro va solo a la derecha. Escaneá cada borde (¿dónde aparece el tono oscuro?) antes de dibujar.
+   - **El glow/highlight de volumen es SUTIL.** Si lo modelás con un radial claro, medí su fuerza contra el PNG y quedate corto (la `face_smile.svg` vieja lo puso al 0.42 y lavó la cara; el real ≈0.14). Más glow ≠ más fiel.
+4. **Ensamblar:** z-order correcto + cada parte con `id` nombrado (riggeable). Cara SÓLIDA detrás (sin agujeros que dejen ver el marco), rasgos ENCIMA.
+
+### Elección de método global, según la pieza
+
+| Pieza | Método | Por qué (probado 24/07) |
+|---|---|---|
+| **Simple / geométrica** (carita, cartel, ventana, puerta) | **NORMA BASE**: primitivas medidas + bevels + gradiente muestreado | Más fiel, limpio y liviano (2.4KB). El trace NO lo supera: introduce gaps y pierde los bevels/profundidad. |
+| **Compleja / irregular** (tienda entera, toldo festón, contornos libres) | **TRACE HÍBRIDO**: trace por máscara + primitivas donde apliquen + gradiente | El a-mano no escala ni pasa de ~60-80% en formas irregulares. |
+| **Orgánico / texturado** | Raster o efecto de código ⚡ | Vectorizar pierde o explota en cientos de paths. |
+
+### Aprendizajes del spike (24/07 tarde) — NO repagar
+
+- **El trace crudo (vtracer color) da fidelidad ~95% PERO 265 paths anónimos, no riggeable.** El nudo no es fidelidad, es ESTRUCTURA. Post-proceso = segmentar + trazar por parte + colapsar gradiente.
+- **Para piezas simples, primitivas > trace.** El trace de máscara arrastra la irregularidad del raster (bordes con micro-dientes) y deja **gaps negros** entre paths que no se solapan. Las primitivas (círculo/rect/arco) encajan perfecto y pesan menos.
+- **El BEVEL es parte del dibujo, no luz por código.** Error del spike: descartarlo pensando que era "luz dinámica". El highlight del marco y el borde interior de la cara dan la PROFUNDIDAD que distingue high-fi de low-fi. El ojo de diseñador de Alan lo cazó.
+- **Gradiente muestreado del raster > estimado a ojo.** Muestrear la rampa real (franjas de la parte) y volcarla como `stops` es superior a adivinar 2-3 tonos.
+
+### Aprendizajes del TEST DEL MARCO (24/07 noche) — carita redibujada de cero, `face_smile_2.svg`
+
+- **El marco guía bien la ESTRUCTURA**: 2 iteraciones a ciegas (solo PNG + reader + score) dejaron la pieza a un pelo de la vara. El proceso segmentar→clasificar→primitivas medidas funciona.
+- **Calcar sobre el PNG, no sobre un SVG previo** (regla de oro arriba): el error se coló cuando se miró la `face_smile.svg` para "cerrar el gap" y se heredó su borde inferior oscuro. Calcado del PNG puro → más fiel que la referencia.
+- **Medir los 4 bordes del marco por separado** (ver punto 3): el depth oscuro va solo al lado en sombra. Asumir simetría metió oscuro en el borde inferior; medir lo corrigió (score 8.8→7.98).
+- **El glow real es sutil** (~0.14, no 0.42). El `score.mjs` baja monótono al corregirlo — pero NO optimizar a 0 (perdés el rasgo de volumen): elegir con ojo el valor que mantiene la profundidad Y calca.
+- **Sub-estructuras que el reader detecta pero hay que ELEVAR a checklist al redibujar:** (a) el **marco** también lleva gradiente (no solo la cara); (b) el gradiente de la cara suele tener un **escalón** (banda inferior plana), no rampa continua; (c) el **glow** diagonal sutil.
+
+### Asset COMPUESTO (escena multi-pieza) — corrida de la tienda (24/07 noche)
+
+Cuando el asset es una ESCENA entera (la tienda: fachada + toldos + carita + puerta + cartel + buzón + plantas…), no se vectoriza como una pieza sola. Flujo probado (tienda completa = **40KB, 31 grupos riggeables, score 18.6** vs el trace 4.24 pero 531KB **no** riggeable):
+
+1. **Mapear las zonas con SCRIPTS, nunca a ojo.** Cada elemento → bbox medido con connected-components / escaneo de alpha+color. (En la tienda, mapear "a ojo" desde una vista reducida metió bboxes corridos ~500px — ver gotcha de coords.)
+2. **Vectorizar cada pieza por separado**, en **coordenadas ABSOLUTAS del canvas completo**, cada una un SVG con `<g id="pieza">` + sub-ids, y **ids de gradientes/clips PREFIJADOS por pieza** (`toldo-`, `buzon-`…) — sin prefijo, colisionan al juntar.
+3. **Ensamblar por z-order** con `assemble.mjs <out> <p1> <p2> …` (junta los `<defs>`, apila en orden de args: primero = atrás).
+4. **Reusar piezas-norma** ya hechas (la carita) reubicándolas con `transform="translate() scale()"` — medí la escala por 2 puntos discretos (los OJOS) y confirmala con un tercero (el radio del ojo escalado). Robusto.
+5. **Medir el score en el ENSAMBLE**, no por pieza. El bbox de una pieza contiene contexto ajeno (pared, solapes) que la pieza correctamente no dibuja → su score aislado se infla; el número real sale del conjunto (la base llena el fondo).
+
+**Delegación:** cada pieza es un contrato cerrado para un subagente (redibujá SOLO tu pieza · coords absolutas · ids prefijados · **refiná el bbox midiendo vos** · auto-verificá con `score.mjs`). Los 6 ejecutores corrigieron errores del brief por evidencia (coords, colores, piezas inexistentes). Delegá ejecución, no criterio (el z-order y el ensamble los define el director).
+
+**Gotchas de asset compuesto (comprados en la corrida):**
+- **Coords vista vs reales:** si mapeás mirando una imagen mostrada a escala reducida, multiplicá por su factor. Mejor: medí el bbox con un script, no a ojo.
+- **`density` + `extract`:** renderizar un SVG con `sharp(svg,{density:D})` da un raster de `size·D/96`; hacer `extract` con coords del viewBox cae en el lugar equivocado. Renderizá a canvas exacto (`resize(W,H)`) ANTES de recortar. (`score.mjs` no sufre esto porque hace `resize`.)
+- **Colisión de temporales:** `overlay.mjs`/`score.mjs` escriben `_trace_*.png` junto al SVG; en corrida multi-agente con dir compartido se pisan. Usá temporales por-proceso / scratchpad propio.
+- **Score de escena limpia ≠ trace:** el redibujo aplana el grano a propósito → su score contra el raster es más alto que el del trace (que lo copia). Es correcto: el valor es formas nítidas + riggeable + liviano, no el número.
+
+### Aprendizajes del GATE de la tienda (Alan, 24/07 noche) — endurecer el método
+
+> Alan revisó el primer run completo. Principio que reforzó: **capturar la ESENCIA de cada elemento y pulir.** Las tres correcciones que dio NO se guardan como defectos de la tienda (eso vive en `tienda/HALLAZGOS-corrida-tienda.md`) — se destilan a **lecciones de método** generalizables.
+
+**Input (con la doctrina de arriba):**
+- **Individual cuando exista** → vectorizá desde SU PNG limpio (leé su estructura aislada con `read-structure`/`detect-features`); el composite solo aporta el **bbox de posición**. Separá *redibujar* (del individual) de *posicionar* (en el composite).
+- **Robusto al composite siempre** (test de estrés) con las 2 patas: bbox por script + score enmascarado a la silueta.
+
+**Lectura de la pieza — las 3 correcciones del gate = 3 reglas:**
+- **NO aplanes una pieza compleja a 1 primitiva.** El techo salió *un rect con gradiente*; era **≥5 tablones + frente curvo perspectivado** (techo abovedado, no plano frontal). Regla: si una pieza hermana tiene sub-estructura (la pared = tablones), asumí que ésta también hasta verificar. Leé CADA pieza con el mismo rigor; la simplificación a ojo miente.
+- **Orientación de patrones = ambigüedad "poste de barbero".** Scallops / rayas / festones pueden salir **espejados** (los toldos salieron con las curvas AL REVÉS, y el par mal cortado + despegado del poste). Confirmá la dirección con `overlay.mjs`/diff contra el PNG **DESPUÉS de dibujar** — nunca la des por buena a ojo. Y anclá la pieza a su soporte (el toldo cuelga DEL poste: verificá el encastre).
+- **Silueta COMPLETA antes de vectorizar.** Un recorte que se come una parte (la **base oscura inferior del buzón** desapareció) da una pieza mutilada. Revisá que la máscara del `clean` cubra TODA la pieza — bordes incluidos — antes de redibujar. Un bache de recorte se propaga al vector.
+
+**Rig — gotcha técnico (lo cazó el agente "entrada", corrigió 4):**
+- **id de gradiente/clip ≠ id de elemento.** Un `<g id="puerta">` y un `<linearGradient id="puerta">` **colisionan** → SVG inválido y **rig roto en Rive**. Namespaceá: elemento `id="puerta"`, gradiente `id="puerta-grad-1"`, clip `id="puerta-clip"`. (Extiende la regla de prefijos-por-pieza al espacio de ids DENTRO de la pieza.)
+
+**Score confiable por pieza (mata round-trips):**
+- **Enmascará la fuente a la silueta de la pieza ANTES de scorear.** El bbox crudo mete **35–40% de contexto ajeno** (pared, solapes) → el score no baja de ~9–15 aunque el cuerpo calque a d=4–6 → el agente no confía en su número y **depende del ensamble para saber si calcó** (round-trip con el director). Con el masking (como se midió `face_smile_3` y `cartel-store`), el score LOCAL es real y cada pieza converge sola. Deuda: exponerlo en `score.mjs` como flag `--mask <silueta.png>`.
+
+### Deuda — pulir AMBOS procesos al límite (fase de construcción, no cerrada)
+
+- **Norma base:** templatizar los bevels; usar la medición automática de `segment2` para colocar las primitivas con precisión (que deje de ser "a ojo").
+- **Trace híbrido:** matar el gap negro (solapar paths / marco sólido detrás), agregar bevels muestreados, bajar peso (simplificar paths / `path_precision`).
+- **Toolkit de composite (los 2 scripts que matan iteraciones — construir + probar en el próximo run contra la tienda):**
+  - `map-pieces.mjs <composite.png>` → tabla de bboxes de TODAS las piezas por connected-components. Elimina la ronda entera de "los agentes corrigen el bbox por evidencia" (fue el eslabón débil de la corrida: 5 corrimientos de ~500px por mapear a ojo).
+  - `score.mjs --mask <silueta.png>` → score enmascarado a la silueta de la pieza (hoy `score.mjs` mide la zona cruda con 35–40% de contexto ajeno). Da al agente un número LOCAL confiable → converge sin round-trips.
+  - Opcional `crop-check.mjs`: renderiza el SVG al canvas exacto ANTES de `extract` (evita el bug `density`+`extract`).
+- **Auto-calcado a precisión** (carril diferenciable diffvg/LIVE) = **Opción B, PARQUEADA** (ver [research](../../../docs/direccion/vectorizacion-research.md)) — "agua de otro pozo".
+
+### Material del spike (en `space-src/e0-supernova/piezas/spike-rive/tienda/`, gitignored)
+
+`clean-asset` → `crop-pieces` (fallback bbox) · `sample-grid` (mapa de color) · `segment2` (segmentación + máscaras + params) · vtracer bw por máscara · `assemble` (ensamble nombrado + gradiente + primitivas). Reconstruir el flujo desde acá.
+
+## Qué resuelve y por qué
+
+El arte se genera raster (nano-banana/Higgsfield) con softness inherente y textura de grano. Para un asset **geométrico** (formas + gradientes), redibujarlo como **SVG** gana en todo: nítido a cualquier escala, ~1500× más liviano (carita 2.2KB vs 3.4MB PNG), y **riggeable** (cada parte = elemento nombrado que anima/parpadea/cambia por separado). Rive importa SVG como shapes editables.
+
+## La frontera (decidí ANTES de empezar)
+
+- **🟢 Geométrico → SVG redibujado** (esta skill): carita, ventana, toldo, cartel, puerta, mostrador, la mayoría del elenco Kurzgesagt. Formas claras + gradientes.
+- **🔴 Orgánico / texturado → raster o efecto de código**: nubes, fuego, follaje, humo. Vectorizar eso pierde o explota en paths. No es para esta skill.
+- **NO replicar la textura de papel/grano** del raster: es ruido, se descarta a propósito.
+
+## El flujo (6 pasos)
+
+Corré los scripts con `bun scripts/<x>.mjs …` desde el repo.
+
+1. **GENERAR (lo hace Alan)** — asset **completo** a **2K/4K**, sobre **verde plano** (`#00B140` ideal), **flat** (colores/gradientes simples, sin grano, sin sombra proyectada), **sin glow/halo** (los pone el código), vista frontal, + los **estados** que se necesiten (ej. carita 😊 y X_X). Ver [`specs-generacion.md`](specs-generacion.md).
+2. **LIMPIAR** — `clean-asset.mjs <in> <out> [erode=4] [feather=2]`: mide el verde real (no asume), chroma `greenness=G−max(R,B)` → soft-alpha, despill, **erode+feather** (mata el rim de anti-aliasing), crop al bbox.
+3. **LEER estructura** — `read-structure.mjs <clean.png>`: **promedia franjas** (NO una línea — una línea agarra textura y punto no representativo). Devuelve las bandas (con `dev`=planitud: dev bajo = color plano), los colores por capa, y los bordes del marco.
+4. **MEDIR rasgos** — `detect-features.mjs <clean.png>`: ojos/boca por **bounding box** (connected-components), NO por una línea de escaneo.
+5. **REDIBUJAR** — a mano, informado por 3–4, **mirando SOLO el PNG** (nunca un SVG previo). Primitivas SVG + gradientes nativos. Cada parte un `id`. Checklist que se olvida a ciegas: **el marco TAMBIÉN lleva gradiente** (no solo la cara); bandas planas = stops del mismo color; bandas con **escalón** (ej. banda inferior plana) = dos stops con salto corto, NO rampa continua; **depth asimétrico = rects desplazados hacia el lado en sombra** (medí los 4 bordes); bevel/highlight = gradientes/overlays; **glow sutil** (medí la fuerza, quedate corto).
+6. **CALCAR y afinar (loop contra target)** — dos varas juntas:
+   - `overlay.mjs <clean.png> <asset.svg>` → `_trace_over.png` (SVG al 50% sobre el raster) + `_trace_diff.png` (**negro = calza, brilla = desajuste**) junto al SVG. Dice DÓNDE ajustar.
+   - `score.mjs <clean.png> <asset.svg>` → un número (mean |Δ|RGB in-shape, **menor = más fiel**). Dice CUÁNTO y si una iteración mejoró o empeoró. Loopeá bajando el score hasta el target; el diff te dice qué tocar. **No pares en el primer pase presentable** — seguí mientras el diff tenga brillos y el score baje.
+   - Gate visual de Alan. → Rive.
+
+## Gotchas (comprados a los golpes)
+
+- **Medí el verde real** — si el prompt solo dice "green background" sale sage `rgb(103,150,111)`, NO `#00B140`. El script lo mide.
+- **Chroma correcto = `G−max(R,B)`**, no distancia euclidiana (confunde el verde con grises claros del arte).
+- **erode+feather SIEMPRE** — sin eso queda rim verde-gris (anillo de AA). En concavidades cerradas puede quedar resto sub-pixel; invisible a tamaño real.
+- **Rasgos por bbox, no por línea** — una línea que no pasa por el centro subestima el radio (pasó: r48 medido vs r65 real).
+- **Promediá franjas al leer** — una línea sola miente (textura + punto no representativo). Reveló mal las bandas hasta promediar.
+- **Bandas planas vs divididas** — no asumir gradiente continuo; el raster suele tener bandas de color plano (la inferior de la carita es UN color en el tercio inferior). El `dev` del reader lo dice.
+- **Sub-estructura fina** — capas como el bevel pueden tener 2 tonos (la franja cálida izquierda = 2 naranjas). Leer con foco.
+- **Calcar > medir a ciegas** — la lectura numérica da el punto de partida; el ajuste fino se hace **calcando sobre la referencia con el diff**, no dibujando de memoria.
+- **NUNCA copiar un SVG de referencia** — se calca del PNG. Un vector previo puede tener errores (la `face_smile.svg` tenía dos); mirarlo los contagia. Es solo vara de `score.mjs`.
+- **Los 4 bordes del marco NO son simétricos** — el depth oscuro asoma solo del lado en sombra. Escaneá cada borde antes de dibujar; el default mental "sombra abajo+derecha" mete oscuro donde el arte tiene un tono liso.
+- **El glow no se infla** — `score.mjs` baja al bajar el glow; tentación de ir a 0. Parar en el valor que aún da volumen (medí contra el PNG), no en el mínimo numérico.
+
+## Límite conocido / hacia dónde va
+
+El pixel-perfect **a mano** converge pero cuesta N iteraciones → **no escala** a 20–30 assets. El salto grande es **automatizar el paso 6** (loop diff→ajuste automático): carril diferenciable = **BL-20, parqueado** (ver [Criterios de decisión](#criterios-de-decisión-norma-base--sellado-2407) + [research](../../../docs/direccion/vectorizacion-research.md)). Esta skill es el andamiaje semi-manual que la precede y la define. (Illustrator descartado: no corre en el Linux de Alan.)
+
+## Scripts
+
+- `scripts/clean-asset.mjs` — chroma + erode + feather + crop.
+- `scripts/read-structure.mjs` — lectura por franjas promediadas (bandas + marco + planitud).
+- `scripts/detect-features.mjs` — bbox de rasgos (ojos/boca/…).
+- `scripts/overlay.mjs` — trace-overlay: `_trace_over.png` + `_trace_diff.png` junto al SVG.
+- `scripts/score.mjs` — métrica objetiva `bun score.mjs <clean.png> <asset.svg>` → mean |Δ|RGB in-shape (menor = más fiel). La vara del loop del paso 6.
+- `scripts/assemble.mjs` — `bun assemble.mjs <out> <p1.svg> <p2.svg> …` junta piezas (mismo viewBox) en 1 SVG por z-order (primero = atrás), combinando `<defs>`. Para asset compuesto.
+- `scripts/reduce-palette.mjs` — `bun reduce-palette.mjs <src.png> <in.svg> <out.svg> [K]` colapsa la paleta explotada de un trace a K familias reales (k-means sobre el PNG). Para el carril trace (limpia color-artefacto).
+
+Requiere `sharp` (ya en el repo) y `bun`.
+
+## Changelog del método (registro para revertir)
+
+> Cada sellado del método queda acá con su ANTES/DESPUÉS y el porqué, para poder razonar o deshacer un cambio si empeora. El punto de reversión **duro** es git (esta skill vive versionada en el repo); esta tabla da el **razonamiento** de la reversión.
+
+### 2026-07-24 — sellado post-gate de la tienda
+- **Antes:** el flujo de asset compuesto ya estaba documentado (mapeo por script, ids prefijados por pieza, ensamble por z-order, score en el ensamble), pero faltaba incorporar el **feedback del gate de Alan** sobre el primer run completo.
+- **Cambió (esta versión sella):**
+  1. **Doctrina** "endurecer el método, no regenerar" + la tienda/composite como test de estrés a propósito (header *Estado* + *Input canónico*).
+  2. **Input individual > composite** cuando exista, pero método **robusto al composite** siempre (2 patas: bbox por script + score enmascarado).
+  3. Tres reglas de **lectura de pieza** destiladas de las 3 correcciones (no aplanar pieza compleja a 1 primitiva · orientación de patrones = "poste de barbero", confirmar con diff · silueta completa antes de vectorizar).
+  4. Gotcha **id de gradiente/clip ≠ id de elemento** (rompe el rig en Rive).
+  5. **Score por-pieza enmascarado a la silueta** (mata round-trips) + deuda `score.mjs --mask`.
+  6. Deuda de toolkit: `map-pieces.mjs`, `score.mjs --mask`, `crop-check.mjs`.
+- **Por qué:** la corrida gastó iteraciones corrigiendo bboxes mal mapeados a ojo y en round-trips por scores de pieza contaminados. Estas reglas atacan ese eslabón débil.
+- **Cómo revertir:** `git checkout <sha-previo> -- .claude/skills/asset-vectorizer/SKILL.md`, o borrar la subsección *Aprendizajes del GATE de la tienda* + este entry y los bullets del toolkit de composite.
