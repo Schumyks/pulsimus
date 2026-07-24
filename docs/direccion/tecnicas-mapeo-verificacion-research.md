@@ -48,6 +48,12 @@ Pipeline recomendado para "pegados, color similar, división sutil":
 
 No hay tool maduro "bajar y usar" (amodal segmentation = área académica fragmentada; "See-through" feb-2026 promete pero sin release). **Y no hace falta en el camino principal:** las piezas ya vienen desarmadas (paso 3), el z-order lo pone el rigger. Solo importaría si dependemos del composite (fallback). → No invertir ahora.
 
+### 1d · Tiling por cuadrantes — por qué NO como mapeo, cuándo SÍ (idea de Alan, 24/07)
+
+Dividir el composite en una grilla de cuadrantes y "mapear el objeto que aparezca en cada celda" **NO sirve como método de mapeo**: un objeto (fachada, toldo, cartel) casi nunca respeta la grilla → cruza 4-6 celdas → se fragmenta → hay que re-fusionar los pedazos, que es reinventar connected-components pero con costuras artificiales y peor. El mapeo lo resuelven connected-components / color (§ 1b) / SAM (§ 1a), que siguen la forma REAL del objeto, no una cuadrícula arbitraria.
+
+**Dónde el tiling SÍ aplica** (otra cosa, mismo nombre): procesar un asset ENORME (4K/8K) **por tiles para no reventar los 8GB de VRAM** al correr SAM → va con [[BL-22]]. Y localizar el peor error por región — que el Hausdorff del score ya devuelve con su coordenada, sin grilla. Es técnica de memoria/GPU, no de segmentación.
+
 ---
 
 ## Eje 2 — VERIFICACIÓN

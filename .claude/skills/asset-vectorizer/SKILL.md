@@ -111,11 +111,11 @@ Cuando el asset es una ESCENA entera (la tienda: fachada + toldos + carita + pue
 
 - **Norma base:** templatizar los bevels; usar la medición automática de `segment2` para colocar las primitivas con precisión (que deje de ser "a ojo").
 - **Trace híbrido:** matar el gap negro (solapar paths / marco sólido detrás), agregar bevels muestreados, bajar peso (simplificar paths / `path_precision`).
-- **Toolkit de composite (los 2 scripts que matan iteraciones — construir + probar en el próximo run contra la tienda):**
-  - `map-pieces.mjs <composite.png>` → tabla de bboxes de TODAS las piezas por connected-components. Elimina la ronda entera de "los agentes corrigen el bbox por evidencia" (fue el eslabón débil de la corrida: 5 corrimientos de ~500px por mapear a ojo).
+- **Toolkit de composite (los 4 scripts que matan iteraciones — construir + probar en el próximo run contra la tienda):**
+  - `map-pieces.mjs <composite.png>` → tabla de bboxes de TODAS las piezas por connected-components. Elimina la ronda entera de "los agentes corrigen el bbox por evidencia" (fue el eslabón débil de la corrida: 5 corrimientos de ~500px por mapear a ojo). (Un tiling ciego por cuadrantes NO reemplaza esto — un objeto cruza varias celdas y se fragmenta; ver [research](../../../docs/direccion/tecnicas-mapeo-verificacion-research.md) § 1d.)
   - `score.mjs` **reforzado a MULTI-EJE + `--mask <silueta-del-target>`** → hoy es `mean |Δ|RGB` de un eje sobre la zona cruda (35–40% de contexto ajeno, hackeable). Nuevo: ΔE + SSIM + IoU + FSIM/GMSD + Hausdorff, pooling p95, enmascarado a la silueta del TARGET → número LOCAL confiable y no-hackeable. Ver *Verificación reforzada*.
+  - `crop-check.mjs <composite.png> <pieza1.png> …` → **el GATE DE RECORTE del paso 2, hecho script** (anillo perimetral transparente + mapa de residuo): verifica que cada pieza esté COMPLETA y que la unión de piezas cubra el composite. Es el que ataca el error del buzón (recorte que se comió la base). *(Impl: renderizá el SVG a canvas exacto con `resize(W,H)` ANTES de `extract` — el gotcha `density`+`extract` cae en el lugar equivocado si no.)*
   - `check-rig.py` → lint de riggeabilidad (paths anónimos, grupos de 1 hijo) + `xmllint --valid` para ids. Corre por pieza antes de Rive.
-  - Opcional `crop-check.mjs`: renderiza el SVG al canvas exacto ANTES de `extract` (evita el bug `density`+`extract`).
 - **Auto-calcado a precisión** (carril diferenciable diffvg/LIVE) = **Opción B, PARQUEADA** (ver [research](../../../docs/direccion/vectorizacion-research.md)) — "agua de otro pozo".
 
 ### Material del spike (en `space-src/e0-supernova/piezas/spike-rive/tienda/`, gitignored)
