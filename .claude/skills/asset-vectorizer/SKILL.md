@@ -113,7 +113,8 @@ Cuando el asset es una ESCENA entera (la tienda: fachada + toldos + carita + pue
 - **Trace híbrido:** matar el gap negro (solapar paths / marco sólido detrás), agregar bevels muestreados, bajar peso (simplificar paths / `path_precision`).
 - **Toolkit de composite (los 2 scripts que matan iteraciones — construir + probar en el próximo run contra la tienda):**
   - `map-pieces.mjs <composite.png>` → tabla de bboxes de TODAS las piezas por connected-components. Elimina la ronda entera de "los agentes corrigen el bbox por evidencia" (fue el eslabón débil de la corrida: 5 corrimientos de ~500px por mapear a ojo).
-  - `score.mjs --mask <silueta.png>` → score enmascarado a la silueta de la pieza (hoy `score.mjs` mide la zona cruda con 35–40% de contexto ajeno). Da al agente un número LOCAL confiable → converge sin round-trips.
+  - `score.mjs` **reforzado a MULTI-EJE + `--mask <silueta-del-target>`** → hoy es `mean |Δ|RGB` de un eje sobre la zona cruda (35–40% de contexto ajeno, hackeable). Nuevo: ΔE + SSIM + IoU + FSIM/GMSD + Hausdorff, pooling p95, enmascarado a la silueta del TARGET → número LOCAL confiable y no-hackeable. Ver *Verificación reforzada*.
+  - `check-rig.py` → lint de riggeabilidad (paths anónimos, grupos de 1 hijo) + `xmllint --valid` para ids. Corre por pieza antes de Rive.
   - Opcional `crop-check.mjs`: renderiza el SVG al canvas exacto ANTES de `extract` (evita el bug `density`+`extract`).
 - **Auto-calcado a precisión** (carril diferenciable diffvg/LIVE) = **Opción B, PARQUEADA** (ver [research](../../../docs/direccion/vectorizacion-research.md)) — "agua de otro pozo".
 
@@ -137,13 +138,44 @@ Corré los scripts con `bun scripts/<x>.mjs …` desde el repo.
 
 1. **GENERAR (lo hace Alan)** — asset **completo** a **2K/4K**, sobre **verde plano** (`#00B140` ideal), **flat** (colores/gradientes simples, sin grano, sin sombra proyectada), **sin glow/halo** (los pone el código), vista frontal, + los **estados** que se necesiten (ej. carita 😊 y X_X). Ver [`specs-generacion.md`](specs-generacion.md).
 2. **LIMPIAR** — `clean-asset.mjs <in> <out> [erode=4] [feather=2]`: mide el verde real (no asume), chroma `greenness=G−max(R,B)` → soft-alpha, despill, **erode+feather** (mata el rim de anti-aliasing), crop al bbox.
+   - **GATE DE RECORTE — verificar ANTES de vectorizar** (un recorte malo se propaga al vector; fue el error del buzón): **(a) anillo perimetral transparente** — las filas/columnas del borde del bbox deben ser alpha≈0. Si un borde tiene contenido, el crop cortó la pieza (la base oscura del buzón tocaba el borde → cortada). Check binario. **(b) mapa de residuo** — `contenido del composite (alpha>umbral) − ∪ piezas recortadas ≈ 0`; lo que sobra sin cubrir = recorte incompleto o pieza faltante. Un diff de alpha responde "¿recorté bien?" Y "¿falta algún objeto?".
 3. **LEER estructura** — `read-structure.mjs <clean.png>`: **promedia franjas** (NO una línea — una línea agarra textura y punto no representativo). Devuelve las bandas (con `dev`=planitud: dev bajo = color plano), los colores por capa, y los bordes del marco.
 4. **MEDIR rasgos** — `detect-features.mjs <clean.png>`: ojos/boca por **bounding box** (connected-components), NO por una línea de escaneo.
 5. **REDIBUJAR** — a mano, informado por 3–4, **mirando SOLO el PNG** (nunca un SVG previo). Primitivas SVG + gradientes nativos. Cada parte un `id`. Checklist que se olvida a ciegas: **el marco TAMBIÉN lleva gradiente** (no solo la cara); bandas planas = stops del mismo color; bandas con **escalón** (ej. banda inferior plana) = dos stops con salto corto, NO rampa continua; **depth asimétrico = rects desplazados hacia el lado en sombra** (medí los 4 bordes); bevel/highlight = gradientes/overlays; **glow sutil** (medí la fuerza, quedate corto).
-6. **CALCAR y afinar (loop contra target)** — dos varas juntas:
-   - `overlay.mjs <clean.png> <asset.svg>` → `_trace_over.png` (SVG al 50% sobre el raster) + `_trace_diff.png` (**negro = calza, brilla = desajuste**) junto al SVG. Dice DÓNDE ajustar.
-   - `score.mjs <clean.png> <asset.svg>` → un número (mean |Δ|RGB in-shape, **menor = más fiel**). Dice CUÁNTO y si una iteración mejoró o empeoró. Loopeá bajando el score hasta el target; el diff te dice qué tocar. **No pares en el primer pase presentable** — seguí mientras el diff tenga brillos y el score baje.
-   - Gate visual de Alan. → Rive.
+6. **VERIFICAR (loop contra target — con GATES obligatorios)** — tres varas, NINGUNA opcional:
+   - **DIFF DE CONTRASTE — OBLIGATORIO POR PIEZA.** `overlay.mjs <clean.png> <asset.svg>` → `_trace_diff.png` (**negro = calza, brilla = desajuste**). Dice DÓNDE falla. NO es opcional: el número solo NO delata forma mal orientada ni incompleta — se saltó en la corrida de la tienda (`piezas_vec/` scoreó sin diff) → toldos al revés y buzón incompleto pasaron con score OK.
+   - **SCORE MULTI-EJE**, no un solo número (color + estructura + forma + bordes, pooling p95). Ver *Verificación reforzada* abajo. Dice CUÁNTO y si mejoró.
+   - Loopeá hasta el target; **no pares en el primer pase** — seguí mientras el diff tenga brillos o algún eje baje. **Cuándo parar (no loopear infinito):** early-stopping por *patience+tol* (si ningún eje baja ≥tol en N pasadas → plateau → parar y marcar la pieza), con **target por CLASE de pieza** (rectilínea ~80%, curvas repetidas ~60-70% — ver *Techo de fidelidad*), no una vara fija. **Gate de riggeabilidad** (`xmllint`) + gate visual de Alan. → Rive.
+
+## Verificación reforzada — score multi-eje + anti reward-hacking (research 2, 24/07)
+
+> Detalle + fuentes + implementaciones en [`tecnicas-mapeo-verificacion-research.md`](../../../docs/direccion/tecnicas-mapeo-verificacion-research.md).
+> Un score de UN eje (`mean |Δ|RGB`) es **HACKEABLE**: el agente optimiza el número sin calcar (ley de Goodhart — no es mala fe, optimiza lo que medís). En la tienda pasó: toldos al revés, buzón incompleto, con score OK. Defensa = **ejes ortogonales + pooling robusto + región fijada por el target + gates no-numéricos**.
+
+**El score pasa a MULTI-EJE** (ninguna trampa satisface los cuatro a la vez):
+- **Color** = ΔE CIEDE2000 (`colour-science`/`skimage`) · **Estructura/contraste** = SSIM (`skimage`/`piq`) · **Forma** = IoU/Dice de silueta (XOR = mapa gratis) · **Bordes** = FSIM/GMSD (`piq`, GPU) · **Peor punto** = Hausdorff (`skimage`, devuelve la coordenada). Todas corren en Linux/8GB.
+- **Pooling NO-mean → p95 o std-dev.** El mean diluye una franja mal calcada hasta pasarla (es lo que dejó pasar los toldos). Separar SIEMPRE el mapa por-píxel del escalar.
+- **Región de scoring = silueta del TARGET, no la del dibujo.** Si el agente elige su propia máscara, esconde lo faltante (la base del buzón nunca entraría al score).
+- **El que mide es el gate, no el que dibuja** — re-score determinista, full-res, sobre el SVG entregado.
+
+**Catálogo de trampas → defensa** (cubrir la mayor cantidad de casos; agregar acá cada modo nuevo que aparezca):
+
+| Trampa (cómo el número miente) | Defensa |
+|---|---|
+| Forma/orientación mal, color promedio OK (los toldos) | SSIM + edge score |
+| Objeto incompleto escondido por la máscara (buzón sin base) | región = silueta del TARGET + IoU |
+| Relleno plano promedio sin estructura | pooling p95/max, no mean |
+| Detalle chico omitido (ranura, tornillo) | p95 + peso por importancia |
+| Blur/suavizado para bajar el Δ | edge score (un SVG borroso pierde bordes) |
+| Auto-reporte desalineado (mide una versión, entrega otra) | mide el gate, no el que dibuja |
+
+**Gate de RIGGEABILIDAD (pre-Rive), separado del de fidelidad:**
+- `xmllint --noout --valid <svg>` → caza la colisión id-elemento↔id-gradiente (**verificado**: rechaza `id` duplicado, exit 4). DTD local, 1 línea, cero setup.
+- Rive NO soporta `gradientTransform` / `<mask>` / `<filter>` / `<image>` / `stroke-dasharray` / `skew` / fill por CSS-`class` → lint por grep.
+- ⚠️ **`svgo` sin configurar corre `cleanupIds` → borra los ids de rig en silencio** (no están referenciados por `url()`). Usar `preservePrefixes` o desactivar `cleanupIds`.
+
+**Flag de confianza — NO adivinar (la regla que faltó en el buzón):**
+- Donde el recorte/segmentación es AMBIGUO, **flaggeá la frontera incierta en vez de adivinar** → pedí el asset individual o el ojo de Alan. Señales medibles: alpha resuelto ≈0.5 con `PyMatting` (trimap fg/bg/unknown); borde de separación DÉBIL entre objetos pegados; entropía inesperada (`skimage.filters.rank.entropy`) en una zona asumida plana = sub-estructura no vista (el error del techo). Un recorte ambiguo resuelto mal y en silencio es el pecado.
 
 ## Gotchas (comprados a los golpes)
 
@@ -190,3 +222,10 @@ Requiere `sharp` (ya en el repo) y `bun`.
   6. Deuda de toolkit: `map-pieces.mjs`, `score.mjs --mask`, `crop-check.mjs`.
 - **Por qué:** la corrida gastó iteraciones corrigiendo bboxes mal mapeados a ojo y en round-trips por scores de pieza contaminados. Estas reglas atacan ese eslabón débil.
 - **Cómo revertir:** `git checkout <sha-previo> -- .claude/skills/asset-vectorizer/SKILL.md`, o borrar la subsección *Aprendizajes del GATE de la tienda* + este entry y los bullets del toolkit de composite.
+
+### 2026-07-24 (2) — research 2: verificación reforzada
+- **Antes:** el score era de un eje (`mean |Δ|RGB`) y el diff de contraste estaba como herramienta opcional (paso 6). En la tienda eso permitió reward-hacking (toldos/buzón mal con score OK; verificado: `piezas_vec/` scoreó sin diff).
+- **Cambió:** paso 6 → **diff de contraste OBLIGATORIO** + score MULTI-EJE (ΔE + SSIM + IoU + FSIM/GMSD + Hausdorff, pooling p95, región por target, mide el gate) · sección nueva *Verificación reforzada* con catálogo de trampas→defensa · gate de riggeabilidad (`xmllint` + gotcha `svgo cleanupIds`).
+- **Por qué:** Alan preguntó qué otras formas de trampa hay y si reforzar el score por color+contraste. Marco: Goodhart. Research 2 (4 subagentes) trajo las métricas y las impl.
+- **Fuente:** [`tecnicas-mapeo-verificacion-research.md`](../../../docs/direccion/tecnicas-mapeo-verificacion-research.md).
+- **Cómo revertir:** borrar la sección *Verificación reforzada* + este entry + revertir el paso 6; `git checkout <sha-previo> -- SKILL.md`.
