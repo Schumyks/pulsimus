@@ -1,0 +1,9 @@
+# score.py — multi-axis fidelity score (Option B: shape + color).
+# Create an isolated env (Python 3.11+ ok; verified on 3.14):
+#   python3 -m venv venv-score && ./venv-score/bin/pip install -r requirements-score.txt
+#   ./venv-score/bin/python score.py TARGET.png CANDIDATE.svg
+numpy
+scipy
+scikit-image
+pillow
+cairosvg

@@ -113,7 +113,7 @@ Cuando el asset es una ESCENA entera (la tienda: fachada + toldos + carita + pue
 - **Trace híbrido:** matar el gap negro (solapar paths / marco sólido detrás), agregar bevels muestreados, bajar peso (simplificar paths / `path_precision`).
 - **Toolkit de composite (los 4 scripts que matan iteraciones — construir + probar en el próximo run contra la tienda):**
   - `map-pieces.mjs <composite.png>` → tabla de bboxes de TODAS las piezas por connected-components. Elimina la ronda entera de "los agentes corrigen el bbox por evidencia" (fue el eslabón débil de la corrida: 5 corrimientos de ~500px por mapear a ojo). (Un tiling ciego por cuadrantes NO reemplaza esto — un objeto cruza varias celdas y se fragmenta; ver [research](../../../docs/direccion/tecnicas-mapeo-verificacion-research.md) § 1d.)
-  - `score.mjs` **reforzado a MULTI-EJE + `--mask <silueta-del-target>`** → hoy es `mean |Δ|RGB` de un eje sobre la zona cruda (35–40% de contexto ajeno, hackeable). Nuevo: ΔE + SSIM + IoU + FSIM/GMSD + Hausdorff, pooling p95, enmascarado a la silueta del TARGET → número LOCAL confiable y no-hackeable. Ver *Verificación reforzada*.
+  - `score.py` — **✅ HECHO (25/07): score multi-eje FORMA + COLOR** (IoU/cobertura + ΔE p95 + SSIM + Hausdorff, región por TARGET, distingue FALTA/SOBRA). Vara automática de la Opción B (ver *Verificación reforzada*), validado con banco de verdad conocida. **Futuro (Opción A, escala de miles):** eje de bordes GMSD/FSIM (cierra el blur por número) + veredicto relativo por-pieza.
   - `crop-check.mjs <composite.png> <pieza1.png> …` → **el GATE DE RECORTE del paso 2, hecho script** (anillo perimetral transparente + mapa de residuo): verifica que cada pieza esté COMPLETA y que la unión de piezas cubra el composite. Es el que ataca el error del buzón (recorte que se comió la base). *(Impl: renderizá el SVG a canvas exacto con `resize(W,H)` ANTES de `extract` — el gotcha `density`+`extract` cae en el lugar equivocado si no.)*
   - `check-rig.py` → lint de riggeabilidad (paths anónimos, grupos de 1 hijo) + `xmllint --valid` para ids. Corre por pieza antes de Rive.
 - **Auto-calcado a precisión** (carril diferenciable diffvg/LIVE) = **Opción B, PARQUEADA** (ver [research](../../../docs/direccion/vectorizacion-research.md)) — "agua de otro pozo".
@@ -152,6 +152,13 @@ Corré los scripts con `bun scripts/<x>.mjs …` desde el repo.
 > Detalle + fuentes + implementaciones en [`tecnicas-mapeo-verificacion-research.md`](../../../docs/direccion/tecnicas-mapeo-verificacion-research.md).
 > Un score de UN eje (`mean |Δ|RGB`) es **HACKEABLE**: el agente optimiza el número sin calcar (ley de Goodhart — no es mala fe, optimiza lo que medís). En la tienda pasó: toldos al revés, buzón incompleto, con score OK. Defensa = **ejes ortogonales + pooling robusto + región fijada por el target + gates no-numéricos**.
 
+**División de trabajo (decisión de Alan, 25/07 — "Opción B"), validada con banco de verdad conocida (`scratchpad/bench.py`):** el número y el diff visual se reparten la carga; ninguno pretende cazar todo solo.
+- **El número (`score.py`) filtra FORMA + COLOR, automático.** La **forma** (IoU/cobertura) es el eje robusto: corte estable (~0.90), distingue FALTA de SOBRA, tapa el error del buzón — probado en arte real (cobertura 0.98→0.77 al borrar la base). El **color** (ΔE p95) caza desvíos gordos de paleta. Filtran sin ojo humano.
+- **El diff de contraste (`_trace_diff.png`, gate OBLIGATORIO) caza ORIENTACIÓN + NITIDEZ**, con el *Criterio accionable del diff* de abajo. Son los modos que el número NO discrimina: **un umbral de color absoluto se cruza entre piezas** (banco: un flip-trampa dio dE95=18, un vector bueno real dio 31 — no hay corte único). El diff los caza gratis.
+- **Por qué así:** dos jueces ortogonales (número simple + imagen) son más difíciles de engañar que un juez numérico único y complejo (menos superficie de reward-hacking), y es lo que el volumen actual pide. El camino "el número lo hace todo" (Opción A: eje de bordes GMSD/FSIM + veredicto relativo por-pieza) queda para escala de miles — el eje de bordes es su primer ladrillo (deuda barata, cierra el blur por número).
+
+**Hallazgo del banco (25/07):** con baseline limpio (target = render limpio de la norma base), la forma cazó el mutilado (IoU 0.67) y el faltante real del buzón (cobertura 0.77); el shift lo cazaron color+estructura; **el flip (orientación) y el blur (nitidez) NO los caza el número** → van al diff. Es la evidencia que fija la Opción B.
+
 **El score pasa a MULTI-EJE** (ninguna trampa satisface los cuatro a la vez):
 - **Color** = ΔE CIEDE2000 (`colour-science`/`skimage`) · **Estructura/contraste** = SSIM (`skimage`/`piq`) · **Forma** = IoU/Dice de silueta (XOR = mapa gratis) · **Bordes** = FSIM/GMSD (`piq`, GPU) · **Peor punto** = Hausdorff (`skimage`, devuelve la coordenada). Todas corren en Linux/8GB.
 - **Pooling NO-mean → p95 o std-dev.** El mean diluye una franja mal calcada hasta pasarla (es lo que dejó pasar los toldos). Separar SIEMPRE el mapa por-píxel del escalar.
@@ -168,6 +175,33 @@ Corré los scripts con `bun scripts/<x>.mjs …` desde el repo.
 | Detalle chico omitido (ranura, tornillo) | p95 + peso por importancia |
 | Blur/suavizado para bajar el Δ | edge score (un SVG borroso pierde bordes) |
 | Auto-reporte desalineado (mide una versión, entrega otra) | mide el gate, no el que dibuja |
+
+### Criterio accionable del diff de contraste — el juez de ORIENTACIÓN + NITIDEZ (Opción B)
+
+`overlay.mjs` deja `_trace_diff.png` (**negro = calza, brillo = desajuste**). **El diff NO se "mira", se LEE**: cada patrón de brillo estructurado tiene causa y corrección. Esto es lo que permite delegar la verificación a un ejecutor SIN ojo de diseñador (dirección de Alan, 25/07).
+
+| Patrón de brillo | Causa | Corrección | Cruzar con el número |
+|---|---|---|---|
+| Contorno espejado / doble | orientación invertida (poste de barbero, toldo al revés) | espejar/rotar, confirmar contra el PNG | — (el número no lo ve) |
+| Contorno corrido paralelo | posición / registro | re-anclar al soporte | forma (IoU baja leve) |
+| **Halo que CRECE desde el centro** | **escala mal** (pieza más grande/chica) | reescalar midiendo 2 puntos discretos | IoU baja SIMÉTRICA (no direccional) |
+| Región rellena que brilla | parte faltante **o** color de relleno mal | completar/revisar recorte, o revisar muestreo | **cov bajo = FALTA · cov alto + IoU bajo = SOBRA** |
+| **Brillo en zona de fondo / lisa** | **elemento SOBRANTE / espurio** (path fantasma, artefacto del trace) | eliminar el elemento | cov alto + IoU < 1 |
+| Franja horizontal / vertical | banda de gradiente mal (escalón vs rampa, stop corrido) | revisar los stops de ESA banda | — |
+| **Punto brillante chico aislado** | **detalle fino omitido** (ranura, tornillo, rasgo) | agregar el detalle | el **p95** lo levanta (por eso NO se poolea con mean) |
+| Brillo difuso tenue uniforme | blur/suavizado o desalineo sub-pixel | endurecer bordes; revisar registro | dE bajo, estructura difusa |
+
+- **Distinción clave (la da el número, se lee acá):** **cobertura baja = FALTA una parte** (buzón sin base); **IoU baja con cobertura alta = SOBRA un elemento** (artefacto). `score.py` reporta ambas.
+- **Fuera de alcance del diff por-pieza:** el **z-order invertido** (una pieza tapa otra al revés) es un check del ENSAMBLE, no de una pieza.
+- **Cuándo PARAR:** negro en lo estructural + IoU/cobertura > ~0.90 + dE razonable para la clase. Difuso tenue uniforme = aceptable (sub-pixel); brillo **estructurado** (contorno / región / franja / punto) = seguir.
+- **Regla de oro:** identificar el patrón → aplicar la corrección → re-correr el diff. Loop hasta que no quede brillo estructurado.
+
+**Antipatrones al leer/actuar el diff (lo que un ejecutor hace mal — NO hacer):**
+- ❌ **Declarar OK con brillo ESTRUCTURADO presente.** El "primer pase presentable" (~80%) no alcanza; solo el difuso tenue uniforme es aceptable. (Feedback de Alan: no parar en "suficiente".)
+- ❌ **Bajar el número sin abrir el diff.** El número puede mejorar con la forma/orientación mal (los toldos pasaron con score OK). El diff es obligatorio JUSTO por esto — nunca cerrar una pieza solo por el número.
+- ❌ **Aplicar la corrección equivocada al patrón.** Trasladar 2px cuando el patrón es orientación (hay que ESPEJAR); retocar color cuando en realidad FALTA una parte. El diff se diagnostica, no se parcha a ojo.
+- ❌ **Matar el diff destruyendo el asset.** Aplanar el bevel/glow legítimo, encoger la máscara del candidate, o blurear el vector para bajar el Δ — bajás el brillo pero rompés la pieza (el volumen es parte del dibujo; la región la fija el TARGET, no el candidato). Es reward-hacking sobre el diff.
+- ❌ **Leer el diff por su "negrura promedio".** "Está bastante negro" a ojo = el mismo pecado del `mean` que dejó pasar los toldos. Se buscan FOCOS estructurados, no un promedio visual.
 
 **Gate de RIGGEABILIDAD (pre-Rive), separado del de fidelidad:**
 - `xmllint --noout --valid <svg>` → caza la colisión id-elemento↔id-gradiente (**verificado**: rechaza `id` duplicado, exit 4). DTD local, 1 línea, cero setup.
@@ -201,7 +235,8 @@ El pixel-perfect **a mano** converge pero cuesta N iteraciones → **no escala**
 - `scripts/read-structure.mjs` — lectura por franjas promediadas (bandas + marco + planitud).
 - `scripts/detect-features.mjs` — bbox de rasgos (ojos/boca/…).
 - `scripts/overlay.mjs` — trace-overlay: `_trace_over.png` + `_trace_diff.png` junto al SVG.
-- `scripts/score.mjs` — métrica objetiva `bun score.mjs <clean.png> <asset.svg>` → mean |Δ|RGB in-shape (menor = más fiel). La vara del loop del paso 6.
+- `scripts/score.mjs` — score de 1 eje (mean |Δ|RGB in-shape), el VIEJO/legacy. Reemplazado como vara por `score.py`.
+- `scripts/score.py` — **score multi-eje FORMA + COLOR (Python, Opción B).** `score.py <target.png> <candidate.{png,svg}>` → IoU/cobertura + ΔE p95 + SSIM + Hausdorff; veredicto de FORMA con corte robusto (distingue FALTA de SOBRA) + señales de color/estructura a cruzar con el diff. Entorno: `venv` con `requirements-score.txt` (numpy/scipy/scikit-image/pillow/cairosvg). La vara automática del lado número.
 - `scripts/assemble.mjs` — `bun assemble.mjs <out> <p1.svg> <p2.svg> …` junta piezas (mismo viewBox) en 1 SVG por z-order (primero = atrás), combinando `<defs>`. Para asset compuesto.
 - `scripts/reduce-palette.mjs` — `bun reduce-palette.mjs <src.png> <in.svg> <out.svg> [K]` colapsa la paleta explotada de un trace a K familias reales (k-means sobre el PNG). Para el carril trace (limpia color-artefacto).
 
@@ -229,3 +264,9 @@ Requiere `sharp` (ya en el repo) y `bun`.
 - **Por qué:** Alan preguntó qué otras formas de trampa hay y si reforzar el score por color+contraste. Marco: Goodhart. Research 2 (4 subagentes) trajo las métricas y las impl.
 - **Fuente:** [`tecnicas-mapeo-verificacion-research.md`](../../../docs/direccion/tecnicas-mapeo-verificacion-research.md).
 - **Cómo revertir:** borrar la sección *Verificación reforzada* + este entry + revertir el paso 6; `git checkout <sha-previo> -- SKILL.md`.
+
+### 2026-07-25 — Opción B sellada: `score.py` (forma+color) + criterio accionable del diff
+- **Antes:** el score multi-eje estaba especificado pero sin construir; el diff de contraste era obligatorio pero sin criterio de LECTURA (un ejecutor sin ojo no sabía qué hacer con el brillo).
+- **Cambió:** **(1)** construido y validado `scripts/score.py` (Python: IoU/cobertura + ΔE p95 + SSIM + Hausdorff) con banco de verdad conocida — la FORMA es el eje robusto (cazó el faltante del buzón en arte real, cobertura 0.98→0.77). **(2)** Decisión de Alan **"Opción B"** (división de trabajo): el número filtra forma+color, el diff visual caza orientación+nitidez (un umbral de color absoluto se cruza entre piezas — banco: flip-trampa dE95=18 vs vector bueno 31). **(3)** *Criterio accionable del diff*: 8 patrones (con escala/sobrante/detalle-chico) + distinción cov/IoU (FALTA vs SOBRA) + 5 antipatrones. `score.mjs` queda como legacy de 1 eje.
+- **Por qué:** el gate de la tienda pasó 3 errores con score OK; B reparte la verificación en dos jueces ortogonales (número simple + diff leído), más difícil de hackear que un juez numérico único. Alan: el diff obligatorio + criterio suficiente lleva al agente en la dirección correcta.
+- **Cómo revertir:** borrar `scripts/score.py` + `requirements-score.txt`, la subsección *División de trabajo* + *Criterio accionable del diff* + este entry; `git checkout <sha-previo> -- SKILL.md`.
