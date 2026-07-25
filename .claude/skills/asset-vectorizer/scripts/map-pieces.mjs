@@ -4,8 +4,10 @@
 //
 // SCOPE: separates islands DISCONNECTED by background (the canonical input = a
 // nano-banana DESARMADO sheet, one piece per island). Pieces that TOUCH/overlap in an
-// assembled composite are NOT split by silhouette alone -> that needs color/gradient
-// (BL-21) or SAM (BL-22), both parked. This tool is honest about that boundary.
+// assembled composite are NOT split by silhouette alone. When you already HAVE the
+// individual pieces and need their position in the ASSEMBLED art, use locate-piece.py
+// (template matching) instead -> it locates without segmenting. Splitting glued pieces
+// you do NOT have needs color/gradient (BL-21) or SAM (BL-22), both parked.
 //
 // Usage: bun map-pieces.mjs <composite.png> [minArea=200] [alphaT=16] [--json]
 import sharp from 'sharp';

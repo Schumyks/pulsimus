@@ -78,5 +78,27 @@ Todo en `space-src/e0-supernova/piezas/spike-rive/tienda/_toolkit-bench/` (gitig
 - `mailbox_padded.png` / `mailbox_cut.png` · `bench_manifest_{full,missing}.json` — casos de crop-check.
 - `svg_{clean,idcollision,rivebad}.svg` — casos de check-rig.
 
+## VERIFICACIONES PRE-TEST (2026-07-25, de-riesgo antes del test visual)
+
+Dos verificaciones más, todavía sin dibujar nada — para no quemar la corrida visual con el toolkit a medio probar.
+
+### 1 · Template matching — la 3ª vía de mapeo (`locate-piece.py`)
+Alan preguntó si había otra forma de mapear sin el bbox difícil. **La hay, y resuelve el caso de la tienda.** `locate-piece.py` busca cada pieza CONOCIDA dentro del composite por correlación normalizada (NCC) → **LOCALIZA sin segmentar** → funciona sobre el composite ENSAMBLADO (donde map-pieces ve 1 blob).
+
+| Caso | Resultado |
+|---|---|
+| Banco de verdad conocida (5 piezas) | posición **exacta**, peak **1.000** |
+| **Material real: `pieces/` vs `tienda_clean.png`** | posición exacta, peak **1.000** en las 3 probadas |
+
+El peak 1.000 sobre material real revela que **las piezas de `pieces/` son recortes 1:1 de `tienda_clean`** → template matching da la posición de cada una en la tienda armada, **sin ojo, sin blob, sin los 500px**. Las **tres vías de mapeo** quedan claras: connected-components (sheet desarmado) · **template matching (tenés las piezas + el arte armado)** · color/SAM (BL-21/BL-22, solo si NO tenés las piezas).
+
+### 2 · Loop de verificación por-pieza (`score.py` + `overlay`)
+Sobre un par alineado real (norma base `face_smile_3.svg` vs su target `face_smile_2k.png`):
+- **score.py distingue calidad:** norma base dE95=**10** / diss=**0.25** vs la vieja mala (glow inflado) dE95=**14** / diss=**0.42**. Ambas `shape-ok` (correcto: el defecto de la vieja es color, no forma).
+- **overlay genera el diff** (el "dónde"), 1690×1494.
+- **Matiz honesto:** el verdict binario + los umbrales de señal filtran lo GRUESO; para diferencias FINAS entre dos versiones buenas hay que leer los números crudos + el diff. Es la división de trabajo de la Opción B funcionando, no un defecto — pero el ejecutor tiene que mirar el diff, no solo el verdict.
+
+Evidencia extra en `_toolkit-bench/` + `_trace_diff.png`/`_trace_over.png` en `spike-rive/`.
+
 ### Qué queda para la próxima (CON gate de Alan, porque es visual)
-El **test de método**: re-vectorizar la tienda de 0 con el toolkit completo puesto (map-pieces da los bboxes, score+diff verifican cada pieza, crop-check el recorte, check-rig antes de Rive) y medir si un ejecutor sin ojo llega sin los corrimientos ni los 3 errores del gate. Eso es visual → gate por pieza, no autónomo.
+El **test de método**: re-vectorizar la tienda de 0 con el toolkit completo puesto (**`locate-piece` da las posiciones** sobre el arte armado, o `map-pieces` sobre un sheet desarmado → vectorizar cada pieza → `score.py`+diff verifican fidelidad → `crop-check` el recorte → `check-rig` antes de Rive) y medir si un ejecutor sin ojo llega sin los corrimientos ni los 3 errores del gate. Eso es visual → gate por pieza, no autónomo.
