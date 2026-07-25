@@ -52,6 +52,8 @@ Handoffs/
 # claude local state
 .claude/settings.local.json
 .claude/worktrees/
+# score.py python env (rebuildable from requirements-score.txt)
+.claude/skills/asset-vectorizer/scripts/venv-score/
 
 # Cloud plates (Higgsfield originals + processed WebP) — no longer consumed
 # by the site (photo cloud banks removed from StarLayer). Kept local only.
